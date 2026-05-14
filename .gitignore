@@ -1,0 +1,31 @@
+# Quartz build output
+public/
+.quartz-cache/
+
+# Node
+node_modules/
+npm-debug.log*
+.npm/
+
+# Content (sourced separately from spec repo at build time)
+content/
+
+# Build artifacts
+tsconfig.tsbuildinfo
+
+# Obsidian (in case content/ is a symlink to a vault)
+.obsidian/
+.trash/
+private/
+
+# OS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+
+# Misc Quartz template leftovers
+.replit
+replit.nix
+prof
