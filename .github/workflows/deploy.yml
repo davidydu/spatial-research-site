@@ -28,14 +28,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check out spec repo into content/
-        uses: actions/checkout@v4
-        with:
-          repository: davidydu/spatial-research
-          path: content
-          fetch-depth: 0
-          # If spec is private, set SPEC_REPO_PAT in repo secrets:
-          token: ${{ secrets.SPEC_REPO_PAT || github.token }}
+      - name: Clone spec repo into content/
+        # Direct git clone avoids actions/checkout's mkdir conflict
+        # with gitignored paths. Works for public spec; for a private
+        # spec, switch to actions/checkout and provide a token via
+        # SPEC_REPO_PAT secret.
+        run: git clone --depth 1 https://github.com/davidydu/spatial-research.git content
 
       - name: Set up Node
         uses: actions/setup-node@v4
