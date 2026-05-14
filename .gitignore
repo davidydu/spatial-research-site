@@ -8,7 +8,9 @@ npm-debug.log*
 .npm/
 
 # Content (sourced separately from spec repo at build time)
-content/
+# No trailing slash: also matches the dev-time symlink, which git
+# tracks as a file-type entry, not a directory entry.
+content
 
 # Build artifacts
 tsconfig.tsbuildinfo
