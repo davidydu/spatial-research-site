@@ -1,15 +1,15 @@
 # spatial-research-site
 
-[Quartz](https://quartz.jzhao.xyz/) site that renders the [spatial-research](https://github.com/davidydu/spatial-research) spec vault as a navigable static site. Deployed to GitHub Pages.
+[Quartz](https://quartz.jzhao.xyz/) site that renders the [spatial-research](https://github.com/davidydu/spatial-research) vault as a navigable research and specification website. Published at [Spatial Research](https://davidydu.github.io/spatial-research-site/).
 
 ## Architecture
 
 Two-repo layout to keep concerns clean:
 
-| Repo | Contents |
-|---|---|
-| `spatial-research` | The Obsidian-style markdown vault (the spec). Source of truth. |
-| `spatial-research-site` (this repo) | Quartz framework + config + CI. No content of its own. |
+| Repo                                | Contents                                                       |
+| ----------------------------------- | -------------------------------------------------------------- |
+| `spatial-research`                  | The Obsidian-style markdown vault (the spec). Source of truth. |
+| `spatial-research-site` (this repo) | Quartz framework + config + CI. No content of its own.         |
 
 At build time, the spec is checked out into `content/`. Locally, `content/` is typically a symlink to your local clone of the spec repo:
 
@@ -24,32 +24,30 @@ ln -s ~/Documents/Spatial\ Research content
 ```bash
 git clone https://github.com/davidydu/spatial-research-site.git
 cd spatial-research-site
-npm install
+npm ci
 ln -s ~/path/to/Spatial\ Research content
-npx quartz build --serve         # preview at http://localhost:8080
+node quartz/bootstrap-cli.mjs build -d "$(realpath content)" --serve
+# preview at http://localhost:8080
 ```
+
+Use Node 22 and npm 10.9.2 or newer, as required by `package.json`. Passing the resolved content directory lets Quartz's Git date lookup work with a local symlink. Content changes belong in the vault; website configuration belongs here.
 
 ## Deployment
 
-The `.github/workflows/deploy.yml` workflow checks out both repos at build time, builds Quartz, and publishes to GitHub Pages.
-
-**Prerequisite — content access.** The workflow uses `actions/checkout@v4` to fetch the spec repo into `content/`. If the spec repo is public, this works with the default `github.token`. If the spec repo is private, you need one of:
-
-1. **Personal access token (PAT) approach** — easiest:
-   - Create a fine-grained PAT with read access to `davidydu/spatial-research`
-   - Add it as `SPEC_REPO_PAT` in this repo's Secrets and variables → Actions
-   - The workflow uses `secrets.SPEC_REPO_PAT` automatically if set
-2. **Deploy key approach** — more secure but more setup:
-   - Generate an SSH keypair: `ssh-keygen -t ed25519 -f deploy_key -N ""`
-   - Add public half as a read-only deploy key on `davidydu/spatial-research`
-   - Add private half as `SSH_DEPLOY_KEY` in this repo's Secrets
-   - Modify the workflow to use `ssh-key` instead of `token`
-3. **Make spec repo public** — simplest, but visibility change required.
+The [deployment workflow](.github/workflows/deploy.yml) checks out this repository, anonymously clones the public vault into `content/`, builds Quartz, and publishes to GitHub Pages. It does not use `SPEC_REPO_PAT` or an SSH deploy key. Making the vault private would require changing this workflow.
 
 **Other prerequisites:**
 
 - GitHub Pages must be enabled in repo Settings → Pages → Source: GitHub Actions
 - The workflow runs on push to `main`, manual dispatch, and a daily schedule (06:00 UTC) so the site picks up spec changes even without pushes here.
+
+Publish vault changes first, then push website changes or dispatch the workflow. A successful scheduled build only proves that the remote vault was built; it does not publish unpushed local research. Verify the deployed homepage and the newly changed pages after the workflow completes.
+
+## Content boundaries
+
+`private/`, templates, Obsidian settings, and `90 - Meta/scripts/**` are excluded from the site. The last directory contains validation helpers and intentionally invalid test fixtures, not research pages. Research notes with `status: draft` remain visible and labeled; Quartz excludes a note only when its frontmatter has `draft: true`.
+
+Historical research and the frozen D-26 protocol remain accessible. The homepage points readers to the current recommendation and approval brief, which distinguish proposed architecture from implemented capabilities.
 
 ## Why not host directly from the spec repo?
 
@@ -71,4 +69,4 @@ Add a `CNAME` file at the repo root with your domain, and configure DNS to point
 
 ## Privacy considerations
 
-The deployed site is **public** (visible to anyone with the URL) when using GitHub Pages free tier on a public site repo. The spec repo can remain private. If you need authenticated access, switch the deployment target to Cloudflare Pages or Netlify — both support password protection on free tiers.
+The website and both repositories are public. Content exclusions affect the website build, not Git history or repository access. Keep private material untracked in the vault and follow its publication checks before pushing.

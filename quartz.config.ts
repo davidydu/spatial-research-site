@@ -8,7 +8,7 @@ import * as Plugin from "./quartz/plugins"
  */
 const config: QuartzConfig = {
   configuration: {
-    pageTitle: "Spatial DSL Implementation Spec",
+    pageTitle: "Spatial Research",
     pageTitleSuffix: "",
     enableSPA: true,
     enablePopovers: true,
@@ -17,6 +17,7 @@ const config: QuartzConfig = {
     baseUrl: "davidydu.github.io/spatial-research-site",
     ignorePatterns: [
       "private",
+      "90 - Meta/scripts/**",
       "templates",
       ".obsidian",
       ".git",
