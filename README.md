@@ -9,7 +9,7 @@ Two-repo layout to keep concerns clean:
 | Repo                                | Contents                                                       |
 | ----------------------------------- | -------------------------------------------------------------- |
 | `spatial-research`                  | The Obsidian-style markdown vault (the spec). Source of truth. |
-| `spatial-research-site` (this repo) | Quartz framework + config + CI. No content of its own.         |
+| `spatial-research-site` (this repo) | Quartz framework, configuration, CI, and presentation files.   |
 
 At build time, the spec is checked out into `content/`. Locally, `content/` is typically a symlink to your local clone of the spec repo:
 
@@ -26,15 +26,32 @@ git clone https://github.com/davidydu/spatial-research-site.git
 cd spatial-research-site
 npm ci
 ln -s ~/path/to/Spatial\ Research content
-node quartz/bootstrap-cli.mjs build -d "$(realpath content)" --serve
-# preview at http://localhost:8080
+npm run build:site
 ```
 
-Use Node 22 and npm 10.9.2 or newer, as required by `package.json`. Passing the resolved content directory lets Quartz's Git date lookup work with a local symlink. Content changes belong in the vault; website configuration belongs here.
+Use Node 22 and npm 10.9.2 or newer, as required by `package.json`. The build resolves the content directory so Quartz's Git date lookup works with a local symlink. It builds the documentation into `public/`, then copies `presentation/` to `public/presentation/`.
+
+To use a vault without creating the symlink:
+
+```bash
+npm run build:site -- --directory "/path/to/Spatial Research"
+```
+
+Preview the combined build with the existing static-server dependency:
+
+```bash
+node --input-type=module -e 'import http from "node:http"; import handler from "serve-handler"; http.createServer((req, res) => handler(req, res, { public: "public", cleanUrls: true })).listen(8080)'
+# documentation: http://localhost:8080/
+# presentation: http://localhost:8080/presentation/
+```
+
+For documentation-only live reload, use `node quartz/bootstrap-cli.mjs build -d "$(realpath content)" --serve`. Quartz rebuilds `public/`; rerun `npm run build:site` to restore the presentation after using that command.
+
+Research content belongs in the vault. Presentation HTML, styles, scripts, and assets belong in `presentation/`. Its asset URLs are relative so the same files work locally and under the GitHub Pages project path.
 
 ## Deployment
 
-The [deployment workflow](.github/workflows/deploy.yml) checks out this repository, anonymously clones the public vault into `content/`, builds Quartz, and publishes to GitHub Pages. It does not use `SPEC_REPO_PAT` or an SSH deploy key. Making the vault private would require changing this workflow.
+The [deployment workflow](.github/workflows/deploy.yml) checks out this repository, anonymously clones the public vault into `content/`, runs `npm run build:site`, and publishes the documentation and presentation to GitHub Pages. The presentation is served at `/spatial-research-site/presentation/`. The workflow does not use `SPEC_REPO_PAT` or an SSH deploy key. Making the vault private would require changing this workflow.
 
 **Other prerequisites:**
 

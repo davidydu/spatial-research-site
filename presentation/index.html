@@ -1,0 +1,819 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f8f7f3" />
+    <meta
+      name="description"
+      content="Spatial research: Rust prototype, documentation, and a proposed Python frontend over one Rust compiler."
+    />
+    <title>Spatial — Architecture Review</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23f8f7f3'/%3E%3Cpath d='M9 9h9v9H9zm13 0h9v9h-9zM9 22h9v9H9zm13 0h9v9h-9z' fill='%234d6680'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="./presentation.css" />
+    <script>
+      document.documentElement.classList.add("js")
+    </script>
+    <script src="./presentation.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#slides">Skip to presentation</a>
+    <div class="deck">
+      <header class="masthead">
+        <a class="brand" href="#progress" aria-label="Spatial research, first screen">
+          <svg viewBox="0 0 30 30" aria-hidden="true">
+            <path
+              d="M0 0h12v12H0zm18 0h12v12H18zM0 18h12v12H0zm18 0h12v12H18z"
+              fill="currentColor"
+            />
+          </svg>
+          <span>SPATIAL<span class="brand-sub">RESEARCH</span></span>
+        </a>
+        <div class="masthead-meta">
+          <span>Architecture review</span><time datetime="2026-09-28">28 September 2026</time>
+        </div>
+        <div class="tools" aria-label="Presentation tools">
+          <button class="tool" id="notes-button" title="Speaker notes (N)">Notes</button>
+          <button class="tool" id="sources-button" title="Sources (E)">Sources</button>
+          <button
+            class="tool icon-tool"
+            id="fullscreen-button"
+            aria-label="Enter fullscreen"
+            title="Fullscreen (F)"
+          >
+            <svg viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M7 3H3v4m10-4h4v4M3 13v4h4m10-4v4h-4" />
+            </svg>
+          </button>
+          <button
+            class="tool icon-tool"
+            id="help-button"
+            aria-label="Keyboard shortcuts"
+            title="Keyboard shortcuts (?)"
+          >
+            ?
+          </button>
+        </div>
+      </header>
+
+      <main id="slides">
+        <section
+          class="slide is-active"
+          id="progress"
+          aria-labelledby="title-progress"
+          data-label="Progress"
+        >
+          <div class="eyebrow">
+            <span>01 / Rust prototype</span
+            ><span class="status">Implemented · selected programs</span>
+          </div>
+          <h1 id="title-progress" tabindex="-1">
+            The Rust prototype works <br />
+            for selected programs.
+          </h1>
+          <p class="lede">Parsing, checks, source diagnostics, and HLS generation.</p>
+          <div class="progress-grid">
+            <div class="prototype-work">
+              <div
+                class="small-flow"
+                aria-label="Current prototype: source, Rust checks, selected HLS output"
+              >
+                <div><span class="node-label">INPUT</span><strong>Kernel source</strong></div>
+                <span class="arrow" aria-hidden="true">→</span>
+                <div><span class="node-label">PROTOTYPE</span><strong>Rust checks</strong></div>
+                <span class="arrow" aria-hidden="true">→</span>
+                <div><span class="node-label">OUTPUT</span><strong>Selected HLS</strong></div>
+              </div>
+              <div class="diagnostic">
+                <div class="panel-label">
+                  <span>A source error and a fix</span><span>Recorded 28 Sep 2026</span>
+                </div>
+                <pre><code><span class="code-muted">2 │</span> inputs { src: Dram&lt;Int&gt;[<mark>N</mark>] }
+<span class="code-muted">  │</span>                        <span class="code-error">↑</span>
+<span class="code-error">E0500</span>  Dimension name does not resolve
+       to an earlier Size constant.
+<span class="code-muted">Help</span>   Declare the Size constant first.</code></pre>
+                <p class="fine">
+                  Source excerpt; diagnostic shortened.
+                  <button class="text-link" data-open-sources>Exact transcript ↗</button>
+                </p>
+              </div>
+            </div>
+            <div class="validation">
+              <p class="panel-label">Historical Vitis checkpoint <span>05 Jul 2026</span></p>
+              <div class="stat">
+                <span class="stat-number">39<span>/39</span></span>
+                <p>
+                  passed HLS simulation <br />
+                  and synthesis
+                </p>
+              </div>
+              <div class="stat secondary-stat">
+                <span class="stat-number">37<span>/39</span></span>
+                <p>fit the resource budget</p>
+              </div>
+              <p class="qualification">
+                2 over budget · 14 initiation-interval caveats <br />
+                No board execution. Exact tested programs only.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section
+          class="slide"
+          id="research"
+          aria-labelledby="title-research"
+          data-label="Documentation"
+        >
+          <div class="eyebrow">
+            <span>02 / Documentation</span><span class="status">Research repository + website</span>
+          </div>
+          <h1 id="title-research" tabindex="-1">
+            Specifications, experiments, <br />
+            and decisions.
+          </h1>
+          <p class="lede">The website presents the research as linked pages.</p>
+          <div class="research-grid">
+            <div class="repo-view">
+              <p class="panel-label">spatial-research <span>Source documents</span></p>
+              <div class="repo-tree">
+                <div>
+                  <span class="folder-number">10</span
+                  ><span>Specification<small>Language rules</small></span>
+                </div>
+                <div>
+                  <span class="folder-number">20</span
+                  ><span>Research notes<small>Evidence and decisions</small></span>
+                </div>
+                <div>
+                  <span class="folder-number">30</span
+                  ><span>HLS mapping<small>Hardware lowering</small></span>
+                </div>
+                <div>
+                  <span class="folder-number">35</span
+                  ><span>Python mapping<small>Source and semantics</small></span>
+                </div>
+              </div>
+              <div class="repo-links">
+                <a
+                  href="https://github.com/davidydu/spatial-research"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Research repo ↗</a
+                ><a
+                  href="https://github.com/davidydu/spatial-research-site"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Site repo ↗</a
+                >
+              </div>
+            </div>
+            <div class="site-view">
+              <div class="site-bar">
+                <span class="site-dot" aria-hidden="true"></span><span>Spatial Research</span
+                ><span class="preview-label">Local preview</span>
+              </div>
+              <button
+                class="site-preview"
+                id="preview-button"
+                aria-label="Explore the documentation website"
+              >
+                <img
+                  src="./assets/docs-preview.jpg"
+                  alt="Spatial Research documentation homepage showing the architecture proposal, reviewer links, and specification navigation."
+                  width="1280"
+                  height="720"
+                /><span>Explore documentation <span aria-hidden="true">↗</span></span>
+              </button>
+              <div class="tour-path">
+                <span>Recommendation</span><span aria-hidden="true">→</span><span>Evidence</span
+                ><span aria-hidden="true">→</span><span>Specification</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide" id="lesson" aria-labelledby="title-lesson" data-label="Lesson">
+          <div class="eyebrow">
+            <span>03 / What the prototype taught us</span
+            ><span class="status proposed">Proposed next step</span>
+          </div>
+          <h1 id="title-lesson" tabindex="-1">
+            From program patterns <br />
+            to language rules.
+          </h1>
+          <p class="lede">Support new combinations of the constructs we implement.</p>
+          <div class="comparison">
+            <div class="comparison-row today">
+              <div class="row-label">Today<small>Whole-program recognition</small></div>
+              <div class="pattern-stack">
+                <span>Program A</span><span>Program B</span><span>Program C</span>
+              </div>
+              <span class="arrow" aria-hidden="true">→</span>
+              <div class="recognizer">Match a supported shape</div>
+              <span class="arrow" aria-hidden="true">→</span>
+              <div class="result-label">
+                Specialized <br />
+                HLS path
+              </div>
+            </div>
+            <div class="comparison-row next">
+              <div class="row-label">Next<small>Check the parts and their use</small></div>
+              <div class="constructs">
+                <span>Memory</span><span>Loops</span><span>Arithmetic</span><span>State</span>
+              </div>
+              <span class="arrow" aria-hidden="true">→</span>
+              <div class="recognizer">One checked program</div>
+              <span class="arrow" aria-hidden="true">→</span>
+              <div class="result-label">
+                Simulation <br />
+                and HLS
+              </div>
+            </div>
+          </div>
+          <p class="bottom-line">
+            <span>Keep</span> Parsing work, numeric rules, backend patterns, and regression cases.
+          </p>
+        </section>
+
+        <section
+          class="slide"
+          id="architecture"
+          aria-labelledby="title-architecture"
+          data-label="Architecture"
+        >
+          <div class="eyebrow">
+            <span>04 / Recommended architecture</span
+            ><span class="status proposed">Proposed · awaiting approval</span>
+          </div>
+          <h1 id="title-architecture" tabindex="-1">
+            Python source. <br />
+            <em>Rust compiler.</em>
+          </h1>
+          <p class="lede">Students write Python syntax. Rust checks the Spatial hardware rules.</p>
+          <div
+            class="architecture"
+            id="architecture-diagram"
+            data-stage="all"
+            role="group"
+            aria-label="Proposed architecture: Python kernel source feeds one Rust compiler, whose checked program feeds functional simulation and HLS C++ for Vitis."
+          >
+            <div class="arch-node input-node">
+              <span class="node-label">AUTHOR</span><strong>Python kernel</strong
+              ><span
+                >Read source without <br />
+                executing the kernel</span
+              >
+            </div>
+            <span class="connector" aria-hidden="true">→</span>
+            <div class="arch-node core-node">
+              <span class="node-label">CHECK</span><strong>Rust compiler</strong
+              ><span>Names · constants · types · legality</span>
+              <div class="checked-program">One checked program</div>
+            </div>
+            <svg class="fork" viewBox="0 0 70 170" aria-hidden="true">
+              <path d="M0 85H27V38H66M27 85v47h39" />
+              <path d="m59 32 7 6-7 6m0 82 7 6-7 6" />
+            </svg>
+            <div class="arch-outputs">
+              <div class="arch-node output-node">
+                <span class="node-label">SIMULATE</span><strong>Functional simulation</strong>
+              </div>
+              <div class="arch-node output-node">
+                <span class="node-label">GENERATE</span
+                ><strong>HLS C++ <span class="inline-arrow">→</span> Vitis</strong>
+              </div>
+            </div>
+          </div>
+          <div class="architecture-controls">
+            <div class="step-buttons" aria-label="Explain the architecture">
+              <button data-stage="read" aria-pressed="false"><span>1</span> Read</button
+              ><button data-stage="check" aria-pressed="false"><span>2</span> Check</button
+              ><button data-stage="use" aria-pressed="false"><span>3</span> Use</button>
+            </div>
+            <p id="stage-caption" aria-live="polite">
+              Ordinary Python handles test data and assertions.
+            </p>
+          </div>
+        </section>
+
+        <section class="slide" id="choice" aria-labelledby="title-choice" data-label="Rationale">
+          <div class="eyebrow">
+            <span>05 / Why this split</span><span class="status proposed">Design choice</span>
+          </div>
+          <h1 id="title-choice" tabindex="-1">
+            Choose the student language <br />
+            and compiler separately.
+          </h1>
+          <div class="reasons">
+            <article>
+              <span class="reason-number">01</span>
+              <h2>Python authoring</h2>
+              <p>
+                Familiar syntax. <br />
+                Python testbenches. <br />
+                Notebook workflow.
+              </p>
+            </article>
+            <article>
+              <span class="reason-number">02</span>
+              <h2>Rust core</h2>
+              <p>
+                Reuse compiler work. <br />
+                Native interpreter speed.
+              </p>
+            </article>
+            <article>
+              <span class="reason-number">03</span>
+              <h2>Shared checks</h2>
+              <p>
+                One set of language rules. <br />
+                One checked program. <br />
+                Simulation and HLS.
+              </p>
+            </article>
+          </div>
+          <div class="tradeoff">
+            <span class="node-label">TRADEOFF</span>
+            <p>Python syntax still follows Spatial hardware semantics.</p>
+            <button class="text-link" data-open-sources>Alternatives and measurements ↗</button>
+          </div>
+        </section>
+
+        <section
+          class="slide"
+          id="milestone"
+          aria-labelledby="title-milestone"
+          data-label="First milestone"
+        >
+          <div class="eyebrow">
+            <span>06 / First implementation milestone</span
+            ><span class="status proposed">After approval</span>
+          </div>
+          <h1 id="title-milestone" tabindex="-1">
+            Compile and simulate <br />
+            one tiled-scale kernel.
+          </h1>
+          <div
+            class="milestone-flow"
+            aria-label="First milestone: Python source to shared checks to checked program to exact simulation"
+          >
+            <span>Python source</span><span aria-hidden="true">→</span><span>Shared checks</span
+            ><span aria-hidden="true">→</span><span>Checked program</span
+            ><span aria-hidden="true">→</span><strong>Exact simulation</strong>
+          </div>
+          <div class="acceptance">
+            <article>
+              <span class="criterion">01 / Meaning</span>
+              <h2>Equivalent sources</h2>
+              <p>Python and internal reference forms produce the same checked meaning.</p>
+            </article>
+            <article>
+              <span class="criterion">02 / Correctness</span>
+              <h2>Exact results</h2>
+              <p>Outputs match an independent reference. Errors point to the source.</p>
+            </article>
+            <article>
+              <span class="criterion">03 / Generality</span>
+              <h2>New combinations</h2>
+              <p>Change names, tiling, or composition without adding a program recognizer.</p>
+            </article>
+          </div>
+          <p class="bottom-line">
+            <span>Then</span> Broader semantics → structural HLS → tested course packages.
+          </p>
+        </section>
+
+        <section class="slide" id="approval" aria-labelledby="title-approval" data-label="Approval">
+          <div class="eyebrow">
+            <span>07 / Decision</span><span class="status proposed">Approval requested</span>
+          </div>
+          <h1 id="title-approval" tabindex="-1">
+            Approve the architecture <br />
+            and first milestone.
+          </h1>
+          <p class="lede">Restricted Python source, one Rust compiler, and staged validation.</p>
+          <div class="closing-flow">
+            <div><span class="node-label">AUTHOR</span><strong>Python</strong></div>
+            <span class="arrow" aria-hidden="true">→</span>
+            <div class="closing-core">
+              <span class="node-label">CHECK</span><strong>Rust</strong>
+            </div>
+            <span class="arrow" aria-hidden="true">→</span>
+            <div>
+              <span class="node-label">RUN / GENERATE</span><strong>Simulation + HLS</strong>
+            </div>
+          </div>
+          <div class="approval-next">
+            <p>
+              <span class="node-label">START WITH</span>The source contract and one tiled-scale
+              example.
+            </p>
+            <div>
+              <a
+                href="../20---Research-Notes/50---Decision-Records/D-26-professor-brief.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Read the brief ↗</a
+              ><a
+                href="../20---Research-Notes/50---Decision-Records/D-26-final-architecture.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Full architecture plan ↗</a
+              >
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="deck-footer">
+        <nav class="chapter-nav" aria-label="Presentation sections">
+          <button data-slide="progress" aria-current="step"><span>01</span> Progress</button
+          ><button data-slide="research"><span>02</span> Docs</button
+          ><button data-slide="lesson"><span>03</span> Lesson</button
+          ><button data-slide="architecture"><span>04</span> Architecture</button
+          ><button data-slide="choice"><span>05</span> Rationale</button
+          ><button data-slide="milestone"><span>06</span> Milestone</button
+          ><button data-slide="approval"><span>07</span> Approval</button>
+        </nav>
+        <div class="paging">
+          <span id="page-counter" aria-live="polite">01 / 07</span
+          ><button id="previous" aria-label="Previous screen" disabled>←</button
+          ><button id="next" aria-label="Next screen">→</button>
+        </div>
+      </footer>
+      <noscript
+        ><p class="no-script">
+          JavaScript is off. All seven screens are shown below one another; source links remain
+          available.
+        </p></noscript
+      >
+    </div>
+
+    <dialog id="detail-dialog" aria-labelledby="detail-title">
+      <div class="dialog-header">
+        <span class="node-label" id="detail-kind">SOURCES</span
+        ><button class="close-button" data-close aria-label="Close details">
+          Close <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <h2 id="detail-title"></h2>
+      <div id="detail-body"></div>
+    </dialog>
+    <dialog id="tour-dialog" aria-labelledby="tour-title">
+      <div class="tour-header">
+        <h2 id="tour-title">Documentation</h2>
+        <nav aria-label="Documentation tour">
+          <button data-doc="brief" aria-pressed="true">Recommendation</button
+          ><button data-doc="mapping" aria-pressed="false">Evidence</button
+          ><button data-doc="spec" aria-pressed="false">Specification</button>
+        </nav>
+        <button class="close-button" data-close>
+          Return to presentation <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <iframe id="tour-frame" title="Spatial research documentation" src="about:blank"></iframe>
+      <div class="tour-footer">
+        <span id="tour-status">Local documentation build</span
+        ><a
+          id="tour-external"
+          href="../20---Research-Notes/50---Decision-Records/D-26-professor-brief.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Open page in a new tab ↗</a
+        ><button class="text-link" id="tour-snapshot-button">Show saved preview</button>
+      </div>
+      <div id="tour-snapshot" hidden>
+        <img
+          src="./assets/docs-preview.jpg"
+          alt="Saved Spatial Research documentation homepage, captured September 28, 2026."
+        />
+        <p>Saved homepage · 28 September 2026</p>
+      </div>
+    </dialog>
+
+    <template id="notes-progress"
+      ><p>
+        The prototype has parsing and checking infrastructure, source diagnostics, and HLS
+        generation for selected families. It still recognizes whole-program shapes.
+      </p>
+      <p>
+        The July 5 checkpoint tested 39 programs in Vitis simulation and synthesis. Thirty-seven fit
+        the resource budget; two were over budget. Fourteen had initiation-interval caveats. These
+        categories can overlap. We have not demonstrated board execution.
+      </p>
+      <p>
+        The Python frontend and general controller-tree compiler are proposed. The next screen shows
+        the documentation behind that proposal.
+      </p></template
+    >
+    <template id="notes-research"
+      ><p>
+        The research repository contains the specification, experiments, mappings, and decision
+        records. A separate repository builds the documentation website from those documents.
+      </p>
+      <p>
+        Spend about 45 seconds here: open the recommendation, show the Python mapping evidence, then
+        the specification. The tour uses the same local build as the presentation. The public
+        repositories may still show an older revision.
+      </p>
+      <p>
+        The point is that the professor can follow a decision back to its evidence and language
+        rules.
+      </p></template
+    >
+    <template id="notes-lesson"
+      ><p>
+        Adding a recognizer for every new program will not give us a general language. The next
+        compiler needs rules for individual constructs and the ways they combine.
+      </p>
+      <p>
+        For example, changing a tile size or nesting a supported operation should not require a new
+        whole-program case. We retain useful parsing work, numeric rules, backend patterns and
+        regression cases, and revalidate them in the new pipeline.
+      </p></template
+    >
+    <template id="notes-architecture"
+      ><p>
+        This is a Python frontend and a Rust compiler. The frontend reads restricted kernel source
+        without executing it. It preserves unresolved structure, literal tokens, and source
+        locations.
+      </p>
+      <p>
+        Rust owns names, constants, types, legality, diagnostics, and exact hardware semantics. It
+        produces one checked controller tree for functional interpretation and structural HLS
+        generation.
+      </p>
+      <p>
+        Ordinary Python runs the host testbench: data preparation, invocation, and assertions.
+        Functional simulation does not promise cycle accuracy. The full pipeline is proposed.
+      </p></template
+    >
+    <template id="notes-choice"
+      ><p>
+        The student-facing language and compiler implementation are separate choices. Python offers
+        familiar authoring and host tooling. Rust retains useful work and interpreter execution
+        headroom.
+      </p>
+      <p>
+        An external DSL has a simpler frontend boundary. A Python compiler core is feasible. We
+        selected this combination with team skills assumed adequate.
+      </p>
+      <p>
+        Python familiarity is a design motivation; we have not measured a learning advantage. The
+        interpreter experiment is bounded and does not measure full compiler or hardware
+        performance. The integration cost and differences from ordinary Python remain real work.
+      </p></template
+    >
+    <template id="notes-milestone"
+      ><p>
+        First freeze the source subset and the capture contract. Then implement dense tiled scale
+        through Python capture, the shared checker, the controller tree, and exact functional
+        interpretation.
+      </p>
+      <p>
+        Equivalent internal external-DSL fixtures check conformance. They are not a second public
+        student language. Test exact results, source nonexecution, rejection cases, and source
+        locations.
+      </p>
+      <p>
+        Renaming, changed tiling, and recomposition must work without a new family recognizer. Later
+        gates cover broader semantics, all 39 existing corpus programs, structural HLS and course
+        packaging. Backend work can begin once a family's semantic gate passes.
+      </p></template
+    >
+    <template id="notes-approval"
+      ><p>
+        Ask for approval of restricted Python authoring over one Rust semantic compiler, with the
+        delivery commitments and validation gates in the architecture plan.
+      </p>
+      <p>
+        Start with the source contract and one complete semantic slice. Approval is for
+        implementation direction; it does not certify completed semantics, course readiness, learner
+        outcomes, or new hardware results.
+      </p></template
+    >
+
+    <template id="sources-progress"
+      ><p class="source-caption">Rust revision <code>eb49d8bc</code> · recorded 28 Sep 2026</p>
+      <h3>Original diagnostic</h3>
+      <pre><code>error[spatial:E0500]: dimension name does not resolve to an earlier Size constant
+  --&gt; crates/spatial-rs-cli/tests/fixtures/e0500.spatial:2:29
+   = `N` is unknown or names a Size constant declared later
+   = help: declare a Size constant with this name before the dimension</code></pre>
+      <p>
+        The projected example shortens the message. The transcript above is recorded output, not a
+        fresh compiler run.
+      </p>
+      <h3>Historical hardware evidence</h3>
+      <p>
+        Vitis 2025.1 checkpoint, 5 July 2026, source revision <code>76158dd7</code>: all 39 programs
+        passed <code>csim_design</code> and <code>csynth_design</code>; 37 fit, 2 over budget, 14
+        initiation-interval caveats. This establishes acceptance for the tested roster. It does not
+        establish board execution, timing closure or general language coverage.
+      </p>
+      <ul>
+        <li>
+          <a href="../90---Meta/progress-log.html" target="_blank" rel="noopener noreferrer"
+            >Diagnostic transcript and verification log ↗</a
+          >
+        </li>
+        <li>
+          <a
+            href="../90---Meta/2026-06-27-rust-spatial-rewrite-roadmap.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Backend checkpoint and limitations ↗</a
+          >
+        </li>
+      </ul></template
+    >
+    <template id="sources-research"
+      ><p>
+        The research repository is the document source. Quartz in the site repository renders those
+        documents. The tour uses the current local build; publication of the latest revision is
+        pending.
+      </p>
+      <ul>
+        <li>
+          <a
+            href="https://github.com/davidydu/spatial-research"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Research repository ↗</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://github.com/davidydu/spatial-research-site"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Website repository ↗</a
+          >
+        </li>
+        <li>
+          <a
+            href="../35---Python-Surface-Mapping/00---Python-Mapping-Overview.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Python mapping overview ↗</a
+          >
+        </li>
+        <li>
+          <a href="../10---Spec/00---Spec-Index.html" target="_blank" rel="noopener noreferrer"
+            >Language specification ↗</a
+          >
+        </li>
+      </ul></template
+    >
+    <template id="sources-lesson"
+      ><p>
+        The current parse → constants → HIR → classifier route provides reusable components. The
+        proposed core checks a controller tree so supported constructs can compose.
+      </p>
+      <ul>
+        <li>
+          <a
+            href="../90---Meta/2026-07-07-fundamental-design-review.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Fundamental design review ↗</a
+          >
+        </li>
+        <li>
+          <a
+            href="../20---Research-Notes/50---Decision-Records/D-26-final-architecture.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Architecture and semantic ownership ↗</a
+          >
+        </li>
+      </ul></template
+    >
+    <template id="sources-architecture"
+      ><h3>One semantic authority</h3>
+      <p>
+        Python captures an unresolved AST with exact tokens and source origins. Rust owns name
+        resolution, constants, types, legality, diagnostic rules and exact semantics. The typed
+        controller tree feeds the reference interpreter and structural HLS backend.
+      </p>
+      <p>
+        Kernels use Python syntax with Spatial hardware semantics. Ordinary Python is used for host
+        code. Capture must never execute the kernel.
+      </p>
+      <ul>
+        <li>
+          <a
+            href="../20---Research-Notes/50---Decision-Records/D-26-final-architecture.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Selected architecture and contracts ↗</a
+          >
+        </li>
+        <li>
+          <a
+            href="../20---Research-Notes/50---Decision-Records/D-26-research/D-26-05-boundary-design.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Frontend/core boundary study ↗</a
+          >
+        </li>
+      </ul></template
+    >
+    <template id="sources-choice"
+      ><h3>Alternatives</h3>
+      <dl>
+        <dt>External DSL + Rust</dt>
+        <dd>Simpler frontend boundary; students learn a separate language.</dd>
+        <dt>Python frontend + Python core</dt>
+        <dd>
+          Technically feasible. Python with a native runtime was not measured in the interpreter
+          experiment.
+        </dd>
+        <dt>Selected: Python frontend + Rust core</dt>
+        <dd>
+          Familiar authoring, existing compiler assets, and native interpreter headroom. Requires
+          careful source capture and an explicit hardware-semantics guide.
+        </dd>
+      </dl>
+      <h3>Matched interpreter experiment</h3>
+      <p>
+        A bounded GEMM32 node-interpreter experiment measured 67.315 ms in CPython and 1.315 ms in
+        Rust. Both passed the ten registered output and edge cases; an independent repeat supported
+        the result. These are interpreter measurements, not full compiler, hardware, or learner
+        outcomes.
+      </p>
+      <ul>
+        <li>
+          <a
+            href="../20---Research-Notes/50---Decision-Records/D-26-research/D-26-12-simulator-spike.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Experiment, limits, and reproducibility archive ↗</a
+          >
+        </li>
+        <li>
+          <a
+            href="../90---Meta/2026-09-28-d26-research-extension.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Research comparison and remaining disagreement ↗</a
+          >
+        </li>
+      </ul></template
+    >
+    <template id="sources-milestone"
+      ><h3>First semantic slice</h3>
+      <p>
+        Dense tiled scale through Python capture and equivalent internal fixture parsing → shared
+        checker → controller tree → exact interpretation. Check source nonexecution, source
+        locations and invalid cases as well as outputs.
+      </p>
+      <h3>Later gates</h3>
+      <p>
+        Broader controller and memory semantics; all 39 existing corpus programs against independent
+        oracles; structural HLS with fresh Vitis validation where generated code changes; paired
+        labs, one diagnostic catalog and tested wheels.
+      </p>
+      <p>
+        The first slice ends at interpretation. Backend work can proceed for each family after its
+        semantic gate passes. Wheels bundle the compiler and simulator; Vitis is separately
+        provisioned.
+      </p>
+      <a
+        href="../20---Research-Notes/50---Decision-Records/D-26-final-architecture.html#implementation-sequence-after-approval"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Delivery gates and acceptance criteria ↗</a
+      ></template
+    >
+    <template id="sources-approval"
+      ><p>
+        The selected R-E recommendation is ready for professor review. Implementation of the
+        proposed general architecture begins after approval.
+      </p>
+      <ul>
+        <li>
+          <a
+            href="../20---Research-Notes/50---Decision-Records/D-26-professor-brief.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Professor approval brief ↗</a
+          >
+        </li>
+        <li>
+          <a
+            href="../20---Research-Notes/50---Decision-Records/D-26-final-architecture.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Full architecture and commitments ↗</a
+          >
+        </li>
+      </ul></template
+    >
+  </body>
+</html>
