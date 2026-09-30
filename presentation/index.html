@@ -74,7 +74,10 @@
             The Rust prototype works <br />
             for selected programs.
           </h1>
-          <p class="lede">Parsing, checks, source diagnostics, and HLS generation.</p>
+          <p class="lede">
+            The prototype reads source code, catches some errors, and generates HLS code for
+            selected examples. This gives us working components and test cases to build on.
+          </p>
           <div class="progress-grid">
             <div class="prototype-work">
               <div
@@ -136,7 +139,10 @@
             Specifications, experiments, <br />
             and decisions.
           </h1>
-          <p class="lede">The website presents the research as linked pages.</p>
+          <p class="lede">
+            The repository holds the language rules, experiments, and decisions. The website makes
+            them easier to read and links each recommendation to its evidence.
+          </p>
           <div class="research-grid">
             <div class="repo-view">
               <p class="panel-label">spatial-research <span>Source documents</span></p>
@@ -151,11 +157,11 @@
                 </div>
                 <div>
                   <span class="folder-number">30</span
-                  ><span>HLS mapping<small>Hardware lowering</small></span>
+                  ><span>HLS mapping<small>How programs become hardware</small></span>
                 </div>
                 <div>
                   <span class="folder-number">35</span
-                  ><span>Python mapping<small>Source and semantics</small></span>
+                  ><span>Python mapping<small>How Python expresses Spatial</small></span>
                 </div>
               </div>
               <div class="repo-links">
@@ -206,7 +212,10 @@
             From program patterns <br />
             to language rules.
           </h1>
-          <p class="lede">Support new combinations of the constructs we implement.</p>
+          <p class="lede">
+            Today, HLS generation matches known program shapes. The next compiler should check
+            supported operations and let students combine them in new ways.
+          </p>
           <div class="comparison">
             <div class="comparison-row today">
               <div class="row-label">Today<small>Whole-program recognition</small></div>
@@ -236,7 +245,8 @@
             </div>
           </div>
           <p class="bottom-line">
-            <span>Keep</span> Parsing work, numeric rules, backend patterns, and regression cases.
+            <span>Build on</span> Reuse the parsing work, numeric rules, HLS patterns, and tests
+            from the prototype.
           </p>
         </section>
 
@@ -254,7 +264,10 @@
             Python source. <br />
             <em>Rust compiler.</em>
           </h1>
-          <p class="lede">Students write Python syntax. Rust checks the Spatial hardware rules.</p>
+          <p class="lede">
+            Students write kernels in Python syntax. Rust checks Spatial's hardware rules, then uses
+            the checked program for simulation and HLS generation.
+          </p>
           <div
             class="architecture"
             id="architecture-diagram"
@@ -282,10 +295,12 @@
             <div class="arch-outputs">
               <div class="arch-node output-node">
                 <span class="node-label">SIMULATE</span><strong>Functional simulation</strong>
+                <span>Check results before generating hardware.</span>
               </div>
               <div class="arch-node output-node">
                 <span class="node-label">GENERATE</span
                 ><strong>HLS C++ <span class="inline-arrow">→</span> Vitis</strong>
+                <span>Generate hardware with vendor tools.</span>
               </div>
             </div>
           </div>
@@ -296,7 +311,8 @@
               ><button data-stage="use" aria-pressed="false"><span>3</span> Use</button>
             </div>
             <p id="stage-caption" aria-live="polite">
-              Ordinary Python handles test data and assertions.
+              Ordinary Python prepares inputs and checks results. Students do not need to write
+              Rust.
             </p>
           </div>
         </section>
@@ -309,37 +325,39 @@
             Choose the student language <br />
             and compiler separately.
           </h1>
+          <p class="lede">
+            Students can work entirely in Python while the compiler is written in Rust. Each
+            language has a different job.
+          </p>
           <div class="reasons">
             <article>
               <span class="reason-number">01</span>
               <h2>Python authoring</h2>
               <p>
-                Familiar syntax. <br />
-                Python testbenches. <br />
-                Notebook workflow.
+                Students write kernels, prepare inputs, and check results in a familiar Python
+                workflow, including notebooks.
               </p>
             </article>
             <article>
               <span class="reason-number">02</span>
               <h2>Rust core</h2>
               <p>
-                Reuse compiler work. <br />
-                Native interpreter speed.
+                We can reuse our compiler work. Rust also ran faster in our small interpreter
+                experiment.
               </p>
             </article>
             <article>
               <span class="reason-number">03</span>
               <h2>Shared checks</h2>
               <p>
-                One set of language rules. <br />
-                One checked program. <br />
-                Simulation and HLS.
+                Simulation and HLS start from the same checked program. The language rules are
+                defined in one place.
               </p>
             </article>
           </div>
           <div class="tradeoff">
             <span class="node-label">TRADEOFF</span>
-            <p>Python syntax still follows Spatial hardware semantics.</p>
+            <p>Kernels look like Python, but follow Spatial's hardware rules.</p>
             <button class="text-link" data-open-sources>Alternatives and measurements ↗</button>
           </div>
         </section>
@@ -358,6 +376,10 @@
             Compile and simulate <br />
             one tiled-scale kernel.
           </h1>
+          <p class="lede">
+            Read an array in chunks, multiply each value by a constant, and write it back. Use this
+            small program to test the full path from Python source to simulation.
+          </p>
           <div
             class="milestone-flow"
             aria-label="First milestone: Python source to shared checks to checked program to exact simulation"
@@ -369,8 +391,8 @@
           <div class="acceptance">
             <article>
               <span class="criterion">01 / Meaning</span>
-              <h2>Equivalent sources</h2>
-              <p>Python and internal reference forms produce the same checked meaning.</p>
+              <h2>Same meaning</h2>
+              <p>The Python source and our internal reference describe the same checked program.</p>
             </article>
             <article>
               <span class="criterion">02 / Correctness</span>
@@ -380,11 +402,14 @@
             <article>
               <span class="criterion">03 / Generality</span>
               <h2>New combinations</h2>
-              <p>Change names, tiling, or composition without adding a program recognizer.</p>
+              <p>
+                Change tile sizes or combine supported operations without a new program recognizer.
+              </p>
             </article>
           </div>
           <p class="bottom-line">
-            <span>Then</span> Broader semantics → structural HLS → tested course packages.
+            <span>Then</span> Add more language features, generate HLS from the checked program, and
+            test the course package.
           </p>
         </section>
 
@@ -396,7 +421,10 @@
             Approve the architecture <br />
             and first milestone.
           </h1>
-          <p class="lede">Restricted Python source, one Rust compiler, and staged validation.</p>
+          <p class="lede">
+            Approve Python for student kernels and Rust for the compiler. Start by proving the
+            source-to-simulation path with one small example, then expand toward HLS generation.
+          </p>
           <div class="closing-flow">
             <div><span class="node-label">AUTHOR</span><strong>Python</strong></div>
             <span class="arrow" aria-hidden="true">→</span>
@@ -410,8 +438,8 @@
           </div>
           <div class="approval-next">
             <p>
-              <span class="node-label">START WITH</span>The source contract and one tiled-scale
-              example.
+              <span class="node-label">START WITH</span>Define the supported Python forms and how
+              source reaches Rust. Then build the tiled-scale example.
             </p>
             <div>
               <a

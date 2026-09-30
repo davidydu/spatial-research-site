@@ -33,3 +33,12 @@ Seven screens match the approved story. No unsupported claim of a finished Pytho
 - Codex copy review removed a manufactured phrase and moved hardware semantics out of the Rust-specific rationale. Code review found and verified fixes for keyboard handling on buttons, snapshot/return-control layout, and skip-link navigation. No remaining concrete blockers in the final review.
 - Print styles were inspected in code; no exported PDF is claimed. Public deployment remains pending because the existing GitHub credential lacks write access. No push or credential change was attempted.
 - Compiler source and historical vendor evidence are unchanged. The only compiler working-tree items remain the pre-existing untracked local artifacts.
+
+## Explanatory copy update — 30 September 2026
+
+- Added visible explanations across all seven slides: prototype progress, the documentation workflow, the move from program recognition to language rules, Python and Rust responsibilities, the architecture rationale, the tiled-scale example, and the approval request.
+- Replaced short fragments with sentences and explained what simulation and HLS generation do. Kept the historical evidence qualifications and the proposal's approval status.
+- Adjusted paragraph width, spacing, and documentation preview height to accommodate the added text.
+- The combined site build passed with 510 Markdown inputs and 1100 Quartz outputs. Formatting and whitespace checks passed. Final presentation assets match their built copies.
+- Browser checks found no slide overflow at 1280 × 720 or 1024 × 768 and no horizontal page overflow across all seven slides at 390 × 844. Visually reviewed the revised slides and mobile text wrapping.
+- This update is local; no public deployment was attempted.
