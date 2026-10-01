@@ -64,7 +64,7 @@ Publish vault changes first, then push website changes or dispatch the workflow.
 
 `private/`, templates, Obsidian settings, and `90 - Meta/scripts/**` are excluded from the site. The last directory contains validation helpers and intentionally invalid test fixtures, not research pages. Research notes with `status: draft` remain visible and labeled; Quartz excludes a note only when its frontmatter has `draft: true`.
 
-Historical research and the frozen D-26 protocol remain accessible. The homepage points readers to the current recommendation and approval brief, which distinguish proposed architecture from implemented capabilities.
+Historical research and the frozen D-26 protocol remain accessible. The homepage points readers to the current pure Python research direction following professor feedback on 30 September 2026. The earlier Rust-core proposal and presentation are marked historical; neither is the current implementation plan.
 
 ## Why not host directly from the spec repo?
 

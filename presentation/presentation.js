@@ -25,7 +25,7 @@ function showSlide(index, { updateHash = true, focus = true } = {}) {
   previousButton.disabled = index === 0
   nextButton.disabled = index === slides.length - 1
   document.querySelector("#page-counter").textContent = `${String(index + 1).padStart(2, "0")} / 07`
-  document.title = `Spatial — ${slides[index].dataset.label}`
+  document.title = `Spatial — Historical proposal: ${slides[index].dataset.label}`
   if (updateHash && location.hash !== `#${slides[index].id}`)
     history.pushState(null, "", `#${slides[index].id}`)
   if (focus) {

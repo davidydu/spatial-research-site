@@ -42,3 +42,9 @@ Seven screens match the approved story. No unsupported claim of a finished Pytho
 - The combined site build passed with 510 Markdown inputs and 1100 Quartz outputs. Formatting and whitespace checks passed. Final presentation assets match their built copies.
 - Browser checks found no slide overflow at 1280 × 720 or 1024 × 768 and no horizontal page overflow across all seven slides at 390 × 844. Visually reviewed the revised slides and mobile text wrapping.
 - This update is local; no public deployment was attempted.
+
+## Professor feedback — 30 September 2026
+
+David reported that the professor wants a pure Python rewrite, beginning with the Python programming model and then studying HLS lowering. The earlier architecture proposal is therefore historical. The presentation now labels that status and links to the new research note; the original slides remain the meeting record.
+
+The combined site build passed with 511 Markdown inputs and 1102 outputs. The vault homepage and current research note replace the previous Rust-core recommendation as the entry point. David authorized future commits through the now-authenticated davidydu GitHub account; repository permissions have been verified.
