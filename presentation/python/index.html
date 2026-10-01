@@ -1,0 +1,831 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f8f7f3" />
+    <meta
+      name="description"
+      content="What a pure Python rewrite of Spatial would look like. A ten-minute research presentation, with proposed source code, interactive explanations and speaker notes."
+    />
+    <title>Spatial in Python</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23f8f7f3'/%3E%3Cpath d='M9 9h9v9H9zm13 0h9v9h-9zM9 22h9v9H9zm13 0h9v9h-9z' fill='%23496681'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="./presentation.css" />
+    <script src="./presentation.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#slides">Skip to presentation</a>
+    <div class="deck">
+      <header class="masthead">
+        <a class="brand" href="#python" aria-label="Spatial research, first slide"
+          ><span class="brand-mark" aria-hidden="true"
+            ><span></span><span></span><span></span><span></span></span
+          ><span>SPATIAL <small>RESEARCH</small></span></a
+        >
+        <div class="masthead-meta">Python rewrite <span>1 October 2026</span></div>
+        <div class="tools" aria-label="Presentation tools">
+          <button class="tool" id="notes-button" title="Speaker notes (N)">Notes</button>
+          <button class="tool" id="sources-button" title="Research sources (E)">Sources</button>
+          <button class="tool" id="fullscreen-button" title="Fullscreen (F)">Fullscreen</button>
+          <button class="tool" id="help-button" aria-label="Keyboard shortcuts">?</button>
+        </div>
+      </header>
+      <main id="slides">
+        <section
+          class="slide is-active"
+          id="python"
+          aria-labelledby="title-python"
+          data-label="The idea"
+          data-time="0:45"
+        >
+          <div class="eyebrow">
+            <span>01 / The proposal</span><span class="status">For professor review</span>
+          </div>
+          <div class="hero-grid">
+            <div class="hero-copy">
+              <h1 id="title-python" tabindex="-1">Spatial<br />in <em>Python.</em></h1>
+              <p class="lede">
+                Write Spatial programs in Python.<br />Build the compiler in Python too.
+              </p>
+              <p class="hero-description">
+                Keep the memories, control and parallelism explicit. Give the program a precise
+                meaning that we can check and simulate.
+              </p>
+            </div>
+            <div
+              class="hero-visual"
+              aria-label="Proposed workflow: a Python Spatial program, a Python compiler, and Python reference simulation"
+            >
+              <div class="program-label">A Spatial program</div>
+              <div class="hero-code">
+                <pre><code><span class="fn">load</span>(tile_in, src[…])
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">foreach</span>(0, 16):
+    tile_out[i] = tile_in[i] * scale
+<span class="fn">store</span>(dst[…], tile_out)</code></pre>
+              </div>
+              <div class="flow-connector" aria-hidden="true">↓</div>
+              <div class="compiler-block">
+                <span>Compiler written in Python</span
+                ><strong>Read the program. Check its meaning.</strong>
+              </div>
+              <div class="flow-connector" aria-hidden="true">↓</div>
+              <div class="program-label">Python reference simulation</div>
+              <div
+                class="hero-results"
+                aria-label="Illustrative first four outputs when inputs start at 1 and scale is 2"
+              >
+                <span class="result-cell">2</span><span class="result-cell">4</span
+                ><span class="result-cell">6</span><span class="result-cell">8</span
+                ><span class="result-ellipsis">…</span>
+              </div>
+            </div>
+          </div>
+          <div class="hero-foot">
+            <span>Today: what we would write and how it would work</span
+            ><span>Proposed design. Compiler not yet implemented.</span>
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              After our last discussion, I looked at what it would mean to write Spatial and its
+              compiler in Python. The proposal is to keep the concepts that matter in Spatial:
+              memories, control and parallel work. We would express them in Python syntax, and the
+              compiler itself would also be Python.
+            </p>
+            <p>
+              I’ll follow one small program through that system. The first goal is to understand the
+              program and simulate its behavior. That gives us a checked program to lower to
+              hardware later. Everything I’m showing here is a proposed design. We have research and
+              small experiments, but we haven’t built this compiler yet.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a href="../../50---Python-Rewrite/05---Python-Professor-Brief.html"
+              >Professor discussion brief</a
+            ><a href="../../20---Research-Notes/50---Decision-Records/D-27.html"
+              >D-27: accepted pure Python direction</a
+            ><a href="../../20---Research-Notes/50---Decision-Records/D-28.html"
+              >D-28: proposed compiler architecture</a
+            >
+          </div>
+        </section>
+
+        <section
+          class="slide"
+          id="program"
+          aria-labelledby="title-program"
+          data-label="The program"
+          data-time="2:00"
+        >
+          <div class="eyebrow">
+            <span>02 / What we would write</span><span class="status">Proposed syntax</span>
+          </div>
+          <h1 id="title-program" tabindex="-1">A familiar Spatial program</h1>
+          <p class="lede">
+            Read 32 values, multiply each by a scale, and write them back. Work on 16 values at a
+            time.
+          </p>
+          <div class="example-grid">
+            <div class="code-panel">
+              <div class="panel-label">
+                <span>tiled_scale.py</span><span>Source captured by the compiler</span>
+              </div>
+              <pre
+                class="source-code"
+              ><code><span class="code-line" data-phase="ports"><span class="fn">@kernel</span></span>
+<span class="code-line" data-phase="ports"><span class="kw">def</span> <span class="fn">tiled_scale</span>(src: <span class="type">In[Dram[Int, 32]]</span>,</span>
+<span class="code-line" data-phase="ports">                scale: <span class="type">In[Int]</span>,</span>
+<span class="code-line" data-phase="ports">                dst: <span class="type">Out[Dram[Int, 32]]</span>):</span>
+<span class="code-line" data-phase="memory">    <span class="kw">for</span> base <span class="kw">in</span> <span class="fn">sequential</span>(0, 32, step=16):</span>
+<span class="code-line" data-phase="memory">        tile_in: <span class="type">Sram[Int, 16]</span></span>
+<span class="code-line" data-phase="memory">        tile_out: <span class="type">Sram[Int, 16]</span></span>
+<span class="code-line" data-phase="load">        <span class="fn">load</span>(tile_in, src[base:base + 16])</span>
+<span class="code-line" data-phase="compute">        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">foreach</span>(0, 16):</span>
+<span class="code-line" data-phase="compute">            tile_out[i] = tile_in[i] * scale</span>
+<span class="code-line" data-phase="store">        <span class="fn">store</span>(dst[base:base + 16], tile_out)</span></code></pre>
+              <p class="fine">
+                The annotations declare Spatial ports and storage. The compiler reads them without
+                executing the function.
+              </p>
+            </div>
+            <div class="tile-demo" data-phase="load">
+              <div class="demo-heading">
+                <span>One tile, step by step</span>
+                <div class="tile-controls">
+                  <button data-tile="0" aria-pressed="true">0–15</button
+                  ><button data-tile="1" aria-pressed="false">16–31</button>
+                </div>
+              </div>
+              <div class="memory-track">
+                <div class="memory-label">
+                  <span>src / DRAM</span><span id="tile-range">Values 1–16 of 32</span>
+                </div>
+                <div class="cells" id="src-cells"></div>
+              </div>
+              <div class="transfer-label" id="load-label">↓ load 16 values</div>
+              <div class="local-memory">
+                <div class="buffer">
+                  <div class="memory-label">tile_in / SRAM</div>
+                  <div class="cells" id="input-cells"></div>
+                </div>
+                <div class="transfer-label">× 2</div>
+                <div class="buffer">
+                  <div class="memory-label">tile_out / SRAM</div>
+                  <div class="cells" id="output-cells"></div>
+                </div>
+              </div>
+              <div class="transfer-label" id="store-label">↓ store 16 values</div>
+              <div class="memory-track">
+                <div class="memory-label">
+                  <span>dst / DRAM</span><span>Same tile positions</span>
+                </div>
+                <div class="cells" id="dst-cells"></div>
+              </div>
+              <div class="phase-controls">
+                <button data-phase="load" aria-pressed="true">1 Load</button
+                ><button data-phase="compute" aria-pressed="false">2 Compute</button
+                ><button data-phase="store" aria-pressed="false">3 Store</button
+                ><button id="play-tile" aria-label="Play tile steps">Play</button>
+              </div>
+              <p id="phase-caption" aria-live="polite">
+                Copy this tile from external memory into tile_in.
+              </p>
+              <p class="fine">
+                Behavior illustration. Animation timing does not represent hardware cycles.
+              </p>
+            </div>
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              This example reads 32 values, scales each one, and writes the results out. It does
+              that in two tiles of 16. The code on the left is the proposed spelling, and the
+              picture on the right follows one tile.
+            </p>
+            <p>
+              At the top, we declare the input memory, the scale and the output memory. These types
+              tell the compiler what kind of data each port carries. Then we declare two local
+              buffers. One holds the input tile and the other holds the result.
+            </p>
+            <p>
+              First we load a tile. Then the inner loop multiplies each value. Finally we store the
+              result back to external memory. The outer loop moves to the next tile. I can click
+              through those operations here and show the corresponding line of code.
+            </p>
+            <p>
+              The important point is that this still describes a Spatial program. We haven’t hidden
+              the local memory or the loop structure. The compiler can see both. The foreach loop
+              expresses work the hardware planner can parallelize. This picture doesn’t claim that
+              every iteration executes in one cycle.
+            </p>
+            <p>
+              The example is a design sketch from the research documents. These annotations have
+              meaning in the language we are defining. They do not allocate SRAM through ordinary
+              Python execution.
+            </p>
+            <p class="note-cue">
+              Click Load, Compute, Store, then choose 16–31. Allow time to read the code.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a
+              href="../../50---Python-Rewrite/10---Research/PY-R001---Programming-Model-Study.html#e1-two-proposed-spellings-of-tiled-scale"
+              >E1: exact proposed source and builder spellings</a
+            ><a
+              href="../../50---Python-Rewrite/30---Implementation-Design/10---Source-Checker-and-IR-Blueprint.html"
+              >Source capture, declarations and checking</a
+            >
+          </div>
+        </section>
+
+        <section
+          class="slide"
+          id="python-boundary"
+          aria-labelledby="title-python-boundary"
+          data-label="Python's role"
+          data-time="1:30"
+        >
+          <div class="eyebrow">
+            <span>03 / What runs, and when</span
+            ><span class="status">Proposed programming model</span>
+          </div>
+          <h1 id="title-python-boundary" tabindex="-1">Python around the kernel</h1>
+          <p class="lede">
+            Ordinary Python runs the experiment. The compiler reads the kernel as a Spatial program.
+          </p>
+          <div class="boundary-grid">
+            <div class="boundary-side">
+              <div class="panel-label">Host program <span>Python executes this</span></div>
+              <h2>Prepare data.<br />Check results.</h2>
+              <pre class="mini-code"><code>inputs = list(range(1, 33))
+scale = 2
+expected = [x * scale for x in inputs]</code></pre>
+              <p>Use Python for files, configuration, test data and experiments.</p>
+            </div>
+            <div class="boundary-arrow" aria-hidden="true">→</div>
+            <div class="boundary-side">
+              <div class="panel-label">
+                Accelerator kernel <span>The compiler captures this</span>
+              </div>
+              <h2>Describe memory.<br />Describe the work.</h2>
+              <pre class="mini-code"><code>tile_in: Sram[Int, 16]
+for i in foreach(0, 16):
+    tile_out[i] = tile_in[i] * scale</code></pre>
+              <p>Use a defined Python subset with Spatial types, memory and control.</p>
+            </div>
+          </div>
+          <div class="takeaway">
+            The compiler reads kernel source without executing its body, decorators or annotations.
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              There are two roles for Python here. The host program is ordinary Python. It can read
+              files, make input arrays, choose parameters and compare results. On the left, we make
+              the 32 input values and a simple expected answer.
+            </p>
+            <p>
+              The accelerator kernel has a different role. The compiler reads its source and
+              recognizes the Spatial operations. It does not run the function to discover what
+              happened. That means it can preserve a branch or loop as part of the program, even
+              when the condition or trip count depends on an input.
+            </p>
+            <p>
+              We need a defined set of supported Python statements and Spatial operations. The
+              familiar syntax helps us write the program, but the compiler still controls its
+              meaning. For example, Int has a specific width, and an SRAM declaration describes
+              storage.
+            </p>
+            <p>
+              For generated programs, the research also proposes a builder that constructs the same
+              internal program and passes through the same checks. For the main user experience, I’m
+              showing the source form.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a
+              href="../../50---Python-Rewrite/10---Research/PY-R004---Capture-Composition-and-Diagnostics.html"
+              >Source capture, composition and diagnostics</a
+            ><a
+              href="../../50---Python-Rewrite/40---Specification/10---Python-Language-Contract.html"
+              >Proposed Python language contract</a
+            >
+          </div>
+        </section>
+
+        <section
+          class="slide"
+          id="compiler"
+          aria-labelledby="title-compiler"
+          data-label="The compiler"
+          data-time="1:30"
+        >
+          <div class="eyebrow">
+            <span>04 / Inside the Python compiler</span
+            ><span class="status">Proposed architecture</span>
+          </div>
+          <h1 id="title-compiler" tabindex="-1">A program the compiler understands</h1>
+          <p class="lede">
+            Turn the source into explicit operations, then check their types, memory use and order.
+          </p>
+          <div class="compiler-flow" aria-label="Compiler stages">
+            <button class="compiler-step is-selected" data-compiler-step="read" aria-pressed="true">
+              <span class="step-number">01</span><strong>Read source</strong
+              ><small>Recognize the supported syntax</small>
+            </button>
+            <button class="compiler-step" data-compiler-step="resolve" aria-pressed="false">
+              <span class="step-number">02</span><strong>Resolve names</strong
+              ><small>Connect uses to declarations</small>
+            </button>
+            <button class="compiler-step" data-compiler-step="check" aria-pressed="false">
+              <span class="step-number">03</span><strong>Check meaning</strong
+              ><small>Types, shapes and effects</small>
+            </button>
+            <button class="compiler-step" data-compiler-step="keep" aria-pressed="false">
+              <span class="step-number">04</span><strong>Keep a checked program</strong
+              ><small>Ready for reference simulation</small>
+            </button>
+          </div>
+          <div class="compiler-detail" aria-live="polite">
+            <div class="detail-copy">
+              <div class="panel-label">The same tiled program</div>
+              <h2 id="compiler-detail-title">Read the structure</h2>
+              <p id="compiler-detail-copy">
+                Capture the two loops, storage declarations and operations. Keep their locations in
+                the source so errors point back to the program.
+              </p>
+            </div>
+            <pre class="ir-code" id="compiler-detail-code">
+kernel tiled_scale
+  ports: src, scale, dst
+  sequential loop: 2 tiles
+    storage: tile_in, tile_out
+    load
+    foreach: multiply
+    store</pre
+            >
+          </div>
+          <p class="fine">
+            Simplified program view. Python owns the language rules. The proposed xDSL framework
+            supplies compiler infrastructure.
+          </p>
+          <div class="notes-source" hidden>
+            <p>
+              Now we can look inside the compiler. It first reads the supported source and records
+              the structure. It resolves names so each use of tile_in or scale points to the right
+              declaration.
+            </p>
+            <p>
+              Then it checks the meaning. Does this operation accept these types? Does the tile have
+              the right shape for this transfer? Do these reads and writes happen in a valid order?
+              If something is wrong, the compiler should explain it at the relevant source location.
+            </p>
+            <p>
+              The output is a checked representation of the program. It still contains the memories
+              and control structure. That representation is what the simulator would run.
+            </p>
+            <p>
+              We propose using xDSL for the compiler infrastructure. The Spatial rules and compiler
+              passes would still be Python code that we own. The framework gives us a way to
+              organize operations and transformations. We still have to implement and test the
+              checks.
+            </p>
+            <p class="note-cue">
+              Click through the stages. The right-hand view is explanatory notation, not actual
+              compiler output.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a
+              href="../../50---Python-Rewrite/30---Implementation-Design/10---Source-Checker-and-IR-Blueprint.html"
+              >Source, checker and program representation blueprint</a
+            ><a
+              href="../../50---Python-Rewrite/10---Research/PY-R006---Compiler-Architecture-and-Framework-Choice.html"
+              >Framework comparison and recommendation</a
+            >
+          </div>
+        </section>
+
+        <section
+          class="slide"
+          id="behavior"
+          aria-labelledby="title-behavior"
+          data-label="The behavior"
+          data-time="1:30"
+        >
+          <div class="eyebrow">
+            <span>05 / What the simulator must preserve</span
+            ><span class="status">Illustrations of proposed behavior</span>
+          </div>
+          <h1 id="title-behavior" tabindex="-1">Values and state both matter</h1>
+          <p class="lede">
+            Check the result of the calculation, and check which operations changed memory or
+            consumed data.
+          </p>
+          <div class="behavior-grid">
+            <div class="numeric-demo">
+              <div class="panel-label">Our tiled example</div>
+              <h2>Each value has a result</h2>
+              <p>Change the scale to see the expected first four outputs.</p>
+              <div class="scale-control">
+                <label for="scale">Scale</label
+                ><input id="scale" type="range" min="0" max="4" value="2" step="1" /><output
+                  id="scale-value"
+                  for="scale"
+                  >2</output
+                >
+              </div>
+              <div class="number-line">
+                <div class="number-group">
+                  <span class="memory-label">Input</span>
+                  <div class="sample-numbers">
+                    <span class="sample-number">1</span><span class="sample-number">2</span
+                    ><span class="sample-number">3</span><span class="sample-number">4</span>
+                  </div>
+                </div>
+                <div class="transfer-label" aria-hidden="true">
+                  ↓ × <span id="scale-factor">2</span>
+                </div>
+                <div class="number-group">
+                  <span class="memory-label">Expected output</span>
+                  <div class="sample-numbers" id="scaled-values" aria-live="polite">
+                    <span class="sample-number">2</span><span class="sample-number">4</span
+                    ><span class="sample-number">6</span><span class="sample-number">8</span>
+                  </div>
+                </div>
+              </div>
+              <p class="fine">
+                Proposed Int: signed 32-bit wrapping arithmetic. These small values do not overflow.
+              </p>
+            </div>
+            <div class="queue-demo">
+              <div class="panel-label">A small state example</div>
+              <h2>A branch consumes one queue</h2>
+              <p>Choose a branch, then take one value. The other queue stays unchanged.</p>
+              <div class="queue-controls">
+                <button data-queue="a" aria-pressed="true">Choose A</button
+                ><button data-queue="b" aria-pressed="false">Choose B</button>
+              </div>
+              <div class="queue-row" data-queue-row="a">
+                <span class="queue-name">A</span>
+                <div class="queue-items" id="queue-a"></div>
+              </div>
+              <div class="queue-row" data-queue-row="b">
+                <span class="queue-name">B</span>
+                <div class="queue-items" id="queue-b"></div>
+              </div>
+              <div class="queue-result">
+                <button id="queue-step">Take one value</button
+                ><button id="queue-reset">Reset</button
+                ><output id="queue-result" aria-live="polite">No value consumed</output>
+              </div>
+              <p class="fine">
+                Illustrates branch behavior with nonempty queues. Blocking and scheduling are
+                outside this illustration.
+              </p>
+            </div>
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              The simulator has to preserve more than the final number. For our scale example, we
+              can calculate the expected answer independently with ordinary Python. We would compare
+              all 32 values. The slide only shows the first four.
+            </p>
+            <p>
+              We also need exact numeric rules. The proposal makes Int a signed 32-bit value with
+              wrapping arithmetic. That is different from Python’s unbounded integers, so the
+              simulator must implement the Spatial rule explicitly.
+            </p>
+            <p>
+              State gives us another kind of test. Here is a small separate example. If a branch
+              chooses queue B, it should take one value from B and leave A alone. Evaluating both
+              branches and then choosing a result would already have changed the wrong state.
+            </p>
+            <p>
+              So our reference tests need expected values and expected state changes. Those
+              expectations should come from the language contract and independent examples. The
+              animations here illustrate those expectations. They are not running the proposed
+              compiler, and they do not measure hardware timing.
+            </p>
+            <p class="note-cue">
+              Change the scale. Then choose B and take one value to show A staying unchanged.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a href="../../50---Python-Rewrite/40---Specification/20---Python-Numeric-Contract.html"
+              >Exact numeric behavior</a
+            ><a
+              href="../../50---Python-Rewrite/10---Research/PY-R003---Control-Memory-and-Effects.html"
+              >Control flow, memory and lazy branch effects</a
+            ><a href="../../50---Python-Rewrite/60---Validation/00---Python-Validation-Plan.html"
+              >Independent expected values and effect traces</a
+            >
+          </div>
+        </section>
+
+        <section
+          class="slide"
+          id="research"
+          aria-labelledby="title-research"
+          data-label="The research"
+          data-time="1:15"
+        >
+          <div class="eyebrow">
+            <span>06 / What we have worked out</span><span class="status">Research and design</span>
+          </div>
+          <h1 id="title-research" tabindex="-1">The design has a place to live</h1>
+          <p class="lede">
+            The research repository holds the examples, rules and design decisions. The website
+            connects them for review.
+          </p>
+          <div class="research-grid">
+            <div class="research-map">
+              <a
+                class="research-row"
+                href="../../50---Python-Rewrite/10---Research/PY-R001---Programming-Model-Study.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                ><span class="research-number">01</span>
+                <div>
+                  <strong>What we write</strong><small>Python examples and programming model</small>
+                </div>
+                <span aria-hidden="true">↗</span></a
+              >
+              <a
+                class="research-row"
+                href="../../50---Python-Rewrite/40---Specification/10---Python-Language-Contract.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                ><span class="research-number">02</span>
+                <div>
+                  <strong>What it means</strong><small>Language, numeric and state contracts</small>
+                </div>
+                <span aria-hidden="true">↗</span></a
+              >
+              <a
+                class="research-row"
+                href="../../50---Python-Rewrite/30---Implementation-Design/00---Implementation-Design-Index.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                ><span class="research-number">03</span>
+                <div>
+                  <strong>How we would build it</strong
+                  ><small>Five implementation blueprints</small>
+                </div>
+                <span aria-hidden="true">↗</span></a
+              >
+              <a
+                class="research-row"
+                href="../../50---Python-Rewrite/60---Validation/07---Python-Implementation-Readiness-Audit.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                ><span class="research-number">04</span>
+                <div>
+                  <strong>What supports the proposal</strong
+                  ><small>Source comparisons, reviews and research probes</small>
+                </div>
+                <span aria-hidden="true">↗</span></a
+              >
+            </div>
+            <div class="documentation-window">
+              <div class="window-bar">
+                <span>Spatial Research</span><span>Documentation website</span>
+              </div>
+              <div class="doc-preview">
+                <div class="crumb">Python Rewrite / Implementation Design</div>
+                <h2>Python Spatial<br />implementation design</h2>
+                <p>
+                  The studies explain the choices. The contracts say what a program means. The
+                  blueprints say how to build the compiler.
+                </p>
+                <div class="doc-lines">
+                  <span>Source, checker and IR</span><span>Numeric engine</span
+                  ><span>State, simulator and HLS</span><span>Package and validation</span
+                  ><span>Libraries and migration</span>
+                </div>
+              </div>
+              <div class="doc-actions">
+                <a
+                  href="../../50---Python-Rewrite/30---Implementation-Design/00---Implementation-Design-Index.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Open the documentation ↗</a
+                >
+              </div>
+            </div>
+          </div>
+          <div class="research-status">
+            <span>Completed: studies, proposed contracts and bounded research probes.</span
+            ><strong>Next: implement and validate the Python compiler.</strong>
+          </div>
+          <div class="repo-links">
+            <a
+              href="https://github.com/davidydu/spatial-research"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Research repository ↗</a
+            ><a
+              href="https://github.com/davidydu/spatial-research-site"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Website repository ↗</a
+            ><a
+              href="../../90---Meta/2026-10-01-python-professor-presentation-outline.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Full speaking script ↗</a
+            >
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              This is where the research lives. We keep the source documents in a repository, and
+              the site publishes those same documents in a form that is easier to read.
+            </p>
+            <p>
+              There is a path through the material. Start with a Python example. Follow the links to
+              the rules that define it. Then open the implementation design that explains how the
+              compiler would enforce those rules.
+            </p>
+            <p>
+              The research now includes five implementation blueprints. We have also reviewed the
+              original Spatial behavior and run small probes to test particular design questions.
+              Those probes give us evidence about individual methods. They do not amount to a
+              working Python compiler.
+            </p>
+            <p>
+              The earlier Rust work still gives us useful examples and validation experience. The
+              compiler we are proposing here has a Python core.
+            </p>
+            <p class="note-cue">
+              Open the implementation design page for a short tour, then return to this tab. Keep
+              the tour to about 30 seconds.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a
+              href="../../50---Python-Rewrite/30---Implementation-Design/00---Implementation-Design-Index.html"
+              >Five implementation blueprints</a
+            ><a
+              href="../../50---Python-Rewrite/60---Validation/07---Python-Implementation-Readiness-Audit.html"
+              >Readiness audit and limits of research evidence</a
+            ><a href="../../50---Python-Rewrite/60---Validation/01---Python-Coverage-Ledger.html"
+              >Full-language research coverage</a
+            >
+          </div>
+        </section>
+
+        <section
+          class="slide"
+          id="first-build"
+          aria-labelledby="title-first-build"
+          data-label="The first build"
+          data-time="1:30"
+        >
+          <div class="eyebrow">
+            <span>07 / The first implementation milestone</span
+            ><span class="status">For approval</span>
+          </div>
+          <h1 id="title-first-build" tabindex="-1">One complete program through Python</h1>
+          <p class="lede">
+            Read the tiled program, check it, and simulate its result. Use that complete path to
+            establish the compiler’s structure.
+          </p>
+          <div class="milestone-grid">
+            <div class="milestone-path">
+              <div class="milestone-row">
+                <span class="step-number">01</span>
+                <div>
+                  <strong>Accept the program</strong>
+                  <p>Capture the source and its memory declarations.</p>
+                </div>
+              </div>
+              <div class="milestone-row">
+                <span class="step-number">02</span>
+                <div>
+                  <strong>Explain mistakes</strong>
+                  <p>Reject invalid types, shapes or names at their source locations.</p>
+                </div>
+              </div>
+              <div class="milestone-row">
+                <span class="step-number">03</span>
+                <div>
+                  <strong>Check the behavior</strong>
+                  <p>
+                    Compare every output with an independent reference. Test changed shapes, helpers
+                    and invalid cases too.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="approval-note">
+              <div class="panel-label">Decision for this meeting</div>
+              <h2>Does this match the Python Spatial we want?</h2>
+              <p>
+                Review the programming model, the proposed compiler design and the first
+                implementation milestone.
+              </p>
+              <p class="fine">
+                The Python direction is agreed. The detailed design and semantic changes remain
+                proposed.
+              </p>
+              <div class="future-step">
+                <span>After this path works</span><strong>Hardware planning and HLS</strong>
+                <p>Begin with the checked subset while the language grows.</p>
+              </div>
+            </div>
+          </div>
+          <div class="closing-line">
+            The first result should be a program we can read, explain and test.
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              The first implementation milestone should be one complete program through the system.
+              We should be able to give the compiler this tiled program, have it check the
+              declarations and operations, and run a reference simulation.
+            </p>
+            <p>
+              That milestone should include errors as well as successful runs. If I use the wrong
+              memory shape or an undefined name, the compiler should explain the problem at the
+              right place in the source. We should save the checked program and the results so
+              another person can reproduce the run.
+            </p>
+            <p>
+              We should also test supported changes in shape, helper composition, memory aliases and
+              invalid cases. That checks that we have a compiler for the subset, rather than special
+              handling for this one listing. We would then extend the same path to reductions, more
+              numeric types and stateful programs.
+            </p>
+            <p>
+              Once that first subset has a defined meaning and independent tests, we can begin
+              hardware planning and HLS for it while the rest of the language grows.
+            </p>
+            <p>
+              What I’d like to check with you today is whether this is the Python programming model
+              you have in mind, and whether this is the right first milestone. The pure Python
+              direction is already agreed. The detailed compiler design and proposed changes to
+              behavior are what we are asking to review.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a href="../../50---Python-Rewrite/04---Python-Implementation-Roadmap.html"
+              >First implementation milestone and sequence</a
+            ><a
+              href="../../50---Python-Rewrite/30---Implementation-Design/40---Package-and-Conformance-Blueprint.html"
+              >Package APIs and conformance checks</a
+            ><a href="../../20---Research-Notes/50---Decision-Records/D-28.html"
+              >Detailed architecture and proposed semantic changes</a
+            >
+          </div>
+        </section>
+      </main>
+      <footer class="deck-footer">
+        <nav class="chapter-nav" aria-label="Slides">
+          <button data-slide="python" aria-current="step">
+            <span class="chapter-number">01</span
+            ><span class="chapter-label">The idea</span></button
+          ><button data-slide="program">
+            <span class="chapter-number">02</span
+            ><span class="chapter-label">The program</span></button
+          ><button data-slide="python-boundary">
+            <span class="chapter-number">03</span
+            ><span class="chapter-label">Python’s role</span></button
+          ><button data-slide="compiler">
+            <span class="chapter-number">04</span
+            ><span class="chapter-label">The compiler</span></button
+          ><button data-slide="behavior">
+            <span class="chapter-number">05</span
+            ><span class="chapter-label">The behavior</span></button
+          ><button data-slide="research">
+            <span class="chapter-number">06</span
+            ><span class="chapter-label">The research</span></button
+          ><button data-slide="first-build">
+            <span class="chapter-number">07</span><span class="chapter-label">The first build</span>
+          </button>
+        </nav>
+        <div class="transport">
+          <button id="previous" aria-label="Previous slide">←</button
+          ><span id="slide-count" aria-live="polite">01 / 07</span
+          ><button id="next" aria-label="Next slide">→</button>
+        </div>
+      </footer>
+      <div class="progress-track" aria-hidden="true"><div class="progress-fill"></div></div>
+    </div>
+    <dialog id="detail-dialog" aria-labelledby="dialog-title">
+      <div class="dialog-shell">
+        <header class="dialog-header">
+          <h2 id="dialog-title">Speaker notes</h2>
+          <button id="dialog-close" aria-label="Close dialog">
+            Close <span aria-hidden="true">×</span>
+          </button>
+        </header>
+        <div id="dialog-content"></div>
+      </div>
+    </dialog>
+    <noscript
+      ><p>
+        This presentation works as a scrolling document without JavaScript. Enable JavaScript for
+        slide navigation and interactive illustrations.
+      </p></noscript
+    >
+  </body>
+</html>

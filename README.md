@@ -43,6 +43,7 @@ Preview the combined build with the existing static-server dependency:
 node --input-type=module -e 'import http from "node:http"; import handler from "serve-handler"; http.createServer((req, res) => handler(req, res, { public: "public", cleanUrls: true })).listen(8080)'
 # documentation: http://localhost:8080/
 # presentation: http://localhost:8080/presentation/
+# current Python presentation: http://localhost:8080/presentation/python/
 ```
 
 For documentation-only live reload, use `node quartz/bootstrap-cli.mjs build -d "$(realpath content)" --serve`. Quartz rebuilds `public/`; rerun `npm run build:site` to restore the presentation after using that command.
@@ -65,6 +66,12 @@ Publish vault changes first, then push website changes or dispatch the workflow.
 `private/`, templates, Obsidian settings, and `90 - Meta/scripts/**` are excluded from the site. The last directory contains validation helpers and intentionally invalid test fixtures, not research pages. Research notes with `status: draft` remain visible and labeled; Quartz excludes a note only when its frontmatter has `draft: true`.
 
 Historical research and the frozen D-26 protocol remain accessible. The homepage points readers to the current pure Python research direction following professor feedback on 30 September 2026. The earlier Rust-core proposal and presentation are marked historical; neither is the current implementation plan.
+
+## Python presentation
+
+The current ten-minute presentation lives at `presentation/python/` and publishes to `/spatial-research-site/presentation/python/`. It follows one proposed Spatial program through Python source capture, checking and reference simulation. All interactive calculations are illustrations, not compiler executions. The historical deck remains at `presentation/`.
+
+Use arrow keys or the numbered navigation to change slides, `N` for speaker notes, `E` for sources and `F` for fullscreen. The tile diagram, compiler stages, scale slider and queue example have their own controls. Documentation links open in another tab. Printing includes all seven slides. The complete outline and speaking script live in the research vault at `90 - Meta/2026-10-01-python-professor-presentation-outline.md`.
 
 ## Why not host directly from the spec repo?
 
