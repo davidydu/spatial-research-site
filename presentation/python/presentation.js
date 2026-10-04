@@ -129,36 +129,71 @@ function renderTile() {
     )
 }
 
-const compilerStages = {
-  read: [
-    "Read the structure",
-    "Capture the two loops, storage declarations and operations. Keep their locations in the source so errors point back to the program.",
-    "kernel tiled_scale\n  ports: src, scale, dst\n  sequential loop: 2 tiles\n    storage: tile_in, tile_out\n    load\n    foreach: multiply\n    store",
+const hostStages = {
+  capture: [
+    "Read the kernel as text",
+    "Freeze the source and its dependencies. Capture does not import the kernel or execute its decorators, annotations or body.",
+    'source = Path("lab1.py").read_text(encoding="utf-8")\nunit = SourceUnit(\n    module_id="lab1", text=source, label="lab1.py",\n)\nbundle = CaptureBundle(\n    entry=("lab1", "tiled_scale"), sources=(unit,),\n    dependencies=(), prelude=core_prelude(),\n)\ntemplate = capture(bundle)',
   ],
-  resolve: [
-    "Know what every name refers to",
-    "Connect each use to its declaration. Keep the outer tile index separate from the inner element index.",
-    "src, dst   → external memory ports\nscale      → input scalar\nbase       → tile index: 0 or 16\ni          → element index: 0…15\ntile_in    → local input storage\ntile_out   → local output storage",
+  specialize: [
+    "Choose compile-time parameters",
+    "Freeze any meta parameters before checking. This fixed-size tiled example needs no additional bindings.",
+    "program = specialize(template, {})",
   ],
   check: [
-    "Check the operations together",
-    "Check the element types, transfer shapes and effects. Validate the load before the reads, and the writes before the store.",
-    "elements:   Int (signed 32-bit)\nlocal size: 16 elements each\ntransfer:   16 values per tile\nindices:    within declared bounds\norder:      load, compute, store\nerrors:     point back to source",
+    "Check the Spatial program",
+    "Check types, shapes, names and effects. Continue only when checking returns a valid program.",
+    'checked_result = check(\n    program, profile="reference.guarded.v1",\n)\nif isinstance(checked_result, Error):\n    raise RuntimeError(checked_result.diagnostics)\nchecked = checked_result.value',
   ],
-  keep: [
-    "Keep the meaning explicit",
-    "Save a checked program with typed operations and control regions. The reference simulator can then follow these rules.",
-    "tiled_scale\n  sequential: base in {0, 16}\n    tile_in, tile_out: SRAM[16]\n    load src[base:base+16]\n    foreach i in [0, 16)\n      multiply Int; write tile_out[i]\n    store dst[base:base+16]",
+  bind: [
+    "Bind typed inputs and storage",
+    "Prepare a private invocation from the checked program and typed bindings. The full example constructs its input and output Backings explicitly.",
+    'bindings = {\n    "src": src.view(access="read"),\n    "scale": ScalarInput.from_int(dtype=Int, value=2),\n    "dst": dst.view(access="write"),\n}\nprepared = prepare(checked, bindings, session=None)\nif isinstance(prepared, Error):\n    raise RuntimeError(prepared.diagnostics)',
+  ],
+  simulate: [
+    "Run the reference simulator",
+    "Execute the checked rules with an explicit environment and budget. Waiting, faults and budget stops remain distinct outcomes.",
+    "run = simulate(\n    prepared.value,\n    environment=Environment.closed_memory(),\n    budget=Budget(\n        steps=100_000, numeric_work=100_000,\n        trace_bytes=1_048_576,\n    ),\n)",
+  ],
+  outputs: [
+    "Read completed output snapshots",
+    "Inspect results only after completion. Read the invocation’s output snapshot; the original host buffer is not the output API.",
+    'if run.outcome != "Completed":\n    raise RuntimeError((run.outcome, run.diagnostics))\ngot = run.complete_outputs["dst"].to_ints()\n# Compare all 32 values with an independent answer.',
   ],
 }
 
-function selectCompilerStage(name) {
-  const [title, copy, code] = compilerStages[name]
-  document.querySelector("#compiler-detail-title").textContent = title
-  document.querySelector("#compiler-detail-copy").textContent = copy
-  document.querySelector("#compiler-detail-code").textContent = code
-  document.querySelectorAll("[data-compiler-step]").forEach((button) => {
-    const selected = button.dataset.compilerStep === name
+const architectureViews = {
+  simulate: [
+    "First: establish the Python behavior",
+    "Run the checked operations with explicit state, input data and an environment. Compare completed results and effects with independent expectations.",
+    "Checked program\n  + typed inputs\n  + state and environment\n  → Python reference execution\n  → results, effects or diagnostics",
+  ],
+  plan: [
+    "Then: choose a hardware implementation",
+    "Derive a checked plan for storage, scheduling and communication. Verify that plan against the same program before emitting HLS.",
+    "The same checked program\n  + target capabilities\n  → checked hardware plan\n  → Python plan execution and checks\n  → HLS C++ and hardware validation",
+  ],
+}
+
+function selectHostStage(name) {
+  const [title, copy, code] = hostStages[name]
+  document.querySelector("#host-title").textContent = title
+  document.querySelector("#host-copy").textContent = copy
+  document.querySelector("#host-code").textContent = code
+  document.querySelectorAll("[data-host-step]").forEach((button) => {
+    const selected = button.dataset.hostStep === name
+    button.classList.toggle("is-selected", selected)
+    button.setAttribute("aria-pressed", String(selected))
+  })
+}
+
+function selectArchitecture(name) {
+  const [title, copy, code] = architectureViews[name]
+  document.querySelector("#architecture-title").textContent = title
+  document.querySelector("#architecture-copy").textContent = copy
+  document.querySelector("#architecture-code").textContent = code
+  document.querySelectorAll("[data-consumer]").forEach((button) => {
+    const selected = button.dataset.consumer === name
     button.classList.toggle("is-selected", selected)
     button.setAttribute("aria-pressed", String(selected))
   })
@@ -274,9 +309,14 @@ document.querySelector("#play-tile").addEventListener("click", () => {
   }, 1400)
 })
 document
-  .querySelectorAll("[data-compiler-step]")
+  .querySelectorAll("[data-host-step]")
   .forEach((button) =>
-    button.addEventListener("click", () => selectCompilerStage(button.dataset.compilerStep)),
+    button.addEventListener("click", () => selectHostStage(button.dataset.hostStep)),
+  )
+document
+  .querySelectorAll("[data-consumer]")
+  .forEach((button) =>
+    button.addEventListener("click", () => selectArchitecture(button.dataset.consumer)),
   )
 document.querySelector("#scale").addEventListener("input", (event) => {
   const scale = Number(event.target.value)
