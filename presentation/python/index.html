@@ -366,8 +366,8 @@ kernel tiled_scale
             >
           </div>
           <p class="fine">
-            Simplified program view. Python owns the language rules. The proposed xDSL framework
-            supplies compiler infrastructure.
+            Simplified program view. Python owns the language rules and stores the checked program
+            in immutable Python records.
           </p>
           <div class="notes-source" hidden>
             <p>
@@ -385,10 +385,10 @@ kernel tiled_scale
               and control structure. That representation is what the simulator would run.
             </p>
             <p>
-              We propose using xDSL for the compiler infrastructure. The Spatial rules and compiler
-              passes would still be Python code that we own. The framework gives us a way to
-              organize operations and transformations. We still have to implement and test the
-              checks.
+              We now propose storing the checked program and hardware plan in our own immutable
+              Python records. The simulator and hardware planner would use the same checked program.
+              We compared this with xDSL; it remains an option if a specific backend needs it. We
+              still have to implement and test the compiler.
             </p>
             <p class="note-cue">
               Click through the stages. The right-hand view is explanatory notation, not actual
