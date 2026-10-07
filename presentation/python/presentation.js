@@ -28,10 +28,14 @@ function showSlide(index, updateHash = true, moveFocus = false) {
 
 function readHash() {
   const aliases = {
-    "#program": "#python-boundary",
-    "#behavior": "#execution",
-    "#research": "#design",
-    "#first-build": "#design",
+    "#program": "#feasibility",
+    "#python-boundary": "#feasibility",
+    "#behavior": "#implementation",
+    "#execution": "#implementation",
+    "#research": "#progress",
+    "#first-build": "#implementation",
+    "#hardware": "#next-steps",
+    "#design": "#next-steps",
   }
   const hash = aliases[location.hash] ?? location.hash
   const index = slides.findIndex((slide) => `#${slide.id}` === hash)
@@ -50,7 +54,7 @@ function openDetails(kind) {
           : "Presentation controls"
   if (kind === "help") {
     dialogContent.innerHTML =
-      '<div class="speaker-script"><p><strong>← / →</strong> Previous or next slide</p><p><strong>1–6</strong> Jump to a slide</p><p><strong>N</strong> Speaker notes &nbsp; <strong>E</strong> Sources</p><p><strong>F</strong> Fullscreen &nbsp; <strong>Esc</strong> Close dialog</p><p>Open the Excalidraw map on slide 3 for the engineering details. Supporting progress is on the final slide. Documentation opens in a separate tab so the presentation keeps its place.</p><p><a href="../../90---Meta/2026-10-01-python-professor-presentation-outline.html" target="_blank" rel="noopener noreferrer">Read the full speaking script ↗</a></p></div>'
+      '<div class="speaker-script"><p><strong>← / →</strong> Previous or next slide</p><p><strong>1–6</strong> Jump to a slide</p><p><strong>N</strong> Speaker notes &nbsp; <strong>E</strong> Sources</p><p><strong>F</strong> Fullscreen &nbsp; <strong>Esc</strong> Close dialog</p><p>Open the Excalidraw map on slide 3 for the engineering details. Implementation progress and the documentation links are on slide 5. Documentation opens in a separate tab so the presentation keeps its place.</p><p><a href="../../90---Meta/2026-10-01-python-professor-presentation-outline.html" target="_blank" rel="noopener noreferrer">Read the full speaking script ↗</a></p></div>'
   } else if (kind === "evidence") {
     dialogContent.innerHTML = document.querySelector("#evidence-content").innerHTML
   } else if (kind === "notes") {

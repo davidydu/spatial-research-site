@@ -6,15 +6,15 @@
     <meta name="theme-color" content="#f8f7f3" />
     <meta
       name="description"
-      content="What a pure Python rewrite of Spatial would look like. A ten-minute research presentation, about the language boundary, Python compiler, reference execution and HLS path, with an interactive architecture map and speaker notes."
+      content="What a pure Python rewrite of Spatial would look like. A ten-minute research presentation about Python feasibility, compiler architecture, the implementation plan and next milestones, with an interactive architecture map and speaker notes."
     />
     <title>Spatial in Python</title>
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23f8f7f3'/%3E%3Cpath d='M9 9h9v9H9zm13 0h9v9h-9zM9 22h9v9H9zm13 0h9v9h-9z' fill='%23496681'/%3E%3C/svg%3E"
     />
-    <link rel="stylesheet" href="./presentation.css?v=20261007-design" />
-    <script src="./presentation.js?v=20261007-design" defer></script>
+    <link rel="stylesheet" href="./presentation.css?v=20261007-implementation" />
+    <script src="./presentation.js?v=20261007-implementation" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#slides">Skip to presentation</a>
@@ -68,9 +68,7 @@
               <span class="layer-tag">EXECUTE</span>
               <div>
                 <h2>Run the model in Python</h2>
-                <p>
-                  A reference for values and state changes. A later backend turns it into hardware.
-                </p>
+                <p>A reference for values and state changes. HLS is the agreed hardware target.</p>
               </div>
             </div>
           </div>
@@ -97,13 +95,13 @@
             </p>
             <p>
               The compiler would produce a structured, checked description of the program. We could
-              run that description in Python first. A later backend would use the same description
-              to build a hardware implementation.
+              run that description in Python first. The agreed HLS backend would use that
+              description to build a hardware implementation.
             </p>
             <p>
-              I want to focus this discussion on the shape of that system: what Python means at the
-              language boundary, what sits inside the compiler, how execution works, and where HLS
-              fits. Detailed syntax examples and implementation evidence are linked for follow-up.
+              HLS is already our agreed target. Today I want to explain why this system is feasible
+              in Python, how we plan to build it, what we have completed, and what we should
+              validate next.
             </p>
           </div>
           <div class="sources-source" hidden>
@@ -118,93 +116,95 @@
         </section>
         <section
           class="slide"
-          id="python-boundary"
-          aria-labelledby="title-python-boundary"
-          data-label="The language boundary"
+          id="feasibility"
+          aria-labelledby="title-feasibility"
+          data-label="Why Python works"
           data-time="1:30"
         >
           <div class="eyebrow">
-            <span>02 / The language boundary</span><span class="status">Architecture proposal</span>
+            <span>02 / Why Python works</span><span class="status">Architecture proposal</span>
           </div>
-          <h1 id="title-python-boundary" tabindex="-1">
-            What does “Python” mean for the language?
-          </h1>
+          <h1 id="title-feasibility" tabindex="-1">Yes, this is feasible in Python.</h1>
           <p class="lede">
-            Ordinary Python runs experiments. Accelerator code uses a defined Python subset with
-            Spatial semantics.
+            Python can implement the compiler and reference engine. We define Spatial’s behavior
+            explicitly.
           </p>
-          <div class="boundary-grid refresh-boundary">
-            <div class="boundary-side">
-              <span class="panel-label">Host Python</span>
-              <h2>Use the Python environment</h2>
-              <p>Prepare data, choose parameters, launch runs and inspect results.</p>
-              <div class="boundary-example">Files · arrays · notebooks · test scripts</div>
-            </div>
-            <div class="boundary-arrow" aria-hidden="true">→</div>
-            <div class="boundary-side">
-              <span class="panel-label">Spatial kernel source</span>
-              <h2>Describe the accelerator</h2>
-              <p>
-                The compiler reads source and checks its types, memory operations and control
-                structure.
-              </p>
-              <div class="boundary-example">
-                Kernel bodies are captured as source, not executed during capture.
-              </div>
-            </div>
-          </div>
-          <div class="stage-split">
+          <div class="feasibility-grid">
             <div>
-              <span class="panel-label">Compile time</span>
+              <span class="step-number">01 / REPRESENT</span>
+              <h2>Programs are data</h2>
               <p>
-                Capture source and dependencies. Fix chosen meta parameters. Check the retained
-                program.
+                Typed Python records describe values, memories and control. Compiler passes inspect
+                and transform those records.
               </p>
             </div>
             <div>
-              <span class="panel-label">Run time</span>
-              <p>Supply input values and runtime dimensions. Execute the selected control paths.</p>
+              <span class="step-number">02 / DEFINE</span>
+              <h2>Spatial owns the rules</h2>
+              <p>
+                We implement exact numeric behavior, storage lifetimes and effect order. Python’s
+                default arithmetic does not define the accelerator.
+              </p>
+            </div>
+            <div>
+              <span class="step-number">03 / CHECK</span>
+              <h2>Correctness is testable</h2>
+              <p>
+                One verifier checks every input route. Independent expected results test the
+                reference engine and transformations.
+              </p>
             </div>
           </div>
-          <div class="design-consequence">
-            <strong>Design consequence</strong
-            ><span
-              >Python syntax is the writing interface. Spatial defines the accelerator’s numeric and
-              state behavior.</span
-            >
+          <div class="feasibility-bottom">
+            <div>
+              <span class="panel-label">Language boundary</span>
+              <p>
+                Ordinary Python for experiments.<br />A defined Python subset for accelerator
+                kernels.
+              </p>
+            </div>
+            <div>
+              <span class="panel-label">Engineering question to measure</span>
+              <p>
+                Compile time and simulator speed at useful program sizes. The full workflow still
+                needs validation.
+              </p>
+            </div>
           </div>
           <div class="notes-source" hidden>
             <p>
-              Python has two roles. On the host side, it is the normal Python environment for data
-              and experiments. Inside a kernel, Python syntax expresses a defined Spatial language.
+              Yes. The compiler’s algorithms and data structures can all be implemented in Python.
+              The main work is representing a program, analyzing its structure, checking rules and
+              transforming it.
             </p>
             <p>
-              The compiler reads the kernel source. It does not execute the kernel’s decorators,
-              annotations or body to discover what the program is. That lets it inspect retained
-              branches, scopes and storage relationships before a run.
+              The important distinction is between the language we use to write the compiler and the
+              behavior that compiler implements. For example, we can use Python integers while
+              explicitly enforcing Spatial’s fixed-width arithmetic. We also define storage
+              identity, lifetimes and the order of state changes.
             </p>
             <p>
-              We also keep compile time and run time explicit. Source, dependencies and chosen meta
-              parameters are fixed for compilation. Actual input values and supported runtime
-              dimensions belong to a run. A runtime branch still chooses its path when the program
-              executes.
+              Ordinary Python remains available for data preparation and experiments. Accelerator
+              kernels use a defined subset that the compiler reads as source. That keeps their
+              meaning under our control.
             </p>
             <p>
-              This is a deliberate language boundary. Spatial defines numeric precision, memory and
-              control behavior even though the program is written with Python syntax. General Python
-              libraries belong on the host unless we explicitly add their operations to the kernel
-              language.
+              So my answer on feasibility is yes. The practical question is how well the complete
+              implementation performs. We need to measure compilation time, simulator speed and
+              memory use on useful workloads. Our existing components give us evidence for parts of
+              the design; they do not yet establish the complete workflow.
             </p>
           </div>
           <div class="sources-source" hidden>
-            <a href="../../50---Python-Rewrite/10---Research/PY-R001---Programming-Model-Study.html"
-              >Source acquisition and language model</a
+            <a
+              href="../../50---Python-Rewrite/10---Research/PY-R006---Compiler-Architecture-and-Framework-Choice.html"
+              >Python compiler architecture</a
             ><a
-              href="../../50---Python-Rewrite/30---Implementation-Design/10---Source-Checker-and-IR-Blueprint.html"
-              >Source and checker blueprint</a
+              href="../../50---Python-Rewrite/10---Research/PY-R002---Numeric-and-Reduction-Semantics.html"
+              >Explicit numeric behavior</a
             ><a
-              href="../../50---Python-Rewrite/10---Research/PY-R016---Source-and-Host-Workflow-Refinement.html"
-              >Complete proposed host API</a
+              href="../../50---Python-Rewrite/10---Research/PY-R007---Host-Workflow-Reproducibility-and-Validation.html"
+              >Workflow and performance acceptance</a
             >
           </div>
         </section>
@@ -213,7 +213,7 @@
           id="compiler"
           aria-labelledby="title-compiler"
           data-label="Inside the compiler"
-          data-time="2:00"
+          data-time="1:30"
         >
           <div class="eyebrow">
             <span>03 / Inside the compiler</span><span class="status">Architecture proposal</span>
@@ -272,33 +272,28 @@
           </div>
           <div class="notes-source" hidden>
             <p>
-              At the center is a program representation that we own in Python. You can think of it
-              as typed records of operations, control regions and storage, with explicit links
-              between them.
+              The center of the design is one shared program model. It holds typed records for
+              operations, control regions and storage, with explicit links between them.
             </p>
             <p>
-              It carries the information needed to preserve Spatial’s behavior: the type of a value,
-              whether two views share memory, where local storage lives, which region owns an
-              operation, and which state changes must happen in order.
+              The model keeps the facts that later stages need: the type of each value, which views
+              share memory, where storage is valid, and which operations must happen in order. These
+              facts should survive changes to the program.
             </p>
             <p>
-              Written source, generated programs and imported artifacts reach the same checking
-              boundary. The compiler first resolves and normalizes them into its common model. Only
-              a fully verified candidate becomes a checked program. Helpers and libraries compose
-              the same operations. A builder is another way to supply a program, not another set of
-              language rules. Checked programs can retain declared input conditions and supported
-              runtime checks; not every property must be proved statically.
+              Written source, generated programs and saved artifacts all reach the same verifier. A
+              fully verified candidate becomes a checked program. Some conditions can remain as
+              declared input requirements or supported runtime checks.
             </p>
             <p>
-              The accepted records are immutable. An optimization or structural edit makes a new
-              candidate, repairs its references and checks it before use. That gives checking,
-              simulation and hardware planning one common meaning to work from.
+              The reference engine runs those records with separate state for each invocation.
+              Compiler transformations build a new candidate and check it before use. The later
+              backend consumes the same meaning.
             </p>
             <p>
-              The Excalidraw map shows this design at both levels. Its top row is the whole system;
-              the detailed sections assign responsibilities to the frontend, verifier, execution
-              engine and backend. We can zoom into those during discussion. The full architecture
-              remains proposed.
+              This Excalidraw map connects that overview to the detailed module responsibilities. We
+              can zoom into the checker, runtime or roadmap during discussion. It shows the proposed
+              full system; the progress slide will show which parts are implemented.
             </p>
           </div>
           <div class="sources-source" hidden>
@@ -316,264 +311,187 @@
         </section>
         <section
           class="slide"
-          id="execution"
-          aria-labelledby="title-execution"
-          data-label="Running it in Python"
-          data-time="1:45"
+          id="implementation"
+          aria-labelledby="title-implementation"
+          data-label="How we build it"
+          data-time="2:15"
         >
           <div class="eyebrow">
-            <span>04 / Running it in Python</span><span class="status">Architecture proposal</span>
+            <span>04 / How we build it</span><span class="status">Implementation plan</span>
           </div>
-          <h1 id="title-execution" tabindex="-1">How would it execute in Python?</h1>
+          <h1 id="title-implementation" tabindex="-1">Build one complete path, then expand it.</h1>
           <p class="lede">
-            A Python reference engine interprets the checked program with explicit state for each
-            run.
+            The first milestone connects source, checking and execution for a reusable set of
+            language features.
           </p>
-          <div class="execution-grid">
-            <div class="shared-program">
-              <span class="panel-label">Reusable, immutable</span>
-              <h2>One checked<br />program</h2>
+          <div class="implementation-grid">
+            <div class="initial-scope">
+              <span class="panel-label">First complete subset</span>
+              <h2>Composed memory programs</h2>
               <p>
-                The program describes operations and their rules. Running it does not rewrite those
-                records.
+                Exact Int32 arithmetic, typed inputs, local and external memory, views and
+                transfers, loops, branches and helpers.
+              </p>
+              <div class="scope-path">Python source → checked program → reference result</div>
+              <p class="scope-principle">
+                Each feature must work through the whole path, including errors and saved artifacts.
               </p>
             </div>
-            <div class="run-branches" aria-label="Two invocations share the same checked program">
-              <div class="run-card">
-                <span class="run-name">RUN A</span><strong>Inputs A + invocation state</strong>
-                <p>Values, memory contents, active control and pending operations.</p>
-                <span class="run-outcome">→ Results and observable state changes</span>
-              </div>
-              <div class="run-card">
-                <span class="run-name">RUN B</span><strong>Inputs B + invocation state</strong>
-                <p>The same program can run again with different data.</p>
-                <span class="run-outcome">→ Its own results and state changes</span>
-              </div>
-            </div>
+            <ol class="implementation-steps">
+              <li>
+                <strong>Finish the subset’s verifier</strong>
+                <p>
+                  Complete memory, alias, lifetime and initialization checks; publish checked
+                  programs.
+                </p>
+              </li>
+              <li>
+                <strong>Connect source and host inputs</strong>
+                <p>
+                  Capture the defined grammar. Bind parameters and validate data through the shared
+                  rules.
+                </p>
+              </li>
+              <li>
+                <strong>Run the checked program</strong>
+                <p>
+                  Add invocation state, memory operations and ordered execution, then expose the API
+                  and artifacts.
+                </p>
+              </li>
+              <li>
+                <strong>Test composition and change</strong>
+                <p>
+                  Check unfamiliar combinations and real structural edits against independent
+                  expectations.
+                </p>
+              </li>
+            </ol>
           </div>
-          <div class="execution-rules">
-            <div>
-              <strong>Execute Spatial’s rules</strong>
-              <p>Exact arithmetic, aliases, lifetimes, selected branches and ordered effects.</p>
-            </div>
-            <div>
-              <strong>Make outcomes explicit</strong>
-              <p>Completion, faults and suspended runs remain distinct.</p>
-            </div>
-            <div>
-              <strong>Use it as the reference</strong>
-              <p>
-                Check program transformations and later hardware plans against defined behavior.
-              </p>
-            </div>
-          </div>
-          <p class="fine">
-            Persistent state, when used, belongs to an explicit session. Reference execution does
-            not claim hardware cycle timing.
-          </p>
           <div class="notes-source" hidden>
             <p>
-              The reference engine is a Python interpreter for our checked representation. It
-              implements Spatial’s numeric, memory and control rules.
+              The implementation plan starts with a complete path for a limited but reusable
+              language subset. The first family is memory programs using exact Int32 arithmetic,
+              typed inputs, local and external storage, views, transfers, loops, branches and
+              helpers.
             </p>
             <p>
-              The program and the execution state are separate. The same checked program can be used
-              for several runs. Each invocation has its inputs, values, memory contents, active
-              control and pending operations. Views that share storage keep that relationship.
-              Persistent state, when requested, belongs to an explicit session.
+              We start by finishing the complete verifier for the initial subset. It needs to check
+              memory relationships, lifetimes, initialization and the remaining whole-program
+              obligations before it can publish a checked program. Several lower-level pieces
+              already work.
             </p>
             <p>
-              This matters because Spatial behavior includes state and effects. The engine must take
-              only the selected branch, respect the required order of operations, and preserve
-              memory lifetimes. For later communicating programs, waiting and resumable work must
-              also have defined behavior.
+              Next we connect source capture and host inputs. The frontend reads the defined Python
+              grammar and lowers it through general rules. A helper remains a helper, a loop remains
+              a loop, and a memory operation remains a memory operation. Generated programs and
+              imported artifacts use the same verifier.
             </p>
             <p>
-              A completed run exposes complete outputs. A fault or suspended run has a different
-              result. We can compare outputs and observable effects with independent expectations,
-              then use this behavior as a reference for transformations and hardware plans.
+              Then we complete reference execution. Each run has its own values and memory state.
+              The engine executes the selected control paths, preserves state-change order and
+              reports faults. We connect that to a usable API and saved artifacts.
             </p>
             <p>
-              This engine tells us what the program does. It does not yet tell us its cycle count or
-              the quality of a hardware implementation.
+              Finally, we test whether those pieces actually compose. After freezing the compiler,
+              an independent author writes a structurally unfamiliar program within the supported
+              subset. It must run without a special compiler path. We also make a real structural
+              edit, recheck it and compare its behavior with independent expectations.
+            </p>
+            <p>
+              This is how we avoid repeating the earlier mistake. The implementation unit is a
+              language feature working through the full pipeline. A successful application alone
+              does not establish general support.
             </p>
           </div>
           <div class="sources-source" hidden>
             <a
-              href="../../50---Python-Rewrite/30---Implementation-Design/30---State-Simulator-and-HLS-Blueprint.html"
-              >Reference execution, state and hardware design</a
+              href="../../50---Python-Rewrite/30---Implementation-Design/80---Initial-Compiler-Goal.html"
+              >Authorized first goal and its acceptance gates</a
+            ><a
+              href="../../50---Python-Rewrite/30---Implementation-Design/10---Source-Checker-and-IR-Blueprint.html"
+              >Frontend and verifier responsibilities</a
             ><a
               href="../../50---Python-Rewrite/30---Implementation-Design/40---Package-and-Conformance-Blueprint.html"
-              >Invocation APIs and outcomes</a
-            ><a
-              href="../../50---Python-Rewrite/30---Implementation-Design/20---Numeric-Engine-Blueprint.html"
-              >Numeric engine design</a
+              >Execution APIs, artifacts and conformance</a
             >
           </div>
         </section>
         <section
           class="slide"
-          id="hardware"
-          aria-labelledby="title-hardware"
-          data-label="The later HLS path"
-          data-time="1:45"
+          id="progress"
+          aria-labelledby="title-progress"
+          data-label="What works today"
+          data-time="1:30"
         >
           <div class="eyebrow">
-            <span>05 / The later HLS path</span><span class="status">Architecture proposal</span>
+            <span>05 / What works today</span
+            ><span class="status">Component checkpoint · 7 Oct</span>
           </div>
-          <h1 id="title-hardware" tabindex="-1">Where does HLS fit?</h1>
+          <h1 id="title-progress" tabindex="-1">The foundations are implemented.</h1>
           <p class="lede">
-            HLS is a backend for a checked hardware plan derived from the same Spatial program.
+            The committed checkpoint has tested compiler components. The complete
+            source-to-simulation path is still unfinished.
           </p>
-          <div class="hardware-start">
-            <span class="panel-label">Shared starting point</span>
-            <h2>Checked Spatial program</h2>
-            <span class="reference-tag">Python execution supplies the behavioral reference</span>
-          </div>
-          <div class="hardware-route">
-            <div>
-              <span class="step-number">01 / PYTHON PLANNER</span>
-              <h2>Choose an implementation</h2>
-              <p>
-                Storage and banking.<br />Work mapping and scheduling constraints.<br />Interfaces
-                and numeric realizations.
-              </p>
-            </div>
-            <div>
-              <span class="step-number">02 / CHECKED PLAN</span>
-              <h2>Preserve the meaning</h2>
-              <p>
-                Check finite storage and required target obligations. Unknown required facts block
-                emission. Compare plan behavior with the reference.
-              </p>
-            </div>
-            <div>
-              <span class="step-number">03 / HLS BACKEND</span>
-              <h2>Generate and validate</h2>
-              <p>
-                Emit HLS C++ and required interfaces. Use vendor tools to evaluate correctness,
-                resources and timing.
-              </p>
-            </div>
-          </div>
-          <div class="design-consequence">
-            <strong>The boundary</strong
-            ><span
-              >The compiler and reference engine are Python. HLS C++ is generated target code.</span
-            >
-          </div>
-          <p class="fine">
-            A valid reference program may still be ineligible for a target. HLS can begin for an
-            accepted subset while the language grows.
-          </p>
-          <div class="notes-source" hidden>
-            <p>
-              HLS comes after the language has a defined meaning. The Python compiler takes the
-              checked program and builds a target-specific implementation plan.
-            </p>
-            <p>
-              That plan introduces hardware choices: storage and banking, work mapping, scheduling
-              constraints, interfaces and realizations of numeric operations. Those choices must
-              satisfy target requirements and preserve the program’s allowed observable behavior. A
-              program can be valid for reference execution and still lack a legal implementation for
-              a particular target. Unknown required target facts block emission. Runtime loops need
-              not have a fixed iteration count, but simultaneous hardware state and storage must be
-              bounded.
-            </p>
-            <p>
-              We would check the plan and execute its modeled behavior in Python against the
-              reference. Then the backend emits HLS C++ and any required interface components.
-              Vendor simulation and synthesis give us separate evidence about the generated
-              hardware.
-            </p>
-            <p>
-              So pure Python describes our compiler and reference engine. It does not mean the
-              eventual FPGA executes Python. The HLS code is an output of the compiler.
-            </p>
-            <p>
-              The split also lets us start hardware work on an accepted subset while the rest of the
-              language grows. We should establish the Python language and reference path first, then
-              use that stable meaning to guide lowering.
-            </p>
-          </div>
-          <div class="sources-source" hidden>
-            <a
-              href="../../50---Python-Rewrite/30---Implementation-Design/30---State-Simulator-and-HLS-Blueprint.html"
-              >Target planning and HLS responsibilities</a
-            ><a
-              href="../../50---Python-Rewrite/40---Specification/40---Python-Compiler-and-HLS-Contract.html"
-              >Compiler and HLS contract</a
-            ><a href="../../50---Python-Rewrite/04---Python-Implementation-Roadmap.html"
-              >Staged implementation roadmap</a
-            >
-          </div>
-        </section>
-        <section
-          class="slide"
-          id="design"
-          aria-labelledby="title-design"
-          data-label="The design to review"
-          data-time="1:45"
-        >
-          <div class="eyebrow">
-            <span>06 / The design to review</span><span class="status">Architecture proposal</span>
-          </div>
-          <h1 id="title-design" tabindex="-1">The proposed Python Spatial system</h1>
-          <p class="lede">
-            Capture the language in Python. Keep one checked meaning. Separate execution from
-            hardware choices.
-          </p>
-          <div class="design-grid">
-            <div class="design-choices">
+          <div class="progress-grid implementation-progress">
+            <div class="foundation-list">
+              <span class="panel-label">Implemented and reviewed</span>
               <div>
                 <span class="step-number">01</span>
                 <div>
-                  <strong>Source capture as the main interface</strong>
+                  <strong>Program structure</strong>
                   <p>
-                    Inspect structure and report errors before execution. Generated programs use the
-                    same checker.
+                    Immutable records, real use/ownership indices and bounded structural checks.
                   </p>
                 </div>
               </div>
               <div>
                 <span class="step-number">02</span>
                 <div>
-                  <strong>Python owns the language rules</strong>
+                  <strong>Numeric and type rules</strong>
                   <p>
-                    Typed records, verification and legal transformations provide a common
-                    foundation.
+                    Exact Int32 / Index primitives, strict Bool, type layouts and scalar
+                    normalization.
                   </p>
                 </div>
               </div>
               <div>
                 <span class="step-number">03</span>
                 <div>
-                  <strong>A reference engine before hardware lowering</strong>
-                  <p>Use one defined behavior as the reference for each implementation plan.</p>
+                  <strong>Input boundaries</strong>
+                  <p>Closed input validation and source/dependency provenance.</p>
                 </div>
               </div>
+              <div class="checkpoint">
+                <strong>236</strong
+                ><span
+                  >passing component tests<br /><small
+                    >Committed checkpoint f8a993b · source suite rechecked 7 Oct</small
+                  ></span
+                >
+              </div>
             </div>
-            <div class="review-question">
-              <span class="panel-label">For professor discussion</span>
-              <h2>Does this capture the Python Spatial we want to build?</h2>
-              <p>
-                Review the language boundary, the shared program model and the split between
-                reference execution and hardware planning.
-              </p>
+            <div class="remaining-panel">
+              <span class="panel-label">Needed to finish the first milestone</span>
+              <h2>Connect and validate<br />the full path</h2>
+              <ul>
+                <li>
+                  Complete verification of the initial subset, including memory and checked-program
+                  publication.
+                </li>
+                <li>Source capture, prepared host inputs and the reference executor.</li>
+                <li>
+                  Artifacts, structural editing, unfamiliar composition and workflow measurements.
+                </li>
+              </ul>
               <p class="fine">
-                Legacy behavior differences remain explicit semantic decisions for review.
+                Component tests establish these foundations. They do not establish a working
+                end-to-end compiler.
               </p>
             </div>
-          </div>
-          <div class="design-tradeoff">
-            <strong>Tradeoff</strong
-            ><span
-              >Accelerator code follows a defined Python subset. Compiler throughput and hardware
-              quality still require measurement.</span
-            >
           </div>
           <div class="supporting-links">
-            <button id="evidence-button">Research, progress &amp; next experiment ↗</button
+            <button id="evidence-button">Detailed evidence ↗</button
             ><a
               href="https://github.com/davidydu/spatial-research"
               target="_blank"
@@ -588,41 +506,155 @@
           </div>
           <div class="notes-source" hidden>
             <p>
-              These are the three design choices I would like to review. First, capture source as
-              the main interface so the compiler can inspect the program before execution. Generated
-              programs still use the same checking rules.
+              We have moved beyond architecture notes into the foundations of the Python compiler.
+              The committed checkpoint has 236 passing component tests. The source suite was
+              rechecked on October 7.
             </p>
             <p>
-              Second, keep the language representation and its rules under our control in Python.
-              That gives us a shared foundation for checking, transformations, execution and
-              backends.
+              The implemented pieces include immutable program records, indices that track actual
+              uses and ownership, exact integer primitives, type and layout rules, scalar
+              normalization, input validation and local structural checks.
             </p>
             <p>
-              Third, separate the reference behavior from hardware choices. The simulator defines
-              the execution reference. Target planning adds implementation decisions that must
-              preserve it.
+              These are useful pieces of a compiler, but we cannot yet take a Spatial Python source
+              file through the complete checking and execution path. The full verifier and memory
+              support are unfinished, and source capture and reference execution still need to be
+              connected.
             </p>
             <p>
-              The tradeoff is that accelerator kernels follow a defined Python subset. We still need
-              to measure compiler throughput and hardware quality; choosing Python does not settle
-              those engineering questions. Where old Spatial implementations disagree, the proposed
-              behavior changes remain explicit review items.
+              The next work is therefore concrete. Finish that path, then demonstrate shared
+              behavior across source, generated programs and saved artifacts. The
+              unfamiliar-composition test, structural editing test and workflow measurements remain
+              open.
             </p>
             <p>
-              This is the research result I want feedback on: does this language boundary and system
-              structure match the Python Spatial we want to build? The research notes, current
-              implementation evidence and next experiment are available here if useful. They support
-              the design discussion rather than setting the agenda.
+              We have also organized the research as a versioned repository and a documentation
+              website. The site connects the language decisions, architecture, implementation plan
+              and evidence. These links let us inspect the reasoning or the exact progress record
+              during discussion.
             </p>
           </div>
           <div class="sources-source" hidden>
-            <a href="../../20---Research-Notes/50---Decision-Records/D-28.html"
-              >Architecture recommendation and unresolved obligations</a
-            ><a href="../../50---Python-Rewrite/05---Python-Professor-Brief.html"
-              >Professor discussion brief</a
+            <a
+              href="../../50---Python-Rewrite/30---Implementation-Design/80---Initial-Compiler-Goal.html"
+              >Committed progress and unfinished acceptance gates</a
+            ><a href="https://github.com/davidydu/spatial-py/tree/f8a993b"
+              >Implementation checkpoint — requires repository access</a
+            ><a href="../../50---Python-Rewrite/00---Python-Rewrite-Index.html"
+              >Research documentation</a
+            >
+          </div>
+        </section>
+        <section
+          class="slide"
+          id="next-steps"
+          aria-labelledby="title-next"
+          data-label="What comes next"
+          data-time="2:00"
+        >
+          <div class="eyebrow">
+            <span>06 / What comes next</span><span class="status">Proposed sequence</span>
+          </div>
+          <h1 id="title-next" tabindex="-1">Complete the core, then grow the language.</h1>
+          <p class="lede">
+            Use explicit acceptance criteria to decide when each stage is ready to expand.
+          </p>
+          <div class="next-plan-grid">
+            <div class="next-milestones">
+              <div>
+                <span class="step-number">FIRST</span>
+                <div>
+                  <h2>Complete the memory subset</h2>
+                  <p>
+                    Source → check → run. Match independently specified values, state changes and
+                    faults.
+                  </p>
+                </div>
+              </div>
+              <div>
+                <span class="step-number">ACCEPT</span>
+                <div>
+                  <h2>Demonstrate generality</h2>
+                  <p>
+                    Freeze the compiler. Run an unfamiliar composition; verify structural edits and
+                    measure the full supported workflow.
+                  </p>
+                </div>
+              </div>
+              <div>
+                <span class="step-number">EXPAND</span>
+                <div>
+                  <h2>Add the remaining Spatial families</h2>
+                  <p>
+                    Reductions and numeric formats, then stateful and communicating constructs. Use
+                    EE 109 labs as coverage targets.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="review-question">
+              <span class="panel-label">For professor discussion</span>
+              <h2>Is this the right first milestone?</h2>
+              <p>
+                Does composed memory cover enough of Spatial’s core to test the design before wider
+                implementation?
+              </p>
+              <p>Which missing capability should we prioritize after that milestone?</p>
+            </div>
+          </div>
+          <div class="design-consequence">
+            <strong>Agreed destination: HLS</strong
+            ><span
+              >Start lowering a validated subset while the remaining language families grow.</span
+            >
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              The next milestone is a complete memory-program subset, with independently specified
+              results, state changes and faults. That gives us something concrete to judge beyond a
+              collection of compiler components.
+            </p>
+            <p>
+              Before expanding, we should show that the design handles a new combination of the
+              supported features. We freeze the implementation and give an independent author the
+              supported language contract. A renamed or resized development example is not enough.
+              If the new program requires a special compiler case, we have found a gap in the
+              general rules.
+            </p>
+            <p>
+              We also need a real structural transformation. It must preserve the intended behavior,
+              keep memory relationships and source information intact, and leave the old program
+              usable if validation fails. Passing the checker alone does not prove equivalent
+              behavior, so we compare outcomes as well.
+            </p>
+            <p>
+              At the same milestone, we measure the actual supported capture, checking and execution
+              paths. That turns the practical Python performance question into evidence.
+            </p>
+            <p>
+              After that, we extend whole feature families: reductions and numeric formats, then
+              more stateful and communicating constructs. The EE 109 labs help us track which
+              combinations matter. Each family gets source support, checking, reference behavior and
+              tests together.
+            </p>
+            <p>
+              HLS remains the agreed destination. We can begin that work from a validated subset
+              while the rest of the language grows.
+            </p>
+            <p>
+              The feedback I want is whether this first milestone tests enough of Spatial’s core,
+              and which capability should come next. That would give us a clear implementation order
+              after the meeting.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a href="../../50---Python-Rewrite/04---Python-Implementation-Roadmap.html"
+              >Staged implementation roadmap</a
             ><a
               href="../../50---Python-Rewrite/30---Implementation-Design/80---Initial-Compiler-Goal.html"
-              >Current component evidence and acceptance criteria</a
+              >Generality and performance acceptance</a
+            ><a href="../../50---Python-Rewrite/60---Validation/01---Python-Coverage-Ledger.html"
+              >Language and lab coverage</a
             >
           </div>
         </section>
@@ -632,21 +664,20 @@
           <button data-slide="python" aria-label="01 The whole system" aria-current="step">
             <span class="chapter-number">01</span
             ><span class="chapter-label">The whole system</span></button
-          ><button data-slide="python-boundary" aria-label="02 The language boundary">
+          ><button data-slide="feasibility" aria-label="02 Why Python works">
             <span class="chapter-number">02</span
-            ><span class="chapter-label">The language boundary</span></button
+            ><span class="chapter-label">Why Python works</span></button
           ><button data-slide="compiler" aria-label="03 Inside the compiler">
             <span class="chapter-number">03</span
             ><span class="chapter-label">Inside the compiler</span></button
-          ><button data-slide="execution" aria-label="04 Running it in Python">
+          ><button data-slide="implementation" aria-label="04 How we build it">
             <span class="chapter-number">04</span
-            ><span class="chapter-label">Running it in Python</span></button
-          ><button data-slide="hardware" aria-label="05 The later HLS path">
+            ><span class="chapter-label">How we build it</span></button
+          ><button data-slide="progress" aria-label="05 What works today">
             <span class="chapter-number">05</span
-            ><span class="chapter-label">The later HLS path</span></button
-          ><button data-slide="design" aria-label="06 The design to review">
-            <span class="chapter-number">06</span
-            ><span class="chapter-label">The design to review</span>
+            ><span class="chapter-label">What works today</span></button
+          ><button data-slide="next-steps" aria-label="06 What comes next">
+            <span class="chapter-number">06</span><span class="chapter-label">What comes next</span>
           </button>
         </nav>
         <div class="transport">
@@ -692,8 +723,7 @@
       </div>
       <p id="map-hint">
         Drag to pan, or focus the map and use arrow keys to scroll. Use + / − to zoom. Proposed
-        responsibilities; implementation evidence is under Research &amp; progress on the final
-        slide.
+        responsibilities; implementation evidence is on slide 5 under Detailed evidence.
       </p>
       <div
         id="map-viewport"
