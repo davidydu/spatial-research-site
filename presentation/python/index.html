@@ -25,7 +25,7 @@
             ><span></span><span></span><span></span><span></span></span
           ><span>SPATIAL <small>RESEARCH</small></span></a
         >
-        <div class="masthead-meta">Python rewrite <span>3 October 2026</span></div>
+        <div class="masthead-meta">Python rewrite <span>7 October 2026</span></div>
         <div class="tools" aria-label="Presentation tools">
           <button class="tool" id="notes-button" title="Speaker notes (N)">Notes</button>
           <button class="tool" id="sources-button" title="Research sources (E)">Sources</button>
@@ -84,23 +84,24 @@
             </div>
           </div>
           <div class="hero-foot">
-            <span>Today: what we would write and how it would work</span
-            ><span>Proposed design. Compiler not yet implemented.</span>
+            <span>Today: the programming model, architecture and first evidence</span
+            ><span>Foundations implemented. Complete workflow still in progress.</span>
           </div>
           <div class="notes-source" hidden>
             <p>
-              After our last discussion, I worked through what a full Python rewrite would look
-              like. The program, compiler and reference simulator would all be Python. We would keep
-              Spatial’s explicit memories, control and parallel work.
+              After our last discussion, I worked through what a Python rewrite would look like. We
+              would write Spatial programs in Python, and build the compiler and reference simulator
+              in Python too. Spatial still has explicit memories, control and parallel work.
             </p>
             <p>
-              I’ll start with what someone writes and how they run it. Then I’ll show the compiler
-              design, what changed after review, and the first implementation milestone.
+              The important question is how we preserve what each program means, and then turn that
+              meaning into hardware. Python is capable of expressing the compiler algorithms. We
+              still need precise rules and independent checks of the results.
             </p>
             <p>
-              The Python direction is already agreed. Today I’m asking you to review this particular
-              programming model and architecture. The compiler is still a proposal; the experiments
-              test parts of the design.
+              We have moved from research into an initial implementation experiment. Today I’ll show
+              the proposed user experience, the architecture, what is implemented, and how we will
+              test whether it handles new programs. The complete workflow is still in progress.
             </p>
           </div>
           <div class="sources-source" hidden>
@@ -119,7 +120,7 @@
           id="program"
           aria-labelledby="title-program"
           data-label="The program"
-          data-time="1:45"
+          data-time="1:30"
         >
           <div class="eyebrow">
             <span>02 / What we would write</span><span class="status">Proposed syntax</span>
@@ -241,96 +242,80 @@
           class="slide"
           id="python-boundary"
           aria-labelledby="title-python-boundary"
-          data-label="Run a program"
-          data-time="1:30"
+          data-label="The Python boundary"
+          data-time="1:00"
         >
           <div class="eyebrow">
-            <span>03 / From source to results</span><span class="status">Proposed API</span>
+            <span>03 / From source to results</span><span class="status">Proposed workflow</span>
           </div>
-          <h1 id="title-python-boundary" tabindex="-1">How you would run it</h1>
+          <h1 id="title-python-boundary" tabindex="-1">
+            Python for the experiment. Spatial for the kernel.
+          </h1>
           <p class="lede">
-            Ordinary Python runs the experiment. The compiler reads the kernel as a Spatial program.
+            Ordinary Python prepares the data. A defined Python subset describes the accelerator.
           </p>
-          <div class="host-flow" aria-label="Proposed host workflow">
-            <button class="host-step is-selected" data-host-step="capture" aria-pressed="true">
-              <span class="step-number">01</span><strong>Capture</strong></button
-            ><button class="host-step" data-host-step="specialize" aria-pressed="false">
-              <span class="step-number">02</span><strong>Specialize</strong></button
-            ><button class="host-step" data-host-step="check" aria-pressed="false">
-              <span class="step-number">03</span><strong>Check</strong></button
-            ><button class="host-step" data-host-step="bind" aria-pressed="false">
-              <span class="step-number">04</span><strong>Bind inputs</strong></button
-            ><button class="host-step" data-host-step="simulate" aria-pressed="false">
-              <span class="step-number">05</span><strong>Simulate</strong></button
-            ><button class="host-step" data-host-step="outputs" aria-pressed="false">
-              <span class="step-number">06</span><strong>Read outputs</strong>
-            </button>
-          </div>
-          <div class="host-detail" aria-live="polite">
-            <div>
-              <div class="panel-label">Host Python → Spatial compiler</div>
-              <h2 id="host-title">Read the kernel as text</h2>
-              <p id="host-copy">
-                Freeze the source and its dependencies. Capture does not import the kernel or
-                execute its decorators, annotations or body.
-              </p>
-              <p class="host-boundary">
-                A defined Python subset for kernels.<br />Ordinary Python for data and experiments.
-              </p>
+          <div class="boundary-grid refresh-boundary">
+            <div class="boundary-side">
+              <span class="panel-label">Host Python</span>
+              <h2>Set up the experiment</h2>
+              <p>Load data, choose parameters, call the compiler, and compare results.</p>
+              <div class="boundary-example">Files · arrays · notebooks · test scripts</div>
             </div>
-            <pre
-              class="ir-code"
-            ><code id="host-code">source = Path(&quot;lab1.py&quot;).read_text(encoding=&quot;utf-8&quot;)
-unit = SourceUnit(
-    module_id=&quot;lab1&quot;, text=source, label=&quot;lab1.py&quot;,
-)
-bundle = CaptureBundle(
-    entry=(&quot;lab1&quot;, &quot;tiled_scale&quot;), sources=(unit,),
-    dependencies=(), prelude=core_prelude(),
-)
-template = capture(bundle)</code></pre>
+            <div class="boundary-arrow" aria-hidden="true">→</div>
+            <div class="boundary-side">
+              <span class="panel-label">Spatial kernel source</span>
+              <h2>Describe the computation</h2>
+              <p>
+                Declare types, storage, loops and dependencies. The compiler reads the source
+                without running the kernel.
+              </p>
+              <div class="boundary-example">Ports · SRAM · transfers · control</div>
+            </div>
           </div>
+          <ol class="journey" aria-label="Proposed execution workflow">
+            <li>
+              <strong>Read &amp; specialize</strong
+              ><span>Fix the source and compile-time choices.</span>
+            </li>
+            <li>
+              <strong>Check &amp; bind</strong
+              ><span>Validate the program and its input shapes.</span>
+            </li>
+            <li>
+              <strong>Run &amp; inspect</strong
+              ><span>Return completed outputs or a clear diagnostic.</span>
+            </li>
+          </ol>
           <p class="fine">
-            Click a stage to inspect the proposed API. Imports and constructors are in the
+            The full host API is specified in the
             <a
               href="../../50---Python-Rewrite/10---Research/PY-R016---Source-and-Host-Workflow-Refinement.html"
               target="_blank"
               rel="noopener noreferrer"
-              >complete host example ↗</a
-            >. These snippets are not a compiler run.
+              >source and host example ↗</a
+            >. This workflow is not yet implemented end to end.
           </p>
           <div class="notes-source" hidden>
             <p>
-              Here is how someone would run that program. Ordinary Python controls the experiment.
-              The kernel stays in a source file that the compiler reads as text.
+              There are two roles for Python here. Normal Python handles data, files and
+              experiments. The kernel is a piece of source that the compiler reads as Spatial. It
+              uses a defined subset of Python syntax with Spatial’s types and storage.
             </p>
             <p>
-              First we capture the source and choose any compile-time parameters. Then we check the
-              program. A checking error stops the workflow and gives us diagnostics.
+              This boundary lets us know what the whole kernel means before we run it. We do not
+              discover the program by executing one sample input. We can inspect both branches,
+              track storage and explain errors at their source.
             </p>
             <p>
-              Next we bind typed inputs and an output buffer. The preparation step checks that their
-              shapes and access permissions match the program. Then we run the Python reference
-              simulator.
-            </p>
-            <p>
-              We read results only after the run reports Completed. A fault gives us diagnostics to
-              inspect. A wait or an exhausted budget can give us a continuation to resume. None of
-              those is a successful output.
-            </p>
-            <p>
-              The research now specifies these public names and a complete host example. The
-              snippets here show that proposed API; there is no installed Spatial package behind
-              these buttons.
-            </p>
-            <p class="note-cue">
-              Click Check, Bind inputs, then Read outputs. The complete example is linked below.
+              The intended workflow is straightforward: read and specialize the source, check the
+              program, bind typed inputs, then simulate. Complete results are available only after a
+              completed run. We have specified this API; the complete path is still being built.
             </p>
           </div>
           <div class="sources-source" hidden>
             <a
               href="../../50---Python-Rewrite/10---Research/PY-R016---Source-and-Host-Workflow-Refinement.html"
-              >Complete source and host workflow</a
+              >Complete proposed host example</a
             ><a
               href="../../50---Python-Rewrite/30---Implementation-Design/40---Package-and-Conformance-Blueprint.html"
               >Public API and result contracts</a
@@ -342,100 +327,89 @@ template = capture(bundle)</code></pre>
           class="slide"
           id="compiler"
           aria-labelledby="title-compiler"
-          data-label="One checked program"
-          data-time="1:30"
+          data-label="The architecture"
+          data-time="1:45"
         >
           <div class="eyebrow">
-            <span>04 / The architecture we recommend</span
-            ><span class="status">Proposed design</span>
+            <span>04 / The architecture</span><span class="status">Proposed design</span>
           </div>
           <h1 id="title-compiler" tabindex="-1">One checked program, two uses</h1>
           <p class="lede">
-            Python owns the language rules. Simulation and hardware planning start from the same
-            meaning.
+            First define what the program does. Then choose how hardware will do it.
           </p>
-          <div
-            class="architecture-flow"
-            aria-label="Captured Python source is checked into immutable program records, then used for reference simulation or hardware planning"
-          >
-            <div class="source-node">
-              <span class="panel-label">Python kernel</span>
-              <h2>Read.<br />Resolve.<br />Check.</h2>
-              <p>Types, shapes, memories<br />and order of effects.</p>
-            </div>
-            <div class="program-record">
-              <span class="panel-label">Compiler-owned Python records</span>
-              <h2>Checked<br />Spatial program</h2>
-              <p>Immutable: a transformation creates a new candidate and checks it before use.</p>
-            </div>
-            <div class="consumer-branches">
-              <button class="consumer is-selected" data-consumer="simulate" aria-pressed="true">
-                <span class="step-number">FIRST</span><strong>Simulate in Python</strong
-                ><small>Values, state and diagnostics</small></button
-              ><button class="consumer" data-consumer="plan" aria-pressed="false">
-                <span class="step-number">THEN</span><strong>Plan hardware</strong
-                ><small>Preserve the checked behavior</small>
-              </button>
-            </div>
-          </div>
-          <div class="architecture-detail" aria-live="polite">
+          <div class="architecture-principles">
             <div>
-              <h2 id="architecture-title">First: establish the Python behavior</h2>
-              <p id="architecture-copy">
-                Run the checked operations with explicit state, input data and an environment.
-                Compare completed results and effects with independent expectations.
-              </p>
+              <span class="panel-label">Meaning</span>
+              <p>Types, storage and effect order live in one checked representation.</p>
             </div>
-            <pre id="architecture-code">
-Checked program
-  + typed inputs
-  + state and environment
-  → Python reference execution
-  → results, effects or diagnostics</pre
-            >
+            <div>
+              <span class="panel-label">Execution</span>
+              <p>The Python simulator gives us a reference result and a trace of state changes.</p>
+            </div>
+            <div>
+              <span class="panel-label">Hardware</span>
+              <p>A separate plan chooses storage and scheduling while preserving that behavior.</p>
+            </div>
           </div>
-          <p class="fine">
-            The first hardware plan also uses Python records. xDSL is optional when a specific
-            backend pipeline demonstrates a benefit.
-          </p>
+          <figure class="map-preview">
+            <button
+              class="map-launch"
+              data-open-map
+              aria-label="Explore the full Excalidraw engineering architecture map"
+            >
+              <img
+                src="./assets/architecture-overview.svg"
+                width="3400"
+                height="550"
+                alt="Excalidraw overview: Python source becomes a checked program shared by reference simulation and hardware planning."
+              /><span class="map-open-label"
+                >Explore engineering map <span aria-hidden="true">↗</span></span
+              >
+            </button>
+            <figcaption>
+              The original Excalidraw map, embedded here. Zoom into the compiler, execution or lab
+              roadmap. Colors show responsibilities.
+            </figcaption>
+          </figure>
+          <div class="map-inline-links">
+            <a href="./assets/architecture.excalidraw" download>Editable Excalidraw ↓</a
+            ><a
+              href="../../50---Python-Rewrite/30---Implementation-Design/70---Engineering-Architecture-Map.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Architecture documentation ↗</a
+            ><span>Detailed map for discussion; the main talk stays at the top level.</span>
+          </div>
           <div class="notes-source" hidden>
             <p>
-              The central object is a checked description of the Spatial program. It records the
-              types, memories, control and order of effects in immutable Python records.
+              This is the main architecture decision. One checked representation owns the meaning of
+              the program. It records the values, memories, control and order of operations.
             </p>
             <p>
-              Both the reference simulator and hardware planner start from that same program. The
-              simulator tells us what it does. The planner chooses a hardware implementation and
-              must show that it preserves the program’s meaning.
+              The Python simulator runs that meaning. Hardware planning then decides how to realize
+              it: where data lives, how work is scheduled, and what interfaces we need. These paths
+              must agree about the program’s behavior.
             </p>
             <p>
-              We compared keeping this representation in our own Python records with using xDSL. We
-              now recommend our own records for both the checked program and the first hardware
-              plans. We already have to own the Spatial rules and checks, and this makes ownership
-              direct.
+              That gives us a stable reference when we change the hardware implementation. A
+              transformation creates a new candidate and checks it before use. Changing a schedule
+              should preserve the observable results and state changes.
             </p>
             <p>
-              xDSL remains an option when a specific backend pipeline gives us a measured benefit.
-              We do not need it to define the language.
-            </p>
-            <p>
-              HLS comes after the checked hardware plan. It does not get to decide what our Python
-              program means.
-            </p>
-            <p class="note-cue">
-              Switch between Simulate in Python and Plan hardware to show the two uses of the same
-              program.
+              The Excalidraw map connects this big picture to the engineering details. We can zoom
+              into checking, execution or the lab roadmap during discussion. The map is the proposed
+              architecture. Its colors describe responsibilities, not what is already implemented.
             </p>
           </div>
           <div class="sources-source" hidden>
-            <a href="../../20---Research-Notes/50---Decision-Records/D-28.html"
-              >Architecture recommendation</a
-            ><a
-              href="../../50---Python-Rewrite/10---Research/PY-R017---Compiler-Representation-Comparison.html"
-              >Representation comparison and alternatives</a
+            <a
+              href="../../50---Python-Rewrite/30---Implementation-Design/70---Engineering-Architecture-Map.html"
+              >Editable engineering map and linked blueprints</a
+            ><a href="../../20---Research-Notes/50---Decision-Records/D-28.html"
+              >Architecture decision for review</a
             ><a
               href="../../50---Python-Rewrite/30---Implementation-Design/30---State-Simulator-and-HLS-Blueprint.html"
-              >Simulation, checked plans and HLS</a
+              >State, simulator and HLS design</a
             >
           </div>
         </section>
@@ -444,124 +418,80 @@ Checked program
           class="slide"
           id="behavior"
           aria-labelledby="title-behavior"
-          data-label="The behavior"
-          data-time="1:15"
+          data-label="Test generality"
+          data-time="1:30"
         >
           <div class="eyebrow">
-            <span>05 / What the simulator must preserve</span
-            ><span class="status">Illustrations of proposed behavior</span>
+            <span>05 / Avoiding the earlier mistake</span
+            ><span class="status">Acceptance gate · still ahead</span>
           </div>
-          <h1 id="title-behavior" tabindex="-1">Values and state both matter</h1>
+          <h1 id="title-behavior" tabindex="-1">A compiler must handle new combinations</h1>
           <p class="lede">
-            Check the result of the calculation, and check which operations changed memory or
-            consumed data.
+            The first target is a reusable language subset. Passing one familiar lab is only a
+            starting point.
           </p>
-          <div class="behavior-grid">
-            <div class="numeric-demo">
-              <div class="panel-label">Our tiled example</div>
-              <h2>Each value has a result</h2>
-              <p>Change the scale to see the expected first four outputs.</p>
-              <div class="scale-control">
-                <label for="scale">Scale</label
-                ><input id="scale" type="range" min="0" max="4" value="2" step="1" /><output
-                  id="scale-value"
-                  for="scale"
-                  >2</output
-                >
+          <div class="generality-grid">
+            <div class="composition-panel">
+              <span class="panel-label">Reusable language rules</span>
+              <div class="constructs">
+                <span>Loops</span><span>Branches</span><span>Helpers</span><span>Memory views</span
+                ><span>Transfers</span><span>Exact numbers</span>
               </div>
-              <div class="number-line">
-                <div class="number-group">
-                  <span class="memory-label">Input</span>
-                  <div class="sample-numbers">
-                    <span class="sample-number">1</span><span class="sample-number">2</span
-                    ><span class="sample-number">3</span><span class="sample-number">4</span>
-                  </div>
-                </div>
-                <div class="transfer-label" aria-hidden="true">
-                  ↓ × <span id="scale-factor">2</span>
-                </div>
-                <div class="number-group">
-                  <span class="memory-label">Expected output</span>
-                  <div class="sample-numbers" id="scaled-values" aria-live="polite">
-                    <span class="sample-number">2</span><span class="sample-number">4</span
-                    ><span class="sample-number">6</span><span class="sample-number">8</span>
-                  </div>
-                </div>
-              </div>
-              <p class="fine">
-                Proposed Int: signed 32-bit wrapping arithmetic. These small values do not overflow.
-              </p>
+              <div class="combine-arrow" aria-hidden="true">↓ combine</div>
+              <h2>A new program<br />using the same rules</h2>
+              <p>Vary nesting, runtime shapes, shared storage and helper boundaries together.</p>
             </div>
-            <div class="queue-demo">
-              <div class="panel-label">A small state example</div>
-              <h2>A branch consumes one queue</h2>
-              <p>Choose a branch, then take one value. The other queue stays unchanged.</p>
-              <div class="queue-controls">
-                <button data-queue="a" aria-pressed="true">Choose A</button
-                ><button data-queue="b" aria-pressed="false">Choose B</button>
-              </div>
-              <div class="queue-row" data-queue-row="a">
-                <span class="queue-name">A</span>
-                <div class="queue-items" id="queue-a"></div>
-              </div>
-              <div class="queue-row" data-queue-row="b">
-                <span class="queue-name">B</span>
-                <div class="queue-items" id="queue-b"></div>
-              </div>
-              <div class="queue-result">
-                <button id="queue-step">Take one value</button
-                ><button id="queue-reset">Reset</button
-                ><output id="queue-result" aria-live="polite">No value consumed</output>
-              </div>
-              <p class="fine">
-                Illustrates branch behavior with nonempty queues. Blocking and scheduling are
-                outside this illustration.
-              </p>
-            </div>
+            <ol class="acceptance-steps">
+              <li>
+                <strong>Freeze a compiler revision</strong>
+                <p>Write down the supported subset and its limits.</p>
+              </li>
+              <li>
+                <strong>Independently write an unfamiliar program</strong>
+                <p>Check values, state changes and faults against separate expectations.</p>
+              </li>
+              <li>
+                <strong>Run it without a new compiler path</strong>
+                <p>
+                  If it needs a fix, keep it as a regression and use a fresh unseen program for
+                  acceptance.
+                </p>
+              </li>
+            </ol>
           </div>
-          <div class="review-lesson">
-            <strong>A lesson from the review</strong
-            ><span
-              >The old numeric candidate and its test shared a wrong assumption. Agreement was not
-              enough; expected results need independent derivations.</span
-            >
+          <div class="takeaway">
+            Compiler rules follow language operations. They never dispatch on a kernel name, lab
+            number or whole-program pattern.
           </div>
           <div class="notes-source" hidden>
             <p>
-              Correctness includes both values and changes to state. The scale example gives us a
-              simple independent expected answer. Int uses signed 32-bit wrapping arithmetic, so we
-              must test that rule as well as these small values.
+              The earlier risk was a compiler that looked successful because it recognized the
+              examples we gave it. We want reusable language rules that work when someone combines
+              the constructs in a new way.
             </p>
             <p>
-              The queue example shows why effect order matters. If a branch chooses B, it takes one
-              value from B and leaves A alone. Evaluating both branches first would already change
-              the wrong queue.
+              Our first scope is small memory programs with exact integers, loops, branches, helpers
+              and shared views. We have written down that scope. We should vary several of those
+              features together, including how helpers share storage.
             </p>
             <p>
-              The review also found a real weakness in our earlier numeric experiment. The candidate
-              and its comparison check shared the same incorrect underflow assumption. They agreed,
-              but that agreement did not prove correctness.
+              The important test comes after we freeze a compiler revision. An independent reviewer
+              writes a valid program with an unfamiliar structure and independent expected results.
+              It must run without adding a special compiler path.
             </p>
             <p>
-              We repaired the rule and used a separately derived status check. That is why the
-              implementation plan calls for independent expected values and state traces.
-            </p>
-            <p class="note-cue">
-              Change the scale. Choose B and take a value. Keep the numerical-boundary details in
-              the sources panel.
+              If the new case exposes a bug, we fix it and keep the case as a regression. Then we
+              need a fresh unseen program for acceptance. A finite test suite cannot prove every
+              possible combination, but this tests something much stronger than resizing or renaming
+              a known lab. We have not reached this gate yet.
             </p>
           </div>
           <div class="sources-source" hidden>
-            <a href="../../50---Python-Rewrite/40---Specification/20---Python-Numeric-Contract.html"
-              >Exact numeric behavior</a
-            ><a
-              href="../../50---Python-Rewrite/10---Research/PY-R015---Numeric-Status-Repair-and-Independent-Oracles.html"
-              >Numeric repair and independently derived status checks</a
-            ><a
-              href="../../50---Python-Rewrite/10---Research/PY-R003---Control-Memory-and-Effects.html"
-              >Control flow, memory and lazy branch effects</a
-            ><a href="../../50---Python-Rewrite/60---Validation/00---Python-Validation-Plan.html"
-              >Independent expected values and effect traces</a
+            <a
+              href="../../50---Python-Rewrite/30---Implementation-Design/80---Initial-Compiler-Goal.html"
+              >Frozen initial scope and acceptance obligations</a
+            ><a href="../../50---Python-Rewrite/60---Validation/01---Python-Coverage-Ledger.html"
+              >Language-wide coverage ledger</a
             >
           </div>
         </section>
@@ -570,149 +500,147 @@ Checked program
           class="slide"
           id="research"
           aria-labelledby="title-research"
-          data-label="What review changed"
-          data-time="1:45"
+          data-label="Progress & documentation"
+          data-time="2:00"
         >
           <div class="eyebrow">
-            <span>06 / Three rounds of review and experiments</span
-            ><span class="status">Research evidence</span>
+            <span>06 / Implementation evidence</span
+            ><span class="status">Committed checkpoint · 7 October</span>
           </div>
-          <h1 id="title-research" tabindex="-1">What changed after review</h1>
+          <h1 id="title-research" tabindex="-1">What now works</h1>
           <p class="lede">
-            We repaired a numeric rule, completed the host workflow, and tested the representation
-            choice.
+            Core records, exact numeric rules and several checking stages are implemented.
           </p>
-          <div class="review-grid">
-            <div class="review-findings">
-              <a
-                class="finding"
-                href="../../50---Python-Rewrite/10---Research/PY-R015---Numeric-Status-Repair-and-Independent-Oracles.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                ><span class="step-number">01 / CORRECTNESS</span>
-                <h2>Independent expectations</h2>
+          <div class="progress-grid">
+            <div class="foundation-list">
+              <div>
+                <span class="step-number">01</span>
+                <div>
+                  <strong>Exact values</strong>
+                  <p>Int32 arithmetic, exact index values and strict Boolean control.</p>
+                </div>
+              </div>
+              <div>
+                <span class="step-number">02</span>
+                <div>
+                  <strong>Program structure</strong>
+                  <p>Values, types, operation layouts and visibility inside nested regions.</p>
+                </div>
+              </div>
+              <div>
+                <span class="step-number">03</span>
+                <div>
+                  <strong>Ordered effects</strong>
+                  <p>
+                    Structural checks reject broken operation-order chains, including inside
+                    branches.
+                  </p>
+                </div>
+              </div>
+              <div class="checkpoint">
+                <strong>236</strong
+                ><span
+                  >component tests pass<br /><small
+                    >Committed revision <code>f8a993b</code></small
+                  ></span
+                >
+              </div>
+            </div>
+            <div class="documentation-window">
+              <div class="window-bar">RESEARCH REPO → PUBLISHED DOCUMENTATION</div>
+              <div class="doc-preview">
+                <span class="crumb">Python rewrite / Evidence</span>
+                <h2>A record we can review</h2>
                 <p>
-                  Repair floating-point status. Check values and state with independently derived
-                  answers.
-                </p></a
-              >
-              <a
-                class="finding"
-                href="../../50---Python-Rewrite/10---Research/PY-R016---Source-and-Host-Workflow-Refinement.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                ><span class="step-number">02 / PROGRAMMING MODEL</span>
-                <h2>Host workflow and failures</h2>
-                <p>
-                  Specify capture, checking, typed inputs, simulation, output access and resumable
-                  stops.
-                </p></a
-              >
-              <div class="documentation-link">
-                <span class="panel-label">Repository → published documentation</span
-                ><a
-                  href="../../50---Python-Rewrite/60---Validation/11---Design-Refinement-Iterations.html"
+                  The site connects design decisions, lab patterns and implementation evidence. Each
+                  result has a stated scope.
+                </p>
+                <div class="doc-lines">
+                  <a
+                    href="../../50---Python-Rewrite/30---Implementation-Design/80---Initial-Compiler-Goal.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Current progress and acceptance gates ↗</a
+                  ><a
+                    href="../../50---Python-Rewrite/30---Implementation-Design/60---Course-Syntax-and-Compiler-Trace.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >EE 109 patterns and proposed Python ↗</a
+                  ><a
+                    href="../../20---Research-Notes/50---Decision-Records/D-28.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Architecture decision and open obligations ↗</a
+                  >
+                </div>
+              </div>
+              <div class="doc-actions">
+                <a
+                  href="https://github.com/davidydu/spatial-research"
                   target="_blank"
                   rel="noopener noreferrer"
-                  >Open the review and evidence ↗</a
+                  >Research repo ↗</a
+                ><a
+                  href="../../50---Python-Rewrite/00---Python-Rewrite-Index.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Documentation site ↗</a
+                ><a
+                  href="https://github.com/davidydu/spatial-research-site"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Site repo ↗</a
                 >
-                <p>Examples → rules → implementation design → reproducible checks.</p>
               </div>
-            </div>
-            <div class="comparison">
-              <span class="step-number">03 / COMPILER REPRESENTATION</span>
-              <h2>Test the choice</h2>
-              <p>100,000 operations · branching graph<br />Build + bounded checks · p95 seconds</p>
-              <div class="bar-row">
-                <div><strong>Python records</strong><span>0.375 s</span></div>
-                <div class="bar-track"><span class="bar records" style="width: 8.23%"></span></div>
-              </div>
-              <div class="bar-row">
-                <div><strong>xDSL</strong><span>4.559 s</span></div>
-                <div class="bar-track"><span class="bar framework" style="width: 100%"></span></div>
-              </div>
-              <p class="comparison-conclusion">
-                Recommend compiler-owned records.<br />Keep xDSL available for useful backend work.
-              </p>
-              <p class="fine">
-                A bounded prototype comparison, not full compiler speed. xDSL maintains use lists
-                and adds structural checks; the record prototype does not. Further analyses and
-                transformations still need testing.
-              </p>
-              <a
-                class="comparison-source"
-                href="../../50---Python-Rewrite/10---Research/PY-R017---Compiler-Representation-Comparison.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Method, raw results and alternatives ↗</a
-              >
             </div>
           </div>
-          <div class="repo-links">
-            <a
-              href="https://github.com/davidydu/spatial-research"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Research repository ↗</a
-            ><a
-              href="https://github.com/davidydu/spatial-research-site"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Website repository ↗</a
-            ><a
-              href="../../50---Python-Rewrite/30---Implementation-Design/00---Implementation-Design-Index.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Five implementation blueprints ↗</a
-            ><a
-              href="../../90---Meta/2026-10-01-python-professor-presentation-outline.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Full speaking script ↗</a
+          <div class="remaining-work">
+            <strong>Still ahead</strong
+            ><span
+              >Full verifier · memory checking and execution · source → simulation ·
+              unseen-composition acceptance</span
             >
           </div>
           <div class="notes-source" hidden>
             <p>
-              We did three rounds of Codex and Fable review, with small experiments to check the
-              claims. The useful result is what changed, not how many reviewers agreed.
+              We have started building the foundations, and there is committed code behind this
+              slide. The first group handles exact numeric values. The next checks program records,
+              types, layouts and which values are visible in nested regions. Structural checking
+              also tracks the required order of effects.
             </p>
             <p>
-              First, we repaired the numeric status rule and separated its expected answer from the
-              candidate. Second, we completed the host workflow and made stopping, resuming and
-              output completion explicit. Third, we compared the two compiler representations.
+              The committed checkpoint passes 236 component tests. The source suite was rerun on
+              October 7 from an isolated copy of that commit. The checkpoint also has earlier source
+              and installed-package checks and independent specification and code-quality reviews.
+              These tests give evidence for those components; they do not establish a working
+              end-to-end compiler.
             </p>
             <p>
-              This chart shows one bounded 100,000-operation workload. Building and checking the
-              records took about 0.38 seconds at the 95th percentile, compared with about 4.56
-              seconds for xDSL. The full study includes another graph shape, snapshot and rewrite
-              costs, and memory use.
+              The full verifier, memory rules and execution path are still unfinished. We cannot yet
+              take the displayed source program through checking and simulation, and the
+              unfamiliar-program acceptance test has not happened.
             </p>
             <p>
-              This is not a measurement of a full Spatial compiler. xDSL maintains use lists and
-              does extra structural checking; our record prototype does not yet do that work. We
-              still need real analyses and harder transformations. Our recommendation comes from the
-              ownership design as well as these measurements.
+              We have also built a documentation system for reviewing the work. The research repo
+              holds the notes, contracts and evidence. The website publishes those files with links
+              between them. This progress page says exactly what works and what remains. The course
+              page connects EE 109 patterns to proposed Python. The architecture decision keeps
+              unresolved obligations visible.
             </p>
             <p>
-              Everything is in the research repository, and the website connects the examples,
-              decisions and evidence. I can open the review page here and follow a finding back to
-              its study or reproducible check.
-            </p>
-            <p class="note-cue">
-              Open the review and evidence page for a short tour. Show the repository link, then
-              return to this slide.
+              For the meeting, I would open the progress page briefly and show how it links back to
+              the design. The private implementation repo is also linked there for people with
+              access.
             </p>
           </div>
           <div class="sources-source" hidden>
             <a
-              href="../../50---Python-Rewrite/60---Validation/11---Design-Refinement-Iterations.html"
-              >Three review rounds and all dispositions</a
-            ><a
-              href="../../50---Python-Rewrite/10---Research/PY-R015---Numeric-Status-Repair-and-Independent-Oracles.html"
-              >Numeric defect, repair and independent checks</a
-            ><a
-              href="../../50---Python-Rewrite/10---Research/PY-R017---Compiler-Representation-Comparison.html"
-              >Measured representation comparison and limits</a
+              href="../../50---Python-Rewrite/30---Implementation-Design/80---Initial-Compiler-Goal.html"
+              >Committed implementation evidence and remaining gates</a
+            ><a href="https://github.com/davidydu/spatial-py/tree/f8a993b"
+              >Private implementation checkpoint — repository access required</a
+            ><a href="https://github.com/davidydu/spatial-research"
+              >Documentation source repository</a
             >
           </div>
         </section>
@@ -721,129 +649,132 @@ Checked program
           class="slide"
           id="first-build"
           aria-labelledby="title-first-build"
-          data-label="The first build"
+          data-label="Next result & discussion"
           data-time="1:30"
         >
           <div class="eyebrow">
-            <span>07 / The first implementation milestone</span
-            ><span class="status">For approval</span>
+            <span>07 / Next experiment, then HLS</span><span class="status">For discussion</span>
           </div>
-          <h1 id="title-first-build" tabindex="-1">One complete program through Python</h1>
+          <h1 id="title-first-build" tabindex="-1">The next result: a complete, reusable path</h1>
           <p class="lede">
-            Read the tiled program, check it, and simulate its result. Use that complete path to
-            establish the compiler’s structure.
+            Complete the memory-program workflow and test it on a new composition. Then take that
+            accepted subset toward hardware.
           </p>
-          <div class="milestone-grid">
+          <div class="next-grid">
             <div class="milestone-path">
               <div class="milestone-row">
                 <span class="step-number">01</span>
                 <div>
-                  <strong>Accept the program</strong>
+                  <strong>Source → check → simulate</strong>
                   <p>
-                    Capture, check and simulate a composed memory program. Save reproducible inputs
-                    and results.
+                    Accept the defined subset, explain invalid programs and save reproducible
+                    outputs and effects.
                   </p>
                 </div>
               </div>
               <div class="milestone-row">
                 <span class="step-number">02</span>
                 <div>
-                  <strong>Explain mistakes</strong>
-                  <p>Reject invalid types, shapes or names at their source locations.</p>
+                  <strong>Test composition and safe changes</strong>
+                  <p>
+                    Pass the unseen-program gate. Edit a program structurally, recheck it and
+                    preserve its behavior.
+                  </p>
                 </div>
               </div>
               <div class="milestone-row">
                 <span class="step-number">03</span>
                 <div>
-                  <strong>Check the behavior</strong>
+                  <strong>Checked plan → HLS → vendor validation</strong>
                   <p>
-                    Compare outputs and effects independently. Change shapes, helpers and aliases;
-                    test an early rewrite before expanding the compiler.
+                    Check the hardware plan against reference behavior, then measure generated
+                    hardware separately.
                   </p>
                 </div>
               </div>
+              <p class="fine">
+                HLS can begin for an accepted subset while reductions, richer numeric types and
+                other language families grow.
+              </p>
             </div>
             <div class="approval-note">
-              <div class="panel-label">Decision for this meeting</div>
-              <h2>Approve this model and first milestone?</h2>
+              <span class="panel-label">Discuss with the professor</span>
+              <h2>Is this the right first research result?</h2>
               <p>
-                Review the programming model, the proposed compiler design and the first
-                implementation milestone.
+                Review the shared checked-program architecture and the first subset’s acceptance
+                criteria.
               </p>
+              <p>Which EE 109 pattern should set the next priority once this path works?</p>
               <p class="fine">
-                The Python direction is agreed. The detailed design and semantic changes remain
-                proposed.
+                The initial experiment is already authorized. Adoption of the full architecture and
+                proposed semantic changes remains a separate decision.
               </p>
-              <div class="future-step">
-                <span>Then, for the checked subset</span
-                ><strong>Checked plan → plan execution → HLS</strong>
-                <p>Begin with the checked subset while the language grows.</p>
-              </div>
             </div>
           </div>
-          <div class="closing-line">First: a Python program we can check, run and explain.</div>
+          <div class="evidence-levels">
+            <span><strong>Language behavior</strong>Independent values and effects</span
+            ><span><strong>Compiler quality</strong>Composition, diagnostics and safe edits</span
+            ><span><strong>Hardware quality</strong>Correctness, resources and timing</span>
+          </div>
           <div class="notes-source" hidden>
             <p>
-              If this programming model and architecture look right, the next step is one complete
-              path through Python: read a composed memory program, check it, simulate it and return
-              a reproducible result.
+              The next deliverable is a complete path through the declared memory-program subset:
+              read source, check it, run it and return a reproducible result. It also has to explain
+              invalid programs and handle new combinations through the same rules.
             </p>
             <p>
-              We should test errors at the same time. A wrong shape or invalid name should produce a
-              useful diagnostic. A fault or unfinished run should never look like a successful
-              output.
+              We will test an actual structural edit as well. When we duplicate or move part of a
+              program, references, storage identities and effect order must still be right. A failed
+              candidate must leave the old program intact.
             </p>
             <p>
-              We should also change the program. Use different shapes, helpers and aliases, and try
-              an early transformation that duplicates a helper or expands a short loop. Check that
-              results, effects and storage identities are still right. That tests the compiler
-              structure before we build many features on top of it.
+              Once that subset is accepted, we can start hardware planning for it while the rest of
+              the language grows. We should check the plan’s behavior against the reference,
+              generate HLS, and then use the vendor tools to establish hardware correctness,
+              resources and timing. Python simulation alone does not establish any of those hardware
+              results.
             </p>
             <p>
-              Once that subset works, we can build and execute its hardware plan, then lower it to
-              HLS while the rest of the language grows. Broader numeric and communication support
-              has its own later gates.
-            </p>
-            <p>
-              What I’m asking you to approve is this programming model, the shared checked-program
-              architecture, and that first complete milestone. The choice of Python itself is
-              already settled.
+              The initial implementation experiment is already authorized. What I would like your
+              feedback on is the shared checked-program architecture, whether these acceptance
+              criteria make a useful first research result, and which EE 109 pattern should come
+              next. Proposed semantic changes remain explicit review items.
             </p>
           </div>
           <div class="sources-source" hidden>
-            <a href="../../50---Python-Rewrite/04---Python-Implementation-Roadmap.html"
-              >First implementation milestone and sequence</a
-            ><a
-              href="../../50---Python-Rewrite/30---Implementation-Design/40---Package-and-Conformance-Blueprint.html"
-              >Package APIs and conformance checks</a
+            <a
+              href="../../50---Python-Rewrite/30---Implementation-Design/80---Initial-Compiler-Goal.html"
+              >Initial experiment and acceptance criteria</a
+            ><a href="../../50---Python-Rewrite/04---Python-Implementation-Roadmap.html"
+              >Language and hardware roadmap</a
             ><a href="../../20---Research-Notes/50---Decision-Records/D-28.html"
-              >Detailed architecture and proposed semantic changes</a
+              >Architecture and proposed semantic changes</a
             >
           </div>
         </section>
       </main>
       <footer class="deck-footer">
         <nav class="chapter-nav" aria-label="Slides">
-          <button data-slide="python" aria-current="step">
+          <button data-slide="python" aria-label="01 The idea" aria-current="step">
             <span class="chapter-number">01</span
             ><span class="chapter-label">The idea</span></button
-          ><button data-slide="program">
+          ><button data-slide="program" aria-label="02 The program">
             <span class="chapter-number">02</span
             ><span class="chapter-label">The program</span></button
-          ><button data-slide="python-boundary">
+          ><button data-slide="python-boundary" aria-label="03 Python boundary">
             <span class="chapter-number">03</span
-            ><span class="chapter-label">Run a program</span></button
-          ><button data-slide="compiler">
+            ><span class="chapter-label">Python boundary</span></button
+          ><button data-slide="compiler" aria-label="04 Architecture">
             <span class="chapter-number">04</span
-            ><span class="chapter-label">One program</span></button
-          ><button data-slide="behavior">
+            ><span class="chapter-label">Architecture</span></button
+          ><button data-slide="behavior" aria-label="05 Generality">
             <span class="chapter-number">05</span
-            ><span class="chapter-label">The behavior</span></button
-          ><button data-slide="research">
+            ><span class="chapter-label">Generality</span></button
+          ><button data-slide="research" aria-label="06 Progress">
             <span class="chapter-number">06</span
-            ><span class="chapter-label">Review findings</span></button
-          ><button data-slide="first-build">
-            <span class="chapter-number">07</span><span class="chapter-label">The first build</span>
+            ><span class="chapter-label">Progress</span></button
+          ><button data-slide="first-build" aria-label="07 Next result">
+            <span class="chapter-number">07</span><span class="chapter-label">Next result</span>
           </button>
         </nav>
         <div class="transport">
@@ -864,6 +795,59 @@ Checked program
         </header>
         <div id="dialog-content"></div>
       </div>
+    </dialog>
+    <dialog id="map-dialog" aria-labelledby="map-title" aria-describedby="map-hint">
+      <header class="map-header">
+        <div>
+          <span class="panel-label">Excalidraw / engineering architecture</span>
+          <h2 id="map-title">From the big picture to the details</h2>
+        </div>
+        <button id="map-close" autofocus>Close ×</button>
+      </header>
+      <div class="map-toolbar">
+        <div class="map-presets" aria-label="Map sections">
+          <button data-map-section="overview">Overview</button
+          ><button data-map-section="compiler">Compiler</button
+          ><button data-map-section="execution">Execution &amp; HLS</button
+          ><button data-map-section="roadmap">Lab roadmap</button
+          ><button data-map-section="all">Whole map</button>
+        </div>
+        <div class="map-zoom">
+          <button id="map-out" aria-label="Zoom out">−</button
+          ><output id="map-zoom-value" aria-live="polite">100%</output
+          ><button id="map-in" aria-label="Zoom in">+</button>
+        </div>
+      </div>
+      <p id="map-hint">
+        Drag to pan, or focus the map and use arrow keys to scroll. Use + / − to zoom. Proposed
+        responsibilities; implementation status is on slide 6.
+      </p>
+      <div
+        id="map-viewport"
+        tabindex="0"
+        role="region"
+        aria-label="Scrollable architecture diagram"
+      >
+        <img
+          id="map-image"
+          src="./assets/architecture.svg"
+          width="3400"
+          height="3215"
+          alt="Complete proposed engineering architecture: source checking and immutable program records, invocation state, simulation, hardware planning, and staged EE 109 coverage."
+          draggable="false"
+        />
+      </div>
+      <footer class="map-footer">
+        <a href="./assets/architecture.excalidraw" download>Download editable Excalidraw</a
+        ><a href="./assets/architecture.svg" target="_blank" rel="noopener noreferrer"
+          >Open full SVG ↗</a
+        ><a
+          href="../../50---Python-Rewrite/30---Implementation-Design/70---Engineering-Architecture-Map.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Read the map guide ↗</a
+        >
+      </footer>
     </dialog>
     <noscript
       ><p>
