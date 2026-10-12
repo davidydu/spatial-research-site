@@ -2,6 +2,10 @@
 
 [Quartz](https://quartz.jzhao.xyz/) site that renders the [spatial-research](https://github.com/davidydu/spatial-research) vault as a navigable research and specification website. Published at [Spatial Research](https://davidydu.github.io/spatial-research-site/).
 
+For a fresh agent in any harness, start with [AGENTS.md](AGENTS.md) and the
+[shared project handoff](https://github.com/davidydu/spatial-research/blob/main/90%20-%20Meta/project-handoff.md).
+They identify the active compiler worktree, current evidence and next task.
+
 ## Architecture
 
 Two-repo layout to keep concerns clean:
@@ -69,7 +73,7 @@ Historical research and the frozen D-26 protocol remain accessible. The homepage
 
 ## Python presentation
 
-The current ten-minute presentation lives at `presentation/python/` and publishes to `/spatial-research-site/presentation/python/`. It follows one proposed Spatial program through Python source capture, checking and reference simulation. All interactive calculations are illustrations, not compiler executions. The historical deck remains at `presentation/`.
+The current ten-minute presentation lives at `presentation/python/` and publishes to `/spatial-research-site/presentation/python/`. It explains what a Python Spatial compiler looks like, its feasibility, implementation plan and next milestones. All interactive calculations are illustrations, not compiler executions. The historical deck remains at `presentation/`.
 
 Use arrow keys or the numbered navigation to change slides, `N` for speaker notes, `E` for sources and `F` for fullscreen. The tile diagram, compiler stages, scale slider and queue example have their own controls. Documentation links open in another tab. Printing includes all seven slides. The complete outline and speaking script live in the research vault at `90 - Meta/2026-10-01-python-professor-presentation-outline.md`.
 
