@@ -9,8 +9,9 @@ No private harness memory is required.
   Research content belongs in `davidydu/spatial-research`; compiler code and
   current implementation state belong on `spatial-py`'s `work/initial-reference`.
 - The active Python deck is `presentation/python/`; the root deck is historical.
-  Slides and interactive examples illustrate the proposal. Check compiler
-  evidence before claiming progress or labeling an illustration as execution.
+  Distinguish the proposed full architecture from implemented progress. The
+  dated result views display saved compiler outputs; they do not execute the
+  compiler in the browser. Check current evidence before refreshing claims.
 - Use `npm run build:site -- --directory '<research checkout>'` for the complete
   documentation/presentation build. Do not edit generated `public/` or CI content.
 - Publish research first. Site `main` pushes and workflow dispatches deploy the

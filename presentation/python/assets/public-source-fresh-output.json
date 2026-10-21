@@ -1,0 +1,26 @@
+{
+  "schema": "spatial.public-source-demo/1",
+  "scope": "Public source capture/specialization; private reference execution",
+  "captured_templates": 1,
+  "specializations": 2,
+  "cases": [
+    {
+      "input": [3, 7, 11],
+      "bias": -2,
+      "output": [1, 5, 9],
+      "outcome": "Completed",
+      "scratch_scopes": 3,
+      "host_inputs_unchanged": true,
+      "matches_literal_expectations": true
+    },
+    {
+      "input": [3, 7],
+      "bias": 4,
+      "output": [7, 11],
+      "outcome": "Completed",
+      "scratch_scopes": 2,
+      "host_inputs_unchanged": true,
+      "matches_literal_expectations": true
+    }
+  ]
+}

@@ -3,18 +3,18 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#f8f7f3" />
+    <meta name="theme-color" content="#f8f6ef" />
     <meta
       name="description"
-      content="What a pure Python rewrite of Spatial would look like. A ten-minute research presentation about Python feasibility, compiler architecture, the implementation plan and next milestones, with an interactive architecture map and speaker notes."
+      content="Python Spatial progress, 21 October 2026. Working Lab 1 reference execution, reusable language features, architecture and next milestones. A ten-minute presentation with speaker notes and an interactive engineering map."
     />
-    <title>Spatial in Python</title>
+    <title>Python Spatial — Progress · 21 October 2026</title>
     <link
       rel="icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23f8f7f3'/%3E%3Cpath d='M9 9h9v9H9zm13 0h9v9h-9zM9 22h9v9H9zm13 0h9v9h-9z' fill='%23496681'/%3E%3C/svg%3E"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23f8f6ef'/%3E%3Cpath d='M9 9h9v9H9zm13 0h9v9h-9zM9 22h9v9H9zm13 0h9v9h-9z' fill='%233556b2'/%3E%3C/svg%3E"
     />
-    <link rel="stylesheet" href="./presentation.css?v=20261007-implementation" />
-    <script src="./presentation.js?v=20261007-implementation" defer></script>
+    <link rel="stylesheet" href="./presentation.css?v=20261021" />
+    <script src="./presentation.js?v=20261021" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#slides">Skip to presentation</a>
@@ -25,12 +25,12 @@
             ><span></span><span></span><span></span><span></span></span
           ><span>SPATIAL <small>RESEARCH</small></span></a
         >
-        <div class="masthead-meta">Python rewrite <span>7 October 2026</span></div>
+        <div class="masthead-meta">Python rewrite <span>21 October 2026</span></div>
         <div class="tools" aria-label="Presentation tools">
-          <button class="tool" id="notes-button" title="Speaker notes (N)">Notes</button>
-          <button class="tool" id="sources-button" title="Research sources (E)">Sources</button>
-          <button class="tool" id="fullscreen-button" title="Fullscreen (F)">Fullscreen</button>
-          <button class="tool" id="help-button" aria-label="Keyboard shortcuts">?</button>
+          <button class="tool" id="notes-button" title="Speaker notes (N)">Notes</button
+          ><button class="tool" id="sources-button" title="Evidence sources (E)">Sources</button
+          ><button class="tool" id="fullscreen-button" title="Fullscreen (F)">Fullscreen</button
+          ><button class="tool" id="help-button" aria-label="Keyboard shortcuts">?</button>
         </div>
       </header>
       <main id="slides">
@@ -38,173 +38,80 @@
           class="slide is-active"
           id="python"
           aria-labelledby="title-python"
-          data-label="The whole system"
-          data-time="1:15"
+          data-label="The result"
+          data-time="1:00"
         >
           <div class="eyebrow">
-            <span>01 / The whole system</span><span class="status">Architecture proposal</span>
+            <span>01 / The result</span><span class="status">Working reference subset</span>
           </div>
-          <h1 id="title-python" tabindex="-1">What does a Python version of Spatial look like?</h1>
+          <h1 id="title-python" tabindex="-1">Python Spatial now runs<br />memory programs.</h1>
           <p class="lede">
-            A Spatial language in Python, with a compiler and reference execution engine also
-            written in Python.
+            A Python frontend, compiler and reference engine. The first source-to-result path works.
           </p>
-          <div class="system-picture" aria-label="Python Spatial system">
-            <div class="system-layer">
-              <span class="layer-tag">WRITE</span>
-              <div>
-                <h2>Express Spatial through Python</h2>
-                <p>Python syntax and tooling; explicit Spatial types, storage and control.</p>
+          <div class="opening-grid">
+            <div class="opening-statement">
+              <span class="panel-label">What changed since the design</span>
+              <p>
+                We can now take actual source,<br />check its meaning,<br />and execute its memory
+                operations.
+              </p>
+              <div class="result-stamp">
+                <span class="dot"></span>Lab 1 tiled memory example passes
               </div>
             </div>
-            <div class="system-layer">
-              <span class="layer-tag">COMPILE</span>
+            <div
+              class="opening-path"
+              aria-label="Working path from Python source to checked model to reference results"
+            >
               <div>
-                <h2>Build a checked model of the program</h2>
-                <p>Python owns the language rules, program representation and transformations.</p>
+                <span>01</span>
+                <h2>Python source</h2>
+                <p>Spatial types, memory and control</p>
               </div>
-            </div>
-            <div class="system-layer">
-              <span class="layer-tag">EXECUTE</span>
               <div>
-                <h2>Run the model in Python</h2>
-                <p>A reference for values and state changes. HLS is the agreed hardware target.</p>
+                <span>02</span>
+                <h2>Checked program</h2>
+                <p>One shared set of language rules</p>
+              </div>
+              <div>
+                <span>03</span>
+                <h2>Reference results</h2>
+                <p>Values, memory changes and lifetimes</p>
               </div>
             </div>
           </div>
-          <div class="preserve-rebuild">
-            <div>
-              <span class="panel-label">Preserve Spatial’s concepts</span>
-              <p>Memories · controllers · parallel work · reductions · streams</p>
-            </div>
-            <div>
-              <span class="panel-label">Rebuild the implementation</span>
-              <p>Source handling · compiler passes · checks · simulation · backend</p>
-            </div>
-          </div>
-          <div class="notes-source" hidden>
-            <p>
-              The answer I’m proposing is a complete Python implementation of Spatial: a language
-              people write through Python, a compiler written in Python, and a Python engine that
-              runs the program’s defined behavior.
-            </p>
-            <p>
-              The Spatial concepts stay recognizable: explicit memory, control, parallel work,
-              reductions and communication. We would rebuild the machinery that reads, represents,
-              checks and executes those concepts.
-            </p>
-            <p>
-              The compiler would produce a structured, checked description of the program. We could
-              run that description in Python first. The agreed HLS backend would use that
-              description to build a hardware implementation.
-            </p>
-            <p>
-              HLS is already our agreed target. Today I want to explain why this system is feasible
-              in Python, how we plan to build it, what we have completed, and what we should
-              validate next.
-            </p>
-          </div>
-          <div class="sources-source" hidden>
-            <a href="../../20---Research-Notes/50---Decision-Records/D-28.html"
-              >Proposed architecture and design decisions</a
-            ><a href="../../50---Python-Rewrite/05---Python-Professor-Brief.html"
-              >Professor discussion brief</a
-            ><a href="../../50---Python-Rewrite/60---Validation/01---Python-Coverage-Ledger.html"
-              >Full language coverage</a
+          <div class="takeaway">
+            <strong>Today’s result</strong
+            ><span
+              >An executable language subset. Broader Spatial support and hardware lowering remain
+              ahead.</span
             >
           </div>
-        </section>
-        <section
-          class="slide"
-          id="feasibility"
-          aria-labelledby="title-feasibility"
-          data-label="Why Python works"
-          data-time="1:30"
-        >
-          <div class="eyebrow">
-            <span>02 / Why Python works</span><span class="status">Architecture proposal</span>
-          </div>
-          <h1 id="title-feasibility" tabindex="-1">Yes, this is feasible in Python.</h1>
-          <p class="lede">
-            Python can implement the compiler and reference engine. We define Spatial’s behavior
-            explicitly.
-          </p>
-          <div class="feasibility-grid">
-            <div>
-              <span class="step-number">01 / REPRESENT</span>
-              <h2>Programs are data</h2>
-              <p>
-                Typed Python records describe values, memories and control. Compiler passes inspect
-                and transform those records.
-              </p>
-            </div>
-            <div>
-              <span class="step-number">02 / DEFINE</span>
-              <h2>Spatial owns the rules</h2>
-              <p>
-                We implement exact numeric behavior, storage lifetimes and effect order. Python’s
-                default arithmetic does not define the accelerator.
-              </p>
-            </div>
-            <div>
-              <span class="step-number">03 / CHECK</span>
-              <h2>Correctness is testable</h2>
-              <p>
-                One verifier checks every input route. Independent expected results test the
-                reference engine and transformations.
-              </p>
-            </div>
-          </div>
-          <div class="feasibility-bottom">
-            <div>
-              <span class="panel-label">Language boundary</span>
-              <p>
-                Ordinary Python for experiments.<br />A defined Python subset for accelerator
-                kernels.
-              </p>
-            </div>
-            <div>
-              <span class="panel-label">Engineering question to measure</span>
-              <p>
-                Compile time and simulator speed at useful program sizes. The full workflow still
-                needs validation.
-              </p>
-            </div>
-          </div>
           <div class="notes-source" hidden>
             <p>
-              Yes. The compiler’s algorithms and data structures can all be implemented in Python.
-              The main work is representing a program, analyzing its structure, checking rules and
-              transforming it.
+              The main update is that Python Spatial now runs small memory programs through a real
+              compiler and reference execution path. We can start with Spatial written in a defined
+              Python subset, check it, prepare its inputs, and obtain the expected results.
             </p>
             <p>
-              The important distinction is between the language we use to write the compiler and the
-              behavior that compiler implements. For example, we can use Python integers while
-              explicitly enforcing Spatial’s fixed-width arithmetic. We also define storage
-              identity, lifetimes and the order of state changes.
+              The frontend, compiler and reference engine are implemented in Python. Spatial still
+              has explicit arithmetic, memory and control rules. HLS remains the eventual hardware
+              destination.
             </p>
             <p>
-              Ordinary Python remains available for data preparation and experiments. Accelerator
-              kernels use a defined subset that the compiler reads as source. That keeps their
-              meaning under our control.
-            </p>
-            <p>
-              So my answer on feasibility is yes. The practical question is how well the complete
-              implementation performs. We need to measure compilation time, simulator speed and
-              memory use on useful workloads. Our existing components give us evidence for parts of
-              the design; they do not yet establish the complete workflow.
+              I’ll show one concrete tiled-memory result, then the reusable features that now work
+              together. I’ll also separate what we have demonstrated from the public workflow and
+              language coverage that still need work. The old presentation stopped at compiler
+              components; today the useful change is that these pieces execute programs together.
             </p>
           </div>
           <div class="sources-source" hidden>
             <a
-              href="../../50---Python-Rewrite/10---Research/PY-R006---Compiler-Architecture-and-Framework-Choice.html"
-              >Python compiler architecture</a
+              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/30---Implementation-Design/80---Initial-Compiler-Goal"
+              >Implementation progress ↗</a
             ><a
-              href="../../50---Python-Rewrite/10---Research/PY-R002---Numeric-and-Reduction-Semantics.html"
-              >Explicit numeric behavior</a
-            ><a
-              href="../../50---Python-Rewrite/10---Research/PY-R007---Host-Workflow-Reproducibility-and-Validation.html"
-              >Workflow and performance acceptance</a
+              href="https://github.com/davidydu/spatial-py/tree/0c7914057970d1cdf3b6a3361f68e761c812b0a6"
+              >Compiler checkpoint ↗</a
             >
           </div>
         </section>
@@ -212,477 +119,603 @@
           class="slide"
           id="compiler"
           aria-labelledby="title-compiler"
-          data-label="Inside the compiler"
+          data-label="The architecture"
           data-time="1:30"
         >
           <div class="eyebrow">
-            <span>03 / Inside the compiler</span><span class="status">Architecture proposal</span>
+            <span>02 / The architecture</span><span class="status">Working reference subset</span>
           </div>
-          <h1 id="title-compiler" tabindex="-1">What does the Python compiler build?</h1>
+          <h1 id="title-compiler" tabindex="-1">One program model connects the system.</h1>
           <p class="lede">
-            A typed, structured model of the program that every later stage can use.
+            Python implements the compiler. Spatial still defines the meaning of numbers, memory and
+            control.
           </p>
-          <div class="meaning-flow">
+          <div
+            class="pipeline"
+            aria-label="Python source to capture and specialize to checked program to reference execution"
+          >
+            <div class="pipeline-node">
+              <span class="panel-label">Write</span>
+              <h2>Python<br />source</h2>
+              <p>A defined kernel subset</p>
+            </div>
+            <span class="connector">→</span>
+            <div class="pipeline-node">
+              <span class="panel-label">Configure</span>
+              <h2>Capture &amp;<br />specialize</h2>
+              <p>Sizes and constants</p>
+              <span class="small-tag">Public entry point</span>
+            </div>
+            <span class="connector">→</span>
+            <div class="pipeline-node central">
+              <span class="panel-label">Check</span>
+              <h2>Structured<br />program model</h2>
+              <p>Types, effects and lifetimes</p>
+            </div>
+            <span class="connector">→</span>
+            <div class="pipeline-node">
+              <span class="panel-label">Run</span>
+              <h2>Python<br />reference</h2>
+              <p>Defined program behavior</p>
+              <span class="small-tag">Internal invocation</span>
+            </div>
+          </div>
+          <div class="architecture-bottom">
+            <div class="semantic-rules">
+              <span class="panel-label">Why this scales beyond one example</span>
+              <p>Each language construct has a rule.<br />New programs combine those rules.</p>
+            </div>
+            <div class="future-path">
+              <span class="panel-label">Later / from the checked model</span>
+              <h2>Hardware planning → HLS</h2>
+              <p>Preserve the behavior we can already test.</p>
+            </div>
+          </div>
+          <div class="map-strip">
             <div>
-              <span class="panel-label">Input routes</span
-              ><strong>Source files / cells<br />Generators / saved artifacts</strong>
-            </div>
-            <span class="meaning-arrow" aria-hidden="true">→</span>
-            <div>
-              <span class="panel-label">Python compiler</span
-              ><strong>Resolve · normalize · verify</strong>
-            </div>
-            <span class="meaning-arrow" aria-hidden="true">→</span>
-            <div class="meaning-core">
-              <span class="panel-label">Shared program model</span
-              ><strong>Checked Spatial meaning</strong>
-            </div>
-          </div>
-          <div class="record-facts">
-            <span><strong>Values</strong>Types and exact numeric rules</span
-            ><span><strong>Storage</strong>Identity, views and lifetimes</span
-            ><span><strong>Control</strong>Regions, dependencies and effects</span>
-          </div>
-          <figure class="map-preview">
-            <button
-              class="map-launch"
-              data-open-map
-              aria-label="Explore the full Excalidraw engineering architecture map"
-            >
-              <img
-                src="./assets/architecture-overview.svg"
-                width="3400"
-                height="550"
-                alt="Excalidraw overview: captured source becomes one checked program shared by Python reference execution and hardware planning."
-              /><span class="map-open-label">Explore engineering map ↗</span>
-            </button>
-            <figcaption>
-              Immutable Python records hold the meaning. A compiler transformation creates a
-              candidate and checks it before use.
-            </figcaption>
-          </figure>
-          <div class="map-inline-links">
-            <a href="./assets/architecture.excalidraw" download>Editable Excalidraw ↓</a
-            ><a
-              href="../../50---Python-Rewrite/30---Implementation-Design/70---Engineering-Architecture-Map.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Full architecture and module boundaries ↗</a
-            >
-          </div>
-          <div class="notes-source" hidden>
-            <p>
-              The center of the design is one shared program model. It holds typed records for
-              operations, control regions and storage, with explicit links between them.
-            </p>
-            <p>
-              The model keeps the facts that later stages need: the type of each value, which views
-              share memory, where storage is valid, and which operations must happen in order. These
-              facts should survive changes to the program.
-            </p>
-            <p>
-              Written source, generated programs and saved artifacts all reach the same verifier. A
-              fully verified candidate becomes a checked program. Some conditions can remain as
-              declared input requirements or supported runtime checks.
-            </p>
-            <p>
-              The reference engine runs those records with separate state for each invocation.
-              Compiler transformations build a new candidate and check it before use. The later
-              backend consumes the same meaning.
-            </p>
-            <p>
-              This Excalidraw map connects that overview to the detailed module responsibilities. We
-              can zoom into the checker, runtime or roadmap during discussion. It shows the proposed
-              full system; the progress slide will show which parts are implemented.
-            </p>
-          </div>
-          <div class="sources-source" hidden>
-            <a
-              href="../../50---Python-Rewrite/30---Implementation-Design/70---Engineering-Architecture-Map.html"
-              >Editable engineering architecture map</a
-            ><a
-              href="../../50---Python-Rewrite/30---Implementation-Design/10---Source-Checker-and-IR-Blueprint.html"
-              >Source, verifier and representation rules</a
-            ><a
-              href="../../50---Python-Rewrite/10---Research/PY-R017---Compiler-Representation-Comparison.html"
-              >Why compiler-owned Python records</a
-            >
-          </div>
-        </section>
-        <section
-          class="slide"
-          id="implementation"
-          aria-labelledby="title-implementation"
-          data-label="How we build it"
-          data-time="2:15"
-        >
-          <div class="eyebrow">
-            <span>04 / How we build it</span><span class="status">Implementation plan</span>
-          </div>
-          <h1 id="title-implementation" tabindex="-1">Build one complete path, then expand it.</h1>
-          <p class="lede">
-            The first milestone connects source, checking and execution for a reusable set of
-            language features.
-          </p>
-          <div class="implementation-grid">
-            <div class="initial-scope">
-              <span class="panel-label">First complete subset</span>
-              <h2>Composed memory programs</h2>
+              <span class="panel-label">Engineering detail, when useful</span>
               <p>
-                Exact Int32 arithmetic, typed inputs, local and external memory, views and
-                transfers, loops, branches and helpers.
-              </p>
-              <div class="scope-path">Python source → checked program → reference result</div>
-              <p class="scope-principle">
-                Each feature must work through the whole path, including errors and saved artifacts.
+                The full proposed architecture includes the remaining compiler and backend work.
               </p>
             </div>
-            <ol class="implementation-steps">
-              <li>
-                <strong>Finish the subset’s verifier</strong>
-                <p>
-                  Complete memory, alias, lifetime and initialization checks; publish checked
-                  programs.
-                </p>
-              </li>
-              <li>
-                <strong>Connect source and host inputs</strong>
-                <p>
-                  Capture the defined grammar. Bind parameters and validate data through the shared
-                  rules.
-                </p>
-              </li>
-              <li>
-                <strong>Run the checked program</strong>
-                <p>
-                  Add invocation state, memory operations and ordered execution, then expose the API
-                  and artifacts.
-                </p>
-              </li>
-              <li>
-                <strong>Test composition and change</strong>
-                <p>
-                  Check unfamiliar combinations and real structural edits against independent
-                  expectations.
-                </p>
-              </li>
-            </ol>
+            <button class="action-button" data-open-map>Explore the Excalidraw map ↗</button>
           </div>
           <div class="notes-source" hidden>
             <p>
-              The implementation plan starts with a complete path for a limited but reusable
-              language subset. The first family is memory programs using exact Int32 arithmetic,
-              typed inputs, local and external storage, views, transfers, loops, branches and
-              helpers.
+              The organizing idea is one explicit model of the Spatial program. Source is captured
+              as data. Compile-time settings specialize that source into a candidate program. The
+              checker then validates the admitted program before the reference engine runs it with
+              prepared inputs.
             </p>
             <p>
-              We start by finishing the complete verifier for the initial subset. It needs to check
-              memory relationships, lifetimes, initialization and the remaining whole-program
-              obligations before it can publish a checked program. Several lower-level pieces
-              already work.
+              The model records the arithmetic, storage, views, control and order of state changes.
+              Python is the implementation language, while these records and rules define Spatial’s
+              behavior. That is how fixed-width integer overflow can remain predictable even though
+              ordinary Python integers have different behavior.
             </p>
             <p>
-              Next we connect source capture and host inputs. The frontend reads the defined Python
-              grammar and lowers it through general rules. A helper remains a helper, a loop remains
-              a loop, and a memory operation remains a memory operation. Generated programs and
-              imported artifacts use the same verifier.
+              The same model gives us a place to add reusable language features. A helper, a memory
+              window and a loop participate in the same checking and execution rules. We do not need
+              a separate compiler path for each example.
             </p>
             <p>
-              Then we complete reference execution. Each run has its own values and memory state.
-              The engine executes the selected control paths, preserves state-change order and
-              reports faults. We connect that to a usable API and saved artifacts.
-            </p>
-            <p>
-              Finally, we test whether those pieces actually compose. After freezing the compiler,
-              an independent author writes a structurally unfamiliar program within the supported
-              subset. It must run without a special compiler path. We also make a real structural
-              edit, recheck it and compare its behavior with independent expectations.
-            </p>
-            <p>
-              This is how we avoid repeating the earlier mistake. The implementation unit is a
-              language feature working through the full pipeline. A successful application alone
-              does not establish general support.
+              The embedded engineering map shows the larger design, including future
+              transformations, saved artifacts and hardware planning. HLS will require additional
+              target-specific work and validation. For today, the solid result is the
+              source-to-reference path for the supported subset. The map is useful for seeing how
+              that path fits into the eventual system.
             </p>
           </div>
           <div class="sources-source" hidden>
             <a
-              href="../../50---Python-Rewrite/30---Implementation-Design/80---Initial-Compiler-Goal.html"
-              >Authorized first goal and its acceptance gates</a
+              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/30---Implementation-Design/70---Engineering-Architecture-Map"
+              >Architecture map ↗</a
             ><a
-              href="../../50---Python-Rewrite/30---Implementation-Design/10---Source-Checker-and-IR-Blueprint.html"
-              >Frontend and verifier responsibilities</a
+              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/05---Python-Professor-Brief"
+              >Language design ↗</a
             ><a
-              href="../../50---Python-Rewrite/30---Implementation-Design/40---Package-and-Conformance-Blueprint.html"
-              >Execution APIs, artifacts and conformance</a
+              href="https://github.com/davidydu/spatial-py/blob/0c7914057970d1cdf3b6a3361f68e761c812b0a6/docs/support-ledger.md"
+              >Implementation support ledger ↗</a
             >
           </div>
         </section>
         <section
           class="slide"
-          id="progress"
-          aria-labelledby="title-progress"
-          data-label="What works today"
+          id="lab1"
+          aria-labelledby="title-lab1"
+          data-label="The working example"
           data-time="1:30"
         >
           <div class="eyebrow">
-            <span>05 / What works today</span
-            ><span class="status">Component checkpoint · 7 Oct</span>
+            <span>03 / The working example</span><span class="status">Replayed today</span>
           </div>
-          <h1 id="title-progress" tabindex="-1">The foundations are implemented.</h1>
+          <h1 id="title-lab1" tabindex="-1">The first Lab 1 memory example works.</h1>
           <p class="lede">
-            The committed checkpoint has tested compiler components. The complete
-            source-to-simulation path is still unfinished.
+            Read 32 values from DRAM, process two 16-value tiles in SRAM, and write the scaled
+            result back.
           </p>
-          <div class="progress-grid implementation-progress">
-            <div class="foundation-list">
-              <span class="panel-label">Implemented and reviewed</span>
-              <div>
-                <span class="step-number">01</span>
-                <div>
-                  <strong>Program structure</strong>
-                  <p>
-                    Immutable records, real use/ownership indices and bounded structural checks.
-                  </p>
-                </div>
-              </div>
-              <div>
-                <span class="step-number">02</span>
-                <div>
-                  <strong>Numeric and type rules</strong>
-                  <p>
-                    Exact Int32 / Index primitives, strict Bool, type layouts and scalar
-                    normalization.
-                  </p>
-                </div>
-              </div>
-              <div>
-                <span class="step-number">03</span>
-                <div>
-                  <strong>Input boundaries</strong>
-                  <p>Closed input validation and source/dependency provenance.</p>
-                </div>
-              </div>
-              <div class="checkpoint">
-                <strong>236</strong
-                ><span
-                  >passing component tests<br /><small
-                    >Committed checkpoint f8a993b · source suite rechecked 7 Oct</small
-                  ></span
-                >
-              </div>
+          <div class="memory-flow">
+            <div>
+              <span class="panel-label">Input / DRAM</span><strong>32 values</strong>
+              <div class="tile-pair"><span>Tile 1 · 16</span><span>Tile 2 · 16</span></div>
             </div>
-            <div class="remaining-panel">
-              <span class="panel-label">Needed to finish the first milestone</span>
-              <h2>Connect and validate<br />the full path</h2>
-              <ul>
-                <li>
-                  Complete verification of the initial subset, including memory and checked-program
-                  publication.
-                </li>
-                <li>Source capture, prepared host inputs and the reference executor.</li>
-                <li>
-                  Artifacts, structural editing, unfamiliar composition and workflow measurements.
-                </li>
-              </ul>
-              <p class="fine">
-                Component tests establish these foundations. They do not establish a working
-                end-to-end compiler.
-              </p>
+            <b aria-hidden="true">→</b>
+            <div class="sram-box">
+              <span class="panel-label">Scratch / SRAM</span><strong>Load → multiply ×2</strong>
+              <p>Local memory for each tile</p>
+            </div>
+            <b aria-hidden="true">→</b>
+            <div>
+              <span class="panel-label">Output / DRAM</span><strong>32 results</strong>
+              <div class="tile-pair output"><span>Tile 1 · 16</span><span>Tile 2 · 16</span></div>
             </div>
           </div>
-          <div class="supporting-links">
-            <button id="evidence-button">Detailed evidence ↗</button
-            ><a
-              href="https://github.com/davidydu/spatial-research"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Research repo ↗</a
-            ><a
-              href="../../50---Python-Rewrite/00---Python-Rewrite-Index.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Documentation site ↗</a
-            >
+          <div class="lab-results">
+            <div class="result-panel">
+              <div class="result-header">
+                <span class="panel-label">Recorded compiler output</span>
+                <div class="segmented" role="group" aria-label="Recorded Lab 1 case">
+                  <button data-case="0" aria-pressed="true">Ordinary values</button
+                  ><button data-case="1" aria-pressed="false">Int32 overflow</button>
+                </div>
+              </div>
+              <div id="lab-output" class="number-grid" aria-label="32 output values"></div>
+              <p id="lab-explanation" class="result-explanation" aria-live="polite"></p>
+            </div>
+            <div class="result-checks">
+              <span class="passed">Both cases pass</span>
+              <p>All 32 outputs match independently calculated answers.</p>
+              <p>Loads, writes and scratch-memory lifetimes are recorded.</p>
+              <a href="./assets/lab1-reference-fresh-output.json" target="_blank" rel="noopener"
+                >View execution record ↗</a
+              >
+            </div>
           </div>
+          <p class="fine">
+            Replayed 21 October · CPython 3.14.5 · Recorded reference execution, not a live browser
+            simulation or full Lab 1 coverage.
+          </p>
           <div class="notes-source" hidden>
             <p>
-              We have moved beyond architecture notes into the foundations of the Python compiler.
-              The committed checkpoint has 236 passing component tests. The source suite was
-              rechecked on October 7.
+              The first concrete example is a tiled-scale memory program based on Lab 1. It
+              processes thirty-two values in two tiles of sixteen. Each tile moves from external
+              memory into local SRAM, is multiplied by a scale, and is written back.
             </p>
             <p>
-              The implemented pieces include immutable program records, indices that track actual
-              uses and ownership, exact integer primitives, type and layout rules, scalar
-              normalization, input validation and local structural checks.
+              With inputs zero through thirty-one and a scale of two, the output is zero, two, four,
+              and so on through sixty-two. A second input includes integer boundary values, and its
+              overflow results agree with the independently specified Int32 expectations.
             </p>
             <p>
-              These are useful pieces of a compiler, but we cannot yet take a Spatial Python source
-              file through the complete checking and execution path. The full verifier and memory
-              support are unfinished, and source capture and reference execution still need to be
-              connected.
+              This is actual source going through the compiler, checking, input preparation and
+              reference execution. The run also records the local allocations, transfers, reads,
+              writes and cleanup. Seven required checks are proved during checking; four are
+              enforced by runtime guards.
             </p>
             <p>
-              The next work is therefore concrete. Finish that path, then demonstrate shared
-              behavior across source, generated programs and saved artifacts. The
-              unfamiliar-composition test, structural editing test and workflow measurements remain
-              open.
+              Both cases were rerun today. Their values and recorded behavior match the saved
+              expectations. This establishes the tiled-memory example and the features it uses. Lab
+              1’s registers, FIFOs and reduction or fold families remain to be implemented, and this
+              result does not establish hardware behavior.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a href="./assets/lab1-reference-fresh-output.json">Fresh execution record ↗</a
+            ><a
+              href="https://github.com/davidydu/spatial-py/blob/0c7914057970d1cdf3b6a3361f68e761c812b0a6/tests/fixtures/sources/lab1_tiled_scale.py"
+              >Actual source ↗</a
+            ><a
+              href="https://github.com/davidydu/spatial-py/blob/0c7914057970d1cdf3b6a3361f68e761c812b0a6/tests/fixtures/lab1_demo_expected.json"
+              >Independent expected results ↗</a
+            >
+          </div>
+        </section>
+        <section
+          class="slide"
+          id="composition"
+          aria-labelledby="title-composition"
+          data-label="Reusable language features"
+          data-time="1:45"
+        >
+          <div class="eyebrow">
+            <span>04 / Reusable language features</span
+            ><span class="status">Working reference subset</span>
+          </div>
+          <h1 id="title-composition" tabindex="-1">The same rules support new combinations.</h1>
+          <p class="lede">
+            Memory, control, helpers and compile-time choices now work together through the shared
+            compiler path.
+          </p>
+          <div class="feature-row">
+            <div>
+              <span class="feature-symbol">▦</span>
+              <h2>Memory</h2>
+              <p>Views, copies, local storage</p>
+            </div>
+            <div>
+              <span class="feature-symbol">↳</span>
+              <h2>Control</h2>
+              <p>Loops and runtime branches</p>
+            </div>
+            <div>
+              <span class="feature-symbol">ƒ</span>
+              <h2>Helpers</h2>
+              <p>Calls and captured values</p>
+            </div>
+            <div>
+              <span class="feature-symbol">N</span>
+              <h2>Configuration</h2>
+              <p>Constants and static expansion</p>
+            </div>
+          </div>
+          <div class="specialization">
+            <div class="template-box">
+              <span class="panel-label">Latest increment</span>
+              <h2>Capture once.<br />Specialize twice.</h2>
+              <p>One frozen template.<br />Different sizes and constants.</p>
+            </div>
+            <span class="branch-symbol" aria-hidden="true">↗<br />↘</span>
+            <div class="specialization-cases">
+              <div>
+                <span class="config-label">N = 3 · BIAS = −2</span
+                ><span class="input-values">[3, 7, 11] →</span><strong>[1, 5, 9]</strong
+                ><span class="case-pass">PASS</span>
+              </div>
+              <div>
+                <span class="config-label">N = 2 · BIAS = 4</span
+                ><span class="input-values">[3, 7] →</span><strong>[7, 11]</strong
+                ><span class="case-pass">PASS</span>
+              </div>
+              <p>Both runs use fresh scratch storage and preserve the host inputs.</p>
+            </div>
+          </div>
+          <p class="fine">
+            Public capture and specialization work for one core module. Checking and execution still
+            use internal interfaces. Results replayed 21 October.
+          </p>
+          <div class="notes-source" hidden>
+            <p>
+              The progress beyond that one example falls into four groups. First, memory: local
+              storage, transfers, named views and helpers that return memory windows. Second,
+              control: ordinary branches, loops and scopes with explicit cleanup. Third, helpers:
+              calls, nested helpers and captured values or memory. Fourth, compile-time
+              configuration: constants, parameters, helper specialization and finite static
+              expansion.
             </p>
             <p>
-              We have also organized the research as a versioned repository and a documentation
-              website. The site connects the language decisions, architecture, implementation plan
-              and evidence. These links let us inspect the reasoning or the exact progress record
-              during discussion.
+              The useful point is how these features combine. A helper can work on a selected memory
+              window. A compile-time choice can generate scopes that each allocate their own scratch
+              memory. Those pieces still pass through the same checker and reference engine.
+            </p>
+            <p>
+              The latest increment makes source capture and specialization public. One captured
+              template can be used with different settings. In the example, inputs three, seven and
+              eleven with bias minus two produce one, five and nine. The same template, specialized
+              for two inputs with bias four, produces seven and eleven. The two runs use three and
+              two fresh scratch lifetimes, and the original host buffers remain unchanged.
+            </p>
+            <p>
+              The public entry point is still deliberately bounded: one core module with no
+              dependencies. Checking, preparation and execution in this example currently use the
+              private bridge. Finishing that public invocation workflow is the next step.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a href="./assets/public-source-fresh-output.json"
+              >Fresh capture and specialization results ↗</a
+            ><a
+              href="https://github.com/davidydu/spatial-py/blob/0c7914057970d1cdf3b6a3361f68e761c812b0a6/examples/run_public_source.py"
+              >Public source demo ↗</a
+            ><a
+              href="https://github.com/davidydu/spatial-py/blob/0c7914057970d1cdf3b6a3361f68e761c812b0a6/docs/support-ledger.md"
+              >Feature support and limits ↗</a
+            >
+          </div>
+        </section>
+        <section
+          class="slide"
+          id="evidence"
+          aria-labelledby="title-evidence"
+          data-label="Confidence in the design"
+          data-time="1:45"
+        >
+          <div class="eyebrow">
+            <span>05 / Confidence in the design</span
+            ><span class="status">Bounded, reproducible evidence</span>
+          </div>
+          <h1 id="title-evidence" tabindex="-1">We check more than the final answer.</h1>
+          <p class="lede">
+            The goal is a compiler that handles new combinations of supported features.
+          </p>
+          <div class="verification-row">
+            <div>
+              <span class="step-number">01 / Values</span>
+              <h2>Independent answers</h2>
+              <p>Expected results are written separately from the compiler.</p>
+            </div>
+            <div>
+              <span class="step-number">02 / Behavior</span>
+              <h2>Memory and effects</h2>
+              <p>Check operation order, storage lifetimes and defined faults.</p>
+            </div>
+            <div>
+              <span class="step-number">03 / Composition</span>
+              <h2>A new program</h2>
+              <p>Freeze production code, then test an independently written combination.</p>
+            </div>
+          </div>
+          <div class="composition-proof">
+            <div>
+              <span class="panel-label">Accepted composition / replayed today</span>
+              <h2>Static expansion + nested helper<br />+ scratch memory + runtime branch</h2>
+            </div>
+            <div class="proof-results">
+              <div><span>Normal branch</span><strong>60</strong></div>
+              <div><span>Flipped branch</span><strong>0</strong></div>
+              <div><span>Empty expansion</span><strong>−9</strong></div>
+            </div>
+          </div>
+          <div class="test-foot">
+            <strong>1,244</strong>
+            <p>
+              tests pass through both the source and installed-package routes.<br /><span
+                >Recorded full suites: 18 October. File hashes and selected examples checked
+                today.</span
+              >
+            </p>
+            <button class="text-button" id="evidence-button">Evidence &amp; limits ↗</button>
+          </div>
+          <p class="fine">
+            This is evidence for the current subset. Broader language coverage, whole-workflow
+            acceptance and performance measurements remain open.
+          </p>
+          <div class="notes-source" hidden>
+            <p>
+              A matching output is necessary, but memory programs have other ways to go wrong. A
+              temporary buffer might outlive its scope, a write might happen in the wrong order, or
+              a fault might occur after an effect that should never have happened.
+            </p>
+            <p>
+              Our checks therefore include independently written expected values and ordered
+              observations of calls, memory operations, branches and cleanup. Some tests compare
+              source programs with separately written common program records. Other tests
+              deliberately exercise rejected programs or faults.
+            </p>
+            <p>
+              We also freeze the implementation before an independent author writes a new
+              composition. The latest accepted case combines static expansion, a nested helper, a
+              mutable scalar cell, scratch SRAM and a runtime branch. Its three handwritten answers
+              are sixty, zero and minus nine. All expected ordered events match as well. That
+              unchanged test was replayed today, and all three scenarios passed.
+            </p>
+            <p>
+              The accepted package checkpoint on eighteen October passed twelve hundred and
+              forty-four tests from source, and the same number from an isolated installed wheel.
+              Today’s checks were narrower: the two demonstrations, that composition, and unchanged
+              file manifests. These results give us concrete regression and composition evidence.
+              Full-compiler acceptance and useful-workload performance measurements remain separate
+              work.
             </p>
           </div>
           <div class="sources-source" hidden>
             <a
-              href="../../50---Python-Rewrite/30---Implementation-Design/80---Initial-Compiler-Goal.html"
-              >Committed progress and unfinished acceptance gates</a
-            ><a href="https://github.com/davidydu/spatial-py/tree/f8a993b"
-              >Implementation checkpoint — requires repository access</a
-            ><a href="../../50---Python-Rewrite/00---Python-Rewrite-Index.html"
-              >Research documentation</a
+              href="https://github.com/davidydu/spatial-py/blob/0c7914057970d1cdf3b6a3361f68e761c812b0a6/docs/evidence/task-03c-public-source-acceptance-second.md"
+              >Independent composition and frozen-code evidence ↗</a
+            ><a
+              href="https://github.com/davidydu/spatial-py/blob/0c7914057970d1cdf3b6a3361f68e761c812b0a6/docs/evidence/task-03c-public-source.md"
+              >Full package verification ↗</a
+            ><a
+              href="https://github.com/davidydu/spatial-py/blob/0c7914057970d1cdf3b6a3361f68e761c812b0a6/docs/support-ledger.md"
+              >Current support ledger ↗</a
             >
           </div>
         </section>
         <section
           class="slide"
           id="next-steps"
-          aria-labelledby="title-next"
-          data-label="What comes next"
-          data-time="2:00"
+          aria-labelledby="title-next-steps"
+          data-label="Implementation plan"
+          data-time="1:30"
         >
           <div class="eyebrow">
-            <span>06 / What comes next</span><span class="status">Proposed sequence</span>
+            <span>06 / Implementation plan</span><span class="status">Next work</span>
           </div>
-          <h1 id="title-next" tabindex="-1">Complete the core, then grow the language.</h1>
+          <h1 id="title-next-steps" tabindex="-1">Finish the workflow. Broaden the language.</h1>
           <p class="lede">
-            Use explicit acceptance criteria to decide when each stage is ready to expand.
+            Add complete feature families in the order suggested by EE 109 Labs 1–3.
           </p>
-          <div class="next-plan-grid">
-            <div class="next-milestones">
-              <div>
-                <span class="step-number">FIRST</span>
-                <div>
-                  <h2>Complete the memory subset</h2>
-                  <p>
-                    Source → check → run. Match independently specified values, state changes and
-                    faults.
-                  </p>
-                </div>
-              </div>
-              <div>
-                <span class="step-number">ACCEPT</span>
-                <div>
-                  <h2>Demonstrate generality</h2>
-                  <p>
-                    Freeze the compiler. Run an unfamiliar composition; verify structural edits and
-                    measure the full supported workflow.
-                  </p>
-                </div>
-              </div>
-              <div>
-                <span class="step-number">EXPAND</span>
-                <div>
-                  <h2>Add the remaining Spatial families</h2>
-                  <p>
-                    Reductions and numeric formats, then stateful and communicating constructs. Use
-                    EE 109 labs as coverage targets.
-                  </p>
-                </div>
-              </div>
+          <div class="next-workflow">
+            <div>
+              <span class="panel-label">Next deliverable</span>
+              <h2>A complete public way to check and run</h2>
             </div>
-            <div class="review-question">
-              <span class="panel-label">For professor discussion</span>
-              <h2>Is this the right first milestone?</h2>
-              <p>
-                Does composed memory cover enough of Spatial’s core to test the design before wider
-                implementation?
-              </p>
-              <p>Which missing capability should we prioritize after that milestone?</p>
+            <p>
+              <strong>Check &amp; prepare</strong><span>→</span
+              ><strong>Correct pause / resume</strong><span>→</span
+              ><strong>Public simulation</strong>
+            </p>
+          </div>
+          <div class="roadmap">
+            <div class="roadmap-stop">
+              <span class="roadmap-index">01</span><span class="panel-label">Lab 1 / extend</span>
+              <h2>State &amp;<br />reductions</h2>
+              <p>Registers, FIFOs,<br />Reduce and Fold</p>
+            </div>
+            <div class="roadmap-stop">
+              <span class="roadmap-index">02</span><span class="panel-label">Lab 2</span>
+              <h2>Richer memory<br />&amp; control</h2>
+              <p>Memory reductions, FSMs,<br />LUTs and fixed-point tiles</p>
+            </div>
+            <div class="roadmap-stop">
+              <span class="roadmap-index">03</span><span class="panel-label">Lab 3</span>
+              <h2>Buffered<br />computation</h2>
+              <p>Line and shift buffers,<br />convolution</p>
+            </div>
+            <div class="roadmap-stop later">
+              <span class="roadmap-index">04</span
+              ><span class="panel-label">After language support</span>
+              <h2>Lower<br />to HLS</h2>
+              <p>Program + testbench,<br />then vendor validation</p>
             </div>
           </div>
-          <div class="design-consequence">
-            <strong>Agreed destination: HLS</strong
+          <div class="takeaway">
+            <strong>For each family</strong
             ><span
-              >Start lowering a validated subset while the remaining language families grow.</span
+              >Source support → checking → reference behavior → independent tests, added
+              together.</span
             >
           </div>
           <div class="notes-source" hidden>
             <p>
-              The next milestone is a complete memory-program subset, with independently specified
-              results, state changes and faults. That gives us something concrete to judge beyond a
-              collection of compiler components.
+              The next implementation step is to expose checking and input preparation through a
+              documented public workflow, using the checker and preparation path we already have.
             </p>
             <p>
-              Before expanding, we should show that the design handles a new combination of the
-              supported features. We freeze the implementation and give an independent author the
-              supported language contract. A renamed or resized development example is not enough.
-              If the new program requires a special compiler case, we have found a gap in the
-              general rules.
+              Before exposing public simulation, we also need real resumption: a run should be able
+              to stop at a supported effect boundary and continue with validated state and
+              cumulative budgets, without replaying effects. The current private resource-limit
+              result does not provide that continuation.
             </p>
             <p>
-              We also need a real structural transformation. It must preserve the intended behavior,
-              keep memory relationships and source information intact, and leave the old program
-              usable if validation fails. Passing the checker alone does not prove equivalent
-              behavior, so we compare outcomes as well.
+              After the current initial-contract work, the labs give us a useful language sequence.
+              Lab 1 adds registers, FIFOs and reductions or folds. Lab 2 brings memory reductions,
+              finite-state control, lookup tables and fixed-point tiles. Lab 3 brings line and shift
+              buffers and convolution. We should implement those as reusable features and test new
+              combinations as we go.
             </p>
             <p>
-              At the same milestone, we measure the actual supported capture, checking and execution
-              paths. That turns the practical Python performance question into evidence.
-            </p>
-            <p>
-              After that, we extend whole feature families: reductions and numeric formats, then
-              more stateful and communicating constructs. The EE 109 labs help us track which
-              combinations matter. Each family gets source support, checking, reference behavior and
-              tests together.
-            </p>
-            <p>
-              HLS remains the agreed destination. We can begin that work from a validated subset
-              while the rest of the language grows.
-            </p>
-            <p>
-              The feedback I want is whether this first milestone tests enough of Spatial’s core,
-              and which capability should come next. That would give us a clear implementation order
-              after the meeting.
+              HLS remains the agreed destination after the planned language and reference support.
+              The trigger for starting vendor validation is a scoped target program, generated code
+              and a testbench. That makes the next stages concrete while keeping the current
+              reference result separate from a hardware claim.
             </p>
           </div>
           <div class="sources-source" hidden>
-            <a href="../../50---Python-Rewrite/04---Python-Implementation-Roadmap.html"
-              >Staged implementation roadmap</a
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/0c7914057970d1cdf3b6a3361f68e761c812b0a6/PROJECT_STATE.md"
+              >Current implementation restart plan ↗</a
             ><a
-              href="../../50---Python-Rewrite/30---Implementation-Design/80---Initial-Compiler-Goal.html"
-              >Generality and performance acceptance</a
-            ><a href="../../50---Python-Rewrite/60---Validation/01---Python-Coverage-Ledger.html"
-              >Language and lab coverage</a
+              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/04---Python-Implementation-Roadmap"
+              >Implementation roadmap ↗</a
+            ><a
+              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/60---Validation/01---Python-Coverage-Ledger"
+              >Language coverage ledger ↗</a
             >
+          </div>
+        </section>
+        <section
+          class="slide"
+          id="discussion"
+          aria-labelledby="title-discussion"
+          data-label="Discussion & records"
+          data-time="1:00"
+        >
+          <div class="eyebrow">
+            <span>07 / Discussion & records</span><span class="status">21 October 2026</span>
+          </div>
+          <h1 id="title-discussion" tabindex="-1">
+            A working reference.<br />Broader Spatial next.
+          </h1>
+          <p class="lede">
+            The architecture now has executable evidence. The next milestone is a usable public
+            workflow and more language families.
+          </p>
+          <div class="closing-grid">
+            <div class="discussion-points">
+              <div>
+                <span class="panel-label">What we can show today</span>
+                <h2>Source → checked execution → results</h2>
+                <p>Lab 1 memory, reusable features and a new composition.</p>
+              </div>
+              <div>
+                <span class="panel-label">What comes next</span>
+                <h2>Public workflow, then Lab 1 state</h2>
+                <p>Continue through Labs 2–3 before HLS validation.</p>
+              </div>
+              <div class="discussion-question">
+                <span class="panel-label">For discussion</span>
+                <p>Which student workload should be our next end-to-end demonstration?</p>
+              </div>
+            </div>
+            <div class="record-links">
+              <a href="https://davidydu.github.io/spatial-research-site/"
+                ><span>01 / Research site</span><strong>Design and decisions ↗</strong>
+                <p>The programming model, feasibility and lab mappings.</p></a
+              ><a
+                href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/30---Implementation-Design/80---Initial-Compiler-Goal"
+                ><span>02 / Progress</span><strong>What works and what remains ↗</strong>
+                <p>Evidence, limitations and implementation sequence.</p></a
+              ><a
+                href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/30---Implementation-Design/70---Engineering-Architecture-Map"
+                ><span>03 / Architecture</span><strong>The system in detail ↗</strong>
+                <p>Excalidraw map and component responsibilities.</p></a
+              >
+              <div class="repo-links">
+                <a
+                  href="https://github.com/davidydu/spatial-py/tree/0c7914057970d1cdf3b6a3361f68e761c812b0a6"
+                  >Compiler checkpoint ↗</a
+                ><a href="https://github.com/davidydu/spatial-research">Research repository ↗</a
+                ><a
+                  href="https://davidydu.github.io/spatial-research-site/90---Meta/2026-10-21-python-progress-presentation"
+                  >Speaking script ↗</a
+                >
+              </div>
+            </div>
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              The takeaway is that we now have a working Python reference path for a useful
+              memory-program subset. The tiled Lab 1 example runs, reusable features compose, and
+              one captured source can produce multiple checked and executed specializations through
+              the current bridge.
+            </p>
+            <p>
+              The next milestone is a complete public invocation workflow, followed by broader
+              language coverage guided by the three labs. HLS remains the later hardware stage.
+            </p>
+            <p>
+              The links here provide the research site, the full architecture, the progress record,
+              and both repositories. We can use them to inspect a result or discuss a missing
+              capability without turning the main presentation into a code walkthrough. The most
+              useful discussion now is which language combinations should shape the next acceptance
+              examples.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a href="https://davidydu.github.io/spatial-research-site/">Research site ↗</a
+            ><a
+              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/30---Implementation-Design/80---Initial-Compiler-Goal"
+              >Progress and next steps ↗</a
+            ><a href="https://github.com/davidydu/spatial-research">Research repository ↗</a>
           </div>
         </section>
       </main>
       <footer class="deck-footer">
         <nav class="chapter-nav" aria-label="Slides">
-          <button data-slide="python" aria-label="01 The whole system" aria-current="step">
+          <button data-slide="python" aria-label="01 The result">
             <span class="chapter-number">01</span
-            ><span class="chapter-label">The whole system</span></button
-          ><button data-slide="feasibility" aria-label="02 Why Python works">
+            ><span class="chapter-label">The result</span></button
+          ><button data-slide="compiler" aria-label="02 Architecture">
             <span class="chapter-number">02</span
-            ><span class="chapter-label">Why Python works</span></button
-          ><button data-slide="compiler" aria-label="03 Inside the compiler">
-            <span class="chapter-number">03</span
-            ><span class="chapter-label">Inside the compiler</span></button
-          ><button data-slide="implementation" aria-label="04 How we build it">
+            ><span class="chapter-label">Architecture</span></button
+          ><button data-slide="lab1" aria-label="03 Lab 1">
+            <span class="chapter-number">03</span><span class="chapter-label">Lab 1</span></button
+          ><button data-slide="composition" aria-label="04 Language">
             <span class="chapter-number">04</span
-            ><span class="chapter-label">How we build it</span></button
-          ><button data-slide="progress" aria-label="05 What works today">
+            ><span class="chapter-label">Language</span></button
+          ><button data-slide="evidence" aria-label="05 Evidence">
             <span class="chapter-number">05</span
-            ><span class="chapter-label">What works today</span></button
-          ><button data-slide="next-steps" aria-label="06 What comes next">
-            <span class="chapter-number">06</span><span class="chapter-label">What comes next</span>
+            ><span class="chapter-label">Evidence</span></button
+          ><button data-slide="next-steps" aria-label="06 Next steps">
+            <span class="chapter-number">06</span
+            ><span class="chapter-label">Next steps</span></button
+          ><button data-slide="discussion" aria-label="07 Records">
+            <span class="chapter-number">07</span><span class="chapter-label">Records</span>
           </button>
         </nav>
         <div class="transport">
           <button id="previous" aria-label="Previous slide">←</button
-          ><span id="slide-count" aria-live="polite">01 / 06</span
+          ><span id="slide-count" aria-live="polite">01 / 07</span
           ><button id="next" aria-label="Next slide">→</button>
         </div>
       </footer>
@@ -692,9 +725,7 @@
       <div class="dialog-shell">
         <header class="dialog-header">
           <h2 id="dialog-title">Speaker notes</h2>
-          <button id="dialog-close" aria-label="Close dialog">
-            Close <span aria-hidden="true">×</span>
-          </button>
+          <button id="dialog-close" aria-label="Close dialog">Close ×</button>
         </header>
         <div id="dialog-content"></div>
       </div>
@@ -722,8 +753,8 @@
         </div>
       </div>
       <p id="map-hint">
-        Drag to pan, or focus the map and use arrow keys to scroll. Use + / − to zoom. Proposed
-        responsibilities; implementation evidence is on slide 5 under Detailed evidence.
+        Full proposed architecture, including unfinished components. Drag to pan; use + / − to zoom.
+        Today’s implemented path is shown on slide 2.
       </p>
       <div
         id="map-viewport"
@@ -745,7 +776,7 @@
         ><a href="./assets/architecture.svg" target="_blank" rel="noopener noreferrer"
           >Open full SVG ↗</a
         ><a
-          href="../../50---Python-Rewrite/30---Implementation-Design/70---Engineering-Architecture-Map.html"
+          href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/30---Implementation-Design/70---Engineering-Architecture-Map.html"
           target="_blank"
           rel="noopener noreferrer"
           >Read the map guide ↗</a
@@ -754,54 +785,135 @@
     </dialog>
     <template id="evidence-content"
       ><div class="evidence-dialog">
-        <p class="lede">Supporting evidence and the next implementation experiment</p>
-        <div class="evidence-checkpoint">
-          <strong>236 component tests</strong>
-          <p>
-            Committed checkpoint <code>f8a993b</code>: core records and indices, exact numeric
-            primitives, closed input validation, type/layout rules, scalar normalization and
-            structural checks. The source suite was rechecked on 7 October.
-          </p>
-        </div>
+        <h3>What was checked today</h3>
         <p>
-          <strong>Still unfinished:</strong> the full verifier, memory checking and execution,
-          source-to-simulation workflow and unfamiliar-composition acceptance. No HLS or hardware
-          result is claimed.
+          On 21 October 2026, CPython 3.14.5 replayed the Lab 1 example (two cases), public
+          capture/specialization demo (two cases), and accepted composition (three scenarios)
+          successfully at compiler commit <code>0c7914057970d1cdf3b6a3361f68e761c812b0a6</code>.
         </p>
-        <h3>The next experiment</h3>
         <p>
-          Complete a reusable memory-program subset. Freeze the compiler, independently write an
-          unfamiliar composition and run it without adding a special compiler path. Compare values
-          and effects with independent expectations; exercise structural edits through the same
-          checks.
+          All 75 production-manifest files and 268 execution-manifest files match the accepted
+          checkpoint. The full suites passed 1,244 tests on each of the source and isolated
+          installed-wheel routes on 18 October; they were not rerun in full today.
         </p>
-        <p class="fine">
-          The initial experiment is authorized. Professor adoption of the full architecture remains
-          separate.
+        <h3>What the records establish</h3>
+        <p>
+          The saved Lab 1 case observations match today’s results. Its historical semantic-revision
+          identifier differs; the fresh record retains the current identifier. The public-source
+          output matches its saved JSON exactly.
+        </p>
+        <p>
+          The independent second composition passed after production was frozen. The first
+          composition required an observer correction and is treated as regression evidence, not a
+          fresh acceptance test.
+        </p>
+        <h3>What remains</h3>
+        <p>
+          Public check/prepare/simulate, cumulative resumption, dependency linking, artifact and
+          editing workflows, broader language support and practical performance checks. There is no
+          HLS or hardware result yet.
         </p>
         <div class="source-list">
-          <a
-            href="../../50---Python-Rewrite/30---Implementation-Design/80---Initial-Compiler-Goal.html"
-            >Implementation evidence and acceptance gates</a
+          <a href="./assets/meeting-demo-record.json">Today’s combined demonstration record ↗</a
           ><a
-            href="../../50---Python-Rewrite/30---Implementation-Design/60---Course-Syntax-and-Compiler-Trace.html"
-            >EE 109 syntax examples and compiler mapping</a
-          ><a href="../../50---Python-Rewrite/00---Python-Rewrite-Index.html"
-            >Published research documentation</a
-          ><a href="https://github.com/davidydu/spatial-research">Research source repository</a
-          ><a href="https://github.com/davidydu/spatial-research-site"
-            >Documentation website repository</a
-          ><a href="https://github.com/davidydu/spatial-py/tree/f8a993b"
-            >Implementation checkpoint — requires repository access</a
+            href="https://github.com/davidydu/spatial-py/blob/0c7914057970d1cdf3b6a3361f68e761c812b0a6/docs/evidence/task-03c-public-source.md"
+            >Full acceptance record ↗</a
+          ><a
+            href="https://github.com/davidydu/spatial-py/blob/0c7914057970d1cdf3b6a3361f68e761c812b0a6/docs/evidence/task-03c-public-source-acceptance-second.md"
+            >Independent composition ↗</a
+          ><a
+            href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/30---Implementation-Design/80---Initial-Compiler-Goal"
+            >Progress and remaining work ↗</a
           >
         </div>
       </div></template
     >
-    <noscript
-      ><p>
-        This presentation works as a scrolling document without JavaScript. Enable JavaScript for
-        slide navigation and interactive illustrations.
-      </p></noscript
-    >
+    <script type="application/json" id="meeting-record">
+      {
+        "checked_on": "2026-10-21",
+        "compiler_commit": "0c7914057970d1cdf3b6a3361f68e761c812b0a6",
+        "python": "CPython 3.14.5",
+        "lab1": {
+          "schema": "spatial.reference-demo/1",
+          "scope": "Private Python reference execution; no HLS or hardware claim",
+          "source": "tests/fixtures/sources/lab1_tiled_scale.py",
+          "entry": "tiled_scale",
+          "semantic_revision": "95002f6b98d592353790a951a079db183f0fe37440dc53d85b32004751be4472",
+          "demands": { "proved": 7, "enforced": 4 },
+          "cases": [
+            {
+              "case": "LAB1-TILED-SCALE-2",
+              "outcome": "Completed",
+              "matches_independent_oracle": true,
+              "output": [
+                0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42,
+                44, 46, 48, 50, 52, 54, 56, 58, 60, 62
+              ],
+              "trace_counts": {
+                "allocate": 4,
+                "copy_snapshot": 4,
+                "write": 96,
+                "read": 32,
+                "deallocate": 4
+              },
+              "host_output_remains_uninitialized": true
+            },
+            {
+              "case": "LAB1-TILED-SCALE-2-INT32-OVERFLOW",
+              "outcome": "Completed",
+              "matches_independent_oracle": true,
+              "output": [
+                0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42,
+                44, 46, 48, 50, -2147483648, -2147483648, -2147483646, 2147483646, -2, 0
+              ],
+              "trace_counts": {
+                "allocate": 4,
+                "copy_snapshot": 4,
+                "write": 96,
+                "read": 32,
+                "deallocate": 4
+              },
+              "host_output_remains_uninitialized": true
+            }
+          ]
+        },
+        "public_source": {
+          "schema": "spatial.public-source-demo/1",
+          "scope": "Public source capture/specialization; private reference execution",
+          "captured_templates": 1,
+          "specializations": 2,
+          "cases": [
+            {
+              "input": [3, 7, 11],
+              "bias": -2,
+              "output": [1, 5, 9],
+              "outcome": "Completed",
+              "scratch_scopes": 3,
+              "host_inputs_unchanged": true,
+              "matches_literal_expectations": true
+            },
+            {
+              "input": [3, 7],
+              "bias": 4,
+              "output": [7, 11],
+              "outcome": "Completed",
+              "scratch_scopes": 2,
+              "host_inputs_unchanged": true,
+              "matches_literal_expectations": true
+            }
+          ]
+        },
+        "lab1_inputs": [
+          [
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+            24, 25, 26, 27, 28, 29, 30, 31
+          ],
+          [
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+            24, 25, 1073741824, -1073741824, 1073741825, -1073741825, 2147483647, -2147483648
+          ]
+        ]
+      }
+    </script>
   </body>
 </html>

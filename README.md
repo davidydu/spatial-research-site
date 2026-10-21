@@ -73,9 +73,36 @@ Historical research and the frozen D-26 protocol remain accessible. The homepage
 
 ## Python presentation
 
-The current ten-minute presentation lives at `presentation/python/` and publishes to `/spatial-research-site/presentation/python/`. It explains what a Python Spatial compiler looks like, its feasibility, implementation plan and next milestones. All interactive calculations are illustrations, not compiler executions. The historical deck remains at `presentation/`.
+The current **21 October 2026**, seven-slide, ten-minute presentation lives at
+`presentation/python/` and publishes to
+[Python Spatial progress](https://davidydu.github.io/spatial-research-site/presentation/python/).
+It leads with working source-to-reference execution, explains the common program
+model, shows the first Lab 1 tiled-memory result and reusable features, then
+presents independent evidence and the Labs 1–3 implementation sequence. HLS
+follows planned language/reference support. The root deck remains historical.
 
-Use arrow keys or the numbered navigation to change slides, `N` for speaker notes, `E` for sources and `F` for fullscreen. The tile diagram, compiler stages, scale slider and queue example have their own controls. Documentation links open in another tab. Printing includes all seven slides. The complete outline and speaking script live in the research vault at `90 - Meta/2026-10-01-python-professor-presentation-outline.md`.
+Use arrows or **1–7** to change slides, **N** for notes, **E** for sources and **F**
+for fullscreen. Slide 2 opens the existing Excalidraw map with section navigation,
+zoom and panning; the full map includes proposed, unfinished components. Slide 3
+switches between actual recorded ordinary and Int32-overflow results. The page
+does not run the compiler. Documentation opens in a separate tab. Print styles
+include all seven slides. The deck and result views work without network access
+when the presentation folder is kept intact; external documentation still needs
+network access.
+
+The complete script and verification record live in the research vault at
+`90 - Meta/2026-10-21-python-progress-presentation.md`. Embedded notes mirror that
+script. Fresh raw outputs and the combined demonstration record are in
+`presentation/python/assets/`. They were replayed on CPython 3.14.5 at compiler
+`0c7914057970d1cdf3b6a3361f68e761c812b0a6` on 21 October. The full accepted test
+suites remain dated 18 October (1,244 tests per source/installed-package route).
+The Lab 1 historical record differs only in semantic-revision metadata; the fresh
+asset retains the current revision. See slide 5's **Evidence & limits** dialog.
+
+Meeting validation: both example runners and the accepted composition passed;
+production/execution manifests match. The integration checkpoint verifies slide
+layout, navigation, case selection, notes, sources and map controls, plus the
+complete site build and changed published pages.
 
 ## Why not host directly from the spec repo?
 

@@ -28,12 +28,15 @@ function showSlide(index, updateHash = true, moveFocus = false) {
 
 function readHash() {
   const aliases = {
-    "#program": "#feasibility",
-    "#python-boundary": "#feasibility",
-    "#behavior": "#implementation",
-    "#execution": "#implementation",
-    "#research": "#progress",
-    "#first-build": "#implementation",
+    "#program": "#compiler",
+    "#python-boundary": "#compiler",
+    "#feasibility": "#compiler",
+    "#behavior": "#composition",
+    "#execution": "#composition",
+    "#implementation": "#composition",
+    "#research": "#evidence",
+    "#progress": "#evidence",
+    "#first-build": "#lab1",
     "#hardware": "#next-steps",
     "#design": "#next-steps",
   }
@@ -54,13 +57,13 @@ function openDetails(kind) {
           : "Presentation controls"
   if (kind === "help") {
     dialogContent.innerHTML =
-      '<div class="speaker-script"><p><strong>← / →</strong> Previous or next slide</p><p><strong>1–6</strong> Jump to a slide</p><p><strong>N</strong> Speaker notes &nbsp; <strong>E</strong> Sources</p><p><strong>F</strong> Fullscreen &nbsp; <strong>Esc</strong> Close dialog</p><p>Open the Excalidraw map on slide 3 for the engineering details. Implementation progress and the documentation links are on slide 5. Documentation opens in a separate tab so the presentation keeps its place.</p><p><a href="../../90---Meta/2026-10-01-python-professor-presentation-outline.html" target="_blank" rel="noopener noreferrer">Read the full speaking script ↗</a></p></div>'
+      '<div class="speaker-script"><p><strong>← / →</strong> Previous or next slide</p><p><strong>1–7</strong> Jump to a slide</p><p><strong>N</strong> Speaker notes &nbsp; <strong>E</strong> Sources</p><p><strong>F</strong> Fullscreen &nbsp; <strong>Esc</strong> Close dialog</p><p>Open the Excalidraw map on slide 2. Slide 3 switches between recorded ordinary and overflow results. Evidence is on slide 5; documentation links are on slide 7. Documentation opens in a separate tab so the presentation keeps its place.</p><p><a href="https://davidydu.github.io/spatial-research-site/90---Meta/2026-10-21-python-progress-presentation" target="_blank" rel="noopener noreferrer">Read the full speaking script ↗</a></p></div>'
   } else if (kind === "evidence") {
     dialogContent.innerHTML = document.querySelector("#evidence-content").innerHTML
   } else if (kind === "notes") {
     dialogContent.innerHTML = `<div class="speaker-script">${slide.querySelector(".notes-source").innerHTML}</div>`
   } else {
-    dialogContent.innerHTML = `<div class="source-list">${slide.querySelector(".sources-source").innerHTML}</div><p class="fine">The Python direction is accepted and the initial experiment is authorized. The full architecture remains proposed. Component tests do not establish a complete compiler or hardware result.</p>`
+    dialogContent.innerHTML = `<div class="source-list">${slide.querySelector(".sources-source").innerHTML}</div><p class="fine">Claims are scoped to the current reference subset. Demonstrations were replayed on 21 October 2026; the full 1,244-test source and installed-package runs are dated 18 October. HLS and hardware validation remain future work.</p>`
   }
   dialogContent.querySelectorAll("a").forEach((link) => {
     link.target = "_blank"
@@ -209,11 +212,43 @@ document.addEventListener("keydown", (event) => {
   } else if (event.key === "End") {
     event.preventDefault()
     showSlide(slides.length - 1, true, true)
-  } else if (/^[1-6]$/.test(event.key)) showSlide(Number(event.key) - 1, true, true)
+  } else if (/^[1-7]$/.test(event.key)) showSlide(Number(event.key) - 1, true, true)
   else if (event.key.toLowerCase() === "n") openDetails("notes")
   else if (event.key.toLowerCase() === "e") openDetails("sources")
   else if (event.key.toLowerCase() === "f") toggleFullscreen()
   else if (event.key === "?") openDetails("help")
 })
+// Display actual saved compiler results; this page does not execute a compiler.
+const meetingRecord = JSON.parse(document.querySelector("#meeting-record").textContent)
+function showRecordedCase(index) {
+  const output = meetingRecord.lab1.cases[index].output
+  const grid = document.querySelector("#lab-output")
+  grid.replaceChildren(
+    ...output.map((value, position) => {
+      const cell = document.createElement("span")
+      cell.textContent = String(value)
+      cell.title = `Output [${position}] = ${value}`
+      if (position >= 16) cell.classList.add("second-tile")
+      if (index === 1 && position >= 26) cell.classList.add("overflow-cell")
+      return cell
+    }),
+  )
+  grid.classList.toggle("overflow-values", index === 1)
+  document.querySelector("#lab-explanation").textContent =
+    index === 0
+      ? "Inputs 0–31 → outputs 0, 2, …, 62. Blue: first tile. Terracotta: second tile."
+      : "The final six inputs exercise Int32 boundaries. For example, 1,073,741,824 × 2 wraps to −2,147,483,648."
+  document.querySelectorAll("[data-case]").forEach((button) => {
+    button.setAttribute("aria-pressed", String(Number(button.dataset.case) === index))
+  })
+}
+document.querySelectorAll("[data-case]").forEach((button) => {
+  button.addEventListener("click", () => showRecordedCase(Number(button.dataset.case)))
+})
+document.querySelectorAll(".slide a").forEach((link) => {
+  link.target = "_blank"
+  link.rel = "noopener noreferrer"
+})
+showRecordedCase(0)
 document.documentElement.classList.add("js")
 readHash()
