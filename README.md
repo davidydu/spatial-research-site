@@ -71,6 +71,16 @@ Publish vault changes first, then push website changes or dispatch the workflow.
 
 Historical research and the frozen D-26 protocol remain accessible. The homepage points readers to the current pure Python research direction following professor feedback on 30 September 2026. The earlier Rust-core proposal and presentation are marked historical; neither is the current implementation plan.
 
+## Student documentation
+
+The [Python Spatial student guide](https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/70---Student-Guide/00---Python-Spatial-Student-Guide)
+is maintained in the research vault under `50 - Python Rewrite/70 - Student Guide/`.
+It starts with functional testing and custom final-project tests. Ordinary Python
+test code drives generated C++ execution; independently specified cases can feed
+HLS and RTL testbenches. The pages clearly distinguish current internal tools
+from planned public wrappers. Update the vault source rather than generated site
+content. Compiler implementation and HLS execution remain paused for the meeting.
+
 ## Python presentation
 
 The current **22 October 2026**, seven-slide, ten-minute presentation lives at
