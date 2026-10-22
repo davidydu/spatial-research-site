@@ -1,0 +1,276 @@
+{
+  "schema": "spatial.meeting-pipeline/1",
+  "presentation_date": "2026-10-22",
+  "evidence_date": "2026-10-21",
+  "read_only_evidence_review": "2026-10-22",
+  "new_compiler_or_vendor_execution": false,
+  "vendor_production_revision": "da4d35f90e993a31d3ffda8b1f568cc4cbcecef6",
+  "vendor_acceptance_revision": "0ac7c00",
+  "toolchain": {
+    "vitis": "2025.1",
+    "hls_build": "6135595",
+    "vitis_run_build": "6137779",
+    "rtl_simulator": "xsim",
+    "rtl_language": "Verilog"
+  },
+  "profile": {
+    "part": "xc7z020clg400-1",
+    "flow": "vivado",
+    "clock_period_ns": 10.0,
+    "clock_uncertainty_ns": 2.7,
+    "automatic_pipeline_loops": 0
+  },
+  "lab1": {
+    "description": "32 Int32 values, two 16-value tiles, scale 2",
+    "source_path": "docs/evidence/vitis-demo/lab1/source.py",
+    "source_sha256": "a4ce8f6887842853b325ce09dd00677dc79260c56e72021c96f689252c60975b",
+    "kernel_sha256": "b779a82fa1743d834955a05852f7a7d6aca16b9f083946f91dbd27c975749010",
+    "cases": [
+      {
+        "case": "LAB1-TILED-SCALE-2",
+        "output": [
+          0,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16,
+          18,
+          20,
+          22,
+          24,
+          26,
+          28,
+          30,
+          32,
+          34,
+          36,
+          38,
+          40,
+          42,
+          44,
+          46,
+          48,
+          50,
+          52,
+          54,
+          56,
+          58,
+          60,
+          62
+        ],
+        "independent_expected": [
+          0,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16,
+          18,
+          20,
+          22,
+          24,
+          26,
+          28,
+          30,
+          32,
+          34,
+          36,
+          38,
+          40,
+          42,
+          44,
+          46,
+          48,
+          50,
+          52,
+          54,
+          56,
+          58,
+          60,
+          62
+        ],
+        "python_reference": "PASS",
+        "native_cpp": "PASS",
+        "vendor_c_simulation": "PASS",
+        "rtl_post_check": "PASS"
+      },
+      {
+        "case": "LAB1-TILED-SCALE-2-INT32-OVERFLOW",
+        "output": [
+          0,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16,
+          18,
+          20,
+          22,
+          24,
+          26,
+          28,
+          30,
+          32,
+          34,
+          36,
+          38,
+          40,
+          42,
+          44,
+          46,
+          48,
+          50,
+          -2147483648,
+          -2147483648,
+          -2147483646,
+          2147483646,
+          -2,
+          0
+        ],
+        "independent_expected": [
+          0,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16,
+          18,
+          20,
+          22,
+          24,
+          26,
+          28,
+          30,
+          32,
+          34,
+          36,
+          38,
+          40,
+          42,
+          44,
+          46,
+          48,
+          50,
+          -2147483648,
+          -2147483648,
+          -2147483646,
+          2147483646,
+          -2,
+          0
+        ],
+        "python_reference": "PASS",
+        "native_cpp": "PASS",
+        "vendor_c_simulation": "PASS",
+        "rtl_post_check": "PASS"
+      }
+    ],
+    "vendor_project": {
+      "project": "lab1",
+      "classification": "development",
+      "cases": [
+        "LAB1-TILED-SCALE-2",
+        "LAB1-TILED-SCALE-2-INT32-OVERFLOW"
+      ],
+      "native": "PASS",
+      "vendor_c_simulation": "PASS",
+      "synthesis": "PASS",
+      "rtl_cosimulation": "PASS",
+      "source_sha256": "a4ce8f6887842853b325ce09dd00677dc79260c56e72021c96f689252c60975b",
+      "kernel_sha256": "b779a82fa1743d834955a05852f7a7d6aca16b9f083946f91dbd27c975749010",
+      "bundle_manifest_sha256": "3eec96b172bb567254092758dc52781eb2fd83ffc0139d16ac2053d5ba528bd9",
+      "semantic_revision": "95002f6b98d592353790a951a079db183f0fe37440dc53d85b32004751be4472",
+      "provenance_revision": "74ce306f0d34e2826ef426f0592c06289351911dbc7a279d9050e0d8707f851a",
+      "resources_hls_estimate": {
+        "BRAM_18K": 0,
+        "DSP": 3,
+        "FF": 622,
+        "LUT": 1269,
+        "URAM": 0
+      },
+      "clock_period_estimate_ns": 6.912,
+      "observed_latency_cycles": {
+        "min": 863,
+        "avg": 863,
+        "max": 863
+      },
+      "observed_transaction_interval_cycles": {
+        "min": 864,
+        "avg": 864,
+        "max": 864
+      },
+      "observed_total_execution_cycles": 1727,
+      "synthesis_started_utc": "2026-10-21T22:26:19Z",
+      "cosim_finished_utc": "2026-10-21T22:27:51Z",
+      "warnings": [
+        "WARNING: [HLS 200-2182] The 'project' project will not automatically appear within Vitis IDE workspaces and is meant only for TCL batch use.  Please use open_component instead of open_project/open_solution to generate Vitis IDE compatible component files and directory structure.",
+        "WARNING: [XFORM 203-561] Updating loop lower bound from 0 to 16 for loop 'VITIS_LOOP_211_5' (./kernel.cpp:211:44) in function 'spatial_kernel'.",
+        "WARNING: [XFORM 203-561] Updating loop lower bound from 0 to 16 for loop 'VITIS_LOOP_302_10' (./kernel.cpp:302:45) in function 'spatial_kernel'."
+      ],
+      "report": "lab1/project/solution/sim/report/spatial_hls_cosim.rpt"
+    }
+  },
+  "hardware_scope": "Bounded sequential IP; no FPGA board execution, final AXI/DRAM integration, timing closure or optimized parallel scheduling.",
+  "broader_vendor_evidence": {
+    "projects": 4,
+    "cases": 9
+  },
+  "latest_local_extension": {
+    "production_revision": "1e55eb8",
+    "accepted_revision": "25a0e61",
+    "source_tests": 1329,
+    "installed_package_tests": 1329,
+    "projects": 12,
+    "cases": 32,
+    "vendor_execution": "pending"
+  },
+  "source_records": {
+    "native_results": {
+      "path": "docs/evidence/native-cpp-demo/results.json",
+      "sha256": "2ab5358d2ca89a0767c5440b28be1ce0673edef6a27530bf6d1ac41bea64df14",
+      "url": "https://github.com/davidydu/spatial-py/blob/0ac7c00/docs/evidence/native-cpp-demo/results.json"
+    },
+    "vendor_results": {
+      "path": "docs/evidence/vitis-demo/results.json",
+      "sha256": "ed0fd1a9132ad6d6ec595b9210dc8281ccf0eb9604cc62be2b85c1f71bd05a20",
+      "url": "https://github.com/davidydu/spatial-py/blob/0ac7c00/docs/evidence/vitis-demo/results.json"
+    },
+    "rtl_log": {
+      "path": "docs/evidence/vitis-demo/lab1/cosim.log",
+      "sha256": "2ca47c828bd8ecfeb998115e9a49715a4644021c746de6ab92fbd9c634edd8b6",
+      "url": "https://github.com/davidydu/spatial-py/blob/0ac7c00/docs/evidence/vitis-demo/lab1/cosim.log"
+    },
+    "rtl_report": {
+      "path": "docs/evidence/vitis-demo/lab1/project/solution/sim/report/spatial_hls_cosim.rpt",
+      "sha256": "357add6c7ba1d8687e3e3ed84c53d601be745d8e3f54fed378d82ace023eee13",
+      "url": "https://github.com/davidydu/spatial-py/blob/0ac7c00/docs/evidence/vitis-demo/lab1/project/solution/sim/report/spatial_hls_cosim.rpt"
+    },
+    "kernel": {
+      "path": "docs/evidence/vitis-demo/lab1/kernel.cpp",
+      "sha256": "b779a82fa1743d834955a05852f7a7d6aca16b9f083946f91dbd27c975749010",
+      "url": "https://github.com/davidydu/spatial-py/blob/0ac7c00/docs/evidence/vitis-demo/lab1/kernel.cpp"
+    },
+    "source": {
+      "path": "docs/evidence/vitis-demo/lab1/source.py",
+      "sha256": "a4ce8f6887842853b325ce09dd00677dc79260c56e72021c96f689252c60975b",
+      "url": "https://github.com/davidydu/spatial-py/blob/0ac7c00/docs/evidence/vitis-demo/lab1/source.py"
+    },
+    "bundle_manifest": {
+      "path": "docs/evidence/vitis-demo/lab1/manifest.json",
+      "sha256": "3eec96b172bb567254092758dc52781eb2fd83ffc0139d16ac2053d5ba528bd9",
+      "url": "https://github.com/davidydu/spatial-py/blob/0ac7c00/docs/evidence/vitis-demo/lab1/manifest.json"
+    }
+  }
+}

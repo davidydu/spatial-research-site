@@ -51,19 +51,19 @@ function openDetails(kind) {
     kind === "notes"
       ? `${String(current + 1).padStart(2, "0")} / ${slide.dataset.label} · ${slide.dataset.time}`
       : kind === "evidence"
-        ? "Research and progress"
+        ? "Evidence and limits"
         : kind === "sources"
           ? "Research behind this slide"
           : "Presentation controls"
   if (kind === "help") {
     dialogContent.innerHTML =
-      '<div class="speaker-script"><p><strong>← / →</strong> Previous or next slide</p><p><strong>1–7</strong> Jump to a slide</p><p><strong>N</strong> Speaker notes &nbsp; <strong>E</strong> Sources</p><p><strong>F</strong> Fullscreen &nbsp; <strong>Esc</strong> Close dialog</p><p>Open the Excalidraw map on slide 2. Slide 3 switches between recorded ordinary and overflow results. Evidence is on slide 5; documentation links are on slide 7. Documentation opens in a separate tab so the presentation keeps its place.</p><p><a href="https://davidydu.github.io/spatial-research-site/90---Meta/2026-10-21-python-progress-presentation" target="_blank" rel="noopener noreferrer">Read the full speaking script ↗</a></p></div>'
+      '<div class="speaker-script"><p><strong>← / →</strong> Previous or next slide</p><p><strong>1–7</strong> Jump to a slide</p><p><strong>N</strong> Speaker notes &nbsp; <strong>E</strong> Sources</p><p><strong>F</strong> Fullscreen &nbsp; <strong>Esc</strong> Close dialog</p><p>Open the Excalidraw map on slide 2. Slide 3 switches between recorded ordinary and overflow results. Evidence is on slide 5; documentation links are on slide 7. Documentation opens in a separate tab so the presentation keeps its place.</p><p><a href="https://davidydu.github.io/spatial-research-site/90---Meta/2026-10-22-python-pipeline-presentation" target="_blank" rel="noopener noreferrer">Read the full speaking script ↗</a></p></div>'
   } else if (kind === "evidence") {
     dialogContent.innerHTML = document.querySelector("#evidence-content").innerHTML
   } else if (kind === "notes") {
     dialogContent.innerHTML = `<div class="speaker-script">${slide.querySelector(".notes-source").innerHTML}</div>`
   } else {
-    dialogContent.innerHTML = `<div class="source-list">${slide.querySelector(".sources-source").innerHTML}</div><p class="fine">Claims are scoped to the current reference subset. Demonstrations were replayed on 21 October 2026; the full 1,244-test source and installed-package runs are dated 18 October. HLS and hardware validation remain future work.</p>`
+    dialogContent.innerHTML = `<div class="source-list">${slide.querySelector(".sources-source").innerHTML}</div><p class="fine">Saved evidence is dated 21 October 2026. The earlier bounded target passed through RTL simulation; the newer state and shift batch is locally validated with HLS pending. Full language coverage, useful parallel performance and board integration remain open.</p>`
   }
   dialogContent.querySelectorAll("a").forEach((link) => {
     link.target = "_blank"

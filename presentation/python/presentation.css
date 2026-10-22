@@ -256,7 +256,7 @@ h3 {
   margin: 0 0 24px;
 }
 #python h1 {
-  font-size: clamp(42px, 4.6vw, 72px);
+  font-size: clamp(42px, 4vw, 64px);
 }
 #python .lede {
   max-width: 940px;
@@ -311,7 +311,7 @@ h3 {
 }
 .pipeline {
   display: grid;
-  grid-template-columns: 1fr 24px 1.15fr 24px 1.4fr 24px 1.05fr;
+  grid-template-columns: 1fr 22px 1.3fr 22px 1.05fr 22px 1fr 22px 0.9fr;
   align-items: stretch;
   margin-top: 4px;
 }
@@ -324,6 +324,7 @@ h3 {
   background: var(--blue-light);
 }
 .pipeline-node h2 {
+  font-size: clamp(23px, 2vw, 29px);
   margin: 13px 0 12px;
 }
 .pipeline-node p {
@@ -344,7 +345,7 @@ h3 {
 }
 .architecture-bottom {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.2fr 1fr;
   margin: 22px 0;
   gap: 48px;
 }
@@ -647,6 +648,9 @@ h3 {
   align-items: center;
   gap: 22px;
   margin-top: 21px;
+}
+.test-foot p > strong {
+  font-weight: 500;
 }
 .test-foot > strong {
   font-family: var(--serif);
@@ -996,6 +1000,157 @@ code {
   padding: 12px 24px;
   font-size: 12px;
 }
+
+/* The meeting story separates the completed pipeline from the next local batch. */
+.direction-comparison > div:not(.result-stamp) {
+  padding: 13px 0 17px;
+  border-bottom: 1px solid var(--rule);
+}
+.direction-comparison p {
+  font-family: var(--serif);
+  font-size: clamp(23px, 2.1vw, 30px);
+  line-height: 1.25;
+  margin-top: 7px;
+  letter-spacing: -0.02em;
+}
+.current-direction p,
+.current-direction .panel-label {
+  color: var(--blue);
+}
+.reference-check {
+  border-left: 2px solid var(--blue);
+  padding-left: 18px;
+}
+.reference-check h2 {
+  font-size: 25px;
+  margin-top: 7px;
+}
+.reference-check p {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 7px;
+}
+.stage-checks {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  padding: 12px 0 16px;
+  color: var(--green);
+  font-size: 12px;
+}
+.stage-checks span {
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 8px;
+}
+.general-rules {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  padding: 22px 25px;
+  margin-bottom: 24px;
+  background: var(--blue-light);
+}
+.general-rules h2 {
+  margin: 10px 0;
+  font-size: 30px;
+}
+.general-rules p {
+  font-size: 14px;
+  color: var(--muted);
+  max-width: 440px;
+}
+.maturity-row {
+  gap: 38px;
+}
+.maturity-row > div:last-child .step-number {
+  color: var(--terra);
+}
+.scope-tag {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 18px;
+}
+.evidence-principle {
+  background: var(--blue-light);
+  padding: 18px 22px;
+}
+.evidence-principle p {
+  font-size: 16px;
+  line-height: 1.5;
+  margin-top: 8px;
+}
+#discussion .repo-links {
+  font-size: 13px;
+  gap: 12px 20px;
+  line-height: 1.65;
+}
+@media (min-width: 701px) and (max-height: 800px) {
+  .slide {
+    padding-top: 18px;
+    padding-bottom: 14px;
+  }
+  .eyebrow {
+    margin-bottom: 12px;
+  }
+  .lede {
+    margin-top: 12px;
+    margin-bottom: 18px;
+  }
+  .opening-grid {
+    margin-bottom: 18px;
+  }
+  .opening-path > div {
+    padding: 9px 0 9px 42px;
+  }
+  .opening-path h2 {
+    font-size: 24px;
+  }
+  .opening-path p {
+    font-size: 12px;
+    margin-top: 3px;
+  }
+  .result-stamp {
+    margin-top: 17px;
+  }
+  .pipeline-node {
+    padding: 17px 14px;
+  }
+  .architecture-bottom {
+    margin-block: 20px;
+  }
+  #lab1 .memory-flow {
+    padding-bottom: 8px;
+  }
+  #lab1 .sram-box {
+    padding-block: 8px;
+  }
+  #lab1 .result-header {
+    margin-bottom: 8px;
+  }
+  #lab1 .fine {
+    margin-top: 8px;
+  }
+  .feature-row {
+    padding-bottom: 20px;
+  }
+  .general-rules {
+    padding-block: 18px;
+  }
+  .general-rules h2 {
+    font-size: 28px;
+  }
+  .next-workflow {
+    padding: 16px 22px;
+    margin-bottom: 20px;
+  }
+  .next-workflow > p {
+    margin-top: 12px;
+  }
+  .roadmap {
+    margin-bottom: 20px;
+  }
+}
 @media (min-width: 1450px) and (min-height: 850px) {
   .slide {
     padding-top: 40px;
@@ -1303,6 +1458,36 @@ code {
   .map-footer {
     padding-inline: 15px;
     gap: 8px 15px;
+  }
+}
+@media (max-width: 700px) {
+  .direction-comparison p {
+    font-size: 26px;
+  }
+  .stage-checks {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 15px;
+  }
+  .general-rules {
+    grid-template-columns: 1fr;
+    gap: 25px;
+    padding: 20px;
+  }
+  .general-rules h2 {
+    font-size: 27px;
+  }
+  .evidence-principle p {
+    font-size: 15px;
+  }
+  .scope-tag {
+    margin-top: 10px;
+  }
+  .result-stamp {
+    font-size: 12px;
+  }
+  .test-foot p {
+    min-width: 0;
+    flex-basis: 100%;
   }
 }
 @media (prefers-reduced-motion: reduce) {

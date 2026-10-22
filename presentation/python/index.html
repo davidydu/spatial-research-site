@@ -6,15 +6,15 @@
     <meta name="theme-color" content="#f8f6ef" />
     <meta
       name="description"
-      content="Python Spatial progress, 21 October 2026. Working Lab 1 reference execution, reusable language features, architecture and next milestones. A ten-minute presentation with speaker notes and an interactive engineering map."
+      content="Python Spatial progress, 22 October 2026. A pure Python compiler takes one Lab 1 example through generated C++, Vitis HLS and RTL simulation. A ten-minute presentation with notes and an interactive architecture map."
     />
-    <title>Python Spatial — Progress · 21 October 2026</title>
+    <title>Python Spatial — Progress · 22 October 2026</title>
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23f8f6ef'/%3E%3Cpath d='M9 9h9v9H9zm13 0h9v9h-9zM9 22h9v9H9zm13 0h9v9h-9z' fill='%233556b2'/%3E%3C/svg%3E"
     />
-    <link rel="stylesheet" href="./presentation.css?v=20261021" />
-    <script src="./presentation.js?v=20261021" defer></script>
+    <link rel="stylesheet" href="./presentation.css?v=20261022" />
+    <script src="./presentation.js?v=20261022" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#slides">Skip to presentation</a>
@@ -25,7 +25,7 @@
             ><span></span><span></span><span></span><span></span></span
           ><span>SPATIAL <small>RESEARCH</small></span></a
         >
-        <div class="masthead-meta">Python rewrite <span>21 October 2026</span></div>
+        <div class="masthead-meta">Python rewrite <span>22 October 2026</span></div>
         <div class="tools" aria-label="Presentation tools">
           <button class="tool" id="notes-button" title="Speaker notes (N)">Notes</button
           ><button class="tool" id="sources-button" title="Evidence sources (E)">Sources</button
@@ -39,79 +39,77 @@
           id="python"
           aria-labelledby="title-python"
           data-label="The result"
-          data-time="1:00"
+          data-time="1:15"
         >
           <div class="eyebrow">
-            <span>01 / The result</span><span class="status">Working reference subset</span>
+            <span>01 / The result</span><span class="status">First hardware path</span>
           </div>
-          <h1 id="title-python" tabindex="-1">Python Spatial now runs<br />memory programs.</h1>
-          <p class="lede">
-            A Python frontend, compiler and reference engine. The first source-to-result path works.
-          </p>
+          <h1 id="title-python" tabindex="-1">Python Spatial reaches<br />RTL simulation</h1>
+          <p class="lede">The compiler is now entirely Python and emits C++ for HLS.</p>
           <div class="opening-grid">
-            <div class="opening-statement">
-              <span class="panel-label">What changed since the design</span>
-              <p>
-                We can now take actual source,<br />check its meaning,<br />and execute its memory
-                operations.
-              </p>
+            <div class="direction-comparison">
+              <div>
+                <span class="panel-label">Earlier approach</span>
+                <p>Python frontend + Rust compiler</p>
+              </div>
+              <div class="current-direction">
+                <span class="panel-label">Current implementation</span>
+                <p>Python frontend + Python compiler</p>
+              </div>
               <div class="result-stamp">
-                <span class="dot"></span>Lab 1 tiled memory example passes
+                <span class="dot"></span>One Lab 1 example clears the pipeline
               </div>
             </div>
             <div
               class="opening-path"
-              aria-label="Working path from Python source to checked model to reference results"
+              aria-label="Implemented path from Python compiler through generated C++ to RTL simulation"
             >
               <div>
                 <span>01</span>
-                <h2>Python source</h2>
-                <p>Spatial types, memory and control</p>
+                <h2>Python compiler</h2>
+                <p>Parse, check and lower the program</p>
               </div>
               <div>
                 <span>02</span>
-                <h2>Checked program</h2>
-                <p>One shared set of language rules</p>
+                <h2>Generated C++</h2>
+                <p>Input to Vitis HLS</p>
               </div>
               <div>
                 <span>03</span>
-                <h2>Reference results</h2>
-                <p>Values, memory changes and lifetimes</p>
+                <h2>RTL simulation</h2>
+                <p>Both Lab 1 cases match expected results</p>
               </div>
             </div>
           </div>
           <div class="takeaway">
-            <strong>Today’s result</strong
+            <strong>A starting point</strong
             ><span
-              >An executable language subset. Broader Spatial support and hardware lowering remain
-              ahead.</span
+              >One complete path for a bounded subset. The full Spatial rewrite is still
+              unfinished.</span
             >
           </div>
           <div class="notes-source" hidden>
             <p>
-              The main update is that Python Spatial now runs small memory programs through a real
-              compiler and reference execution path. We can start with Spatial written in a defined
-              Python subset, check it, prepare its inputs, and obtain the expected results.
+              Since our last meeting, I changed the implementation from a Python frontend with a
+              Rust compiler to a compiler written entirely in Python. That follows the direction we
+              discussed. The Python compiler now generates C++, and that C++ has gone through Vitis
+              HLS to RTL simulation.
             </p>
             <p>
-              The frontend, compiler and reference engine are implemented in Python. Spatial still
-              has explicit arithmetic, memory and control rules. HLS remains the eventual hardware
-              destination.
-            </p>
-            <p>
-              I’ll show one concrete tiled-memory result, then the reusable features that now work
-              together. I’ll also separate what we have demonstrated from the public workflow and
-              language coverage that still need work. The old presentation stopped at compiler
-              components; today the useful change is that these pieces execute programs together.
+              The result I want to focus on is one small Lab 1 example. It loads values, works on
+              them in local memory, and writes the results back. Both the ordinary and overflow
+              cases pass through the complete path. This is an initial success, rather than
+              completion of the rewrite. I’ll show the shape of the system, what this example
+              establishes, and what I would build on next.
             </p>
           </div>
           <div class="sources-source" hidden>
             <a
-              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/30---Implementation-Design/80---Initial-Compiler-Goal"
-              >Implementation progress ↗</a
-            ><a
-              href="https://github.com/davidydu/spatial-py/tree/0c7914057970d1cdf3b6a3361f68e761c812b0a6"
-              >Compiler checkpoint ↗</a
+              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/50---HLS-Lowering/2026-10-21-vitis-rtl-checkpoint"
+              >Saved HLS and RTL checkpoint ↗</a
+            >
+            <a href="https://github.com/davidydu/spatial-py/tree/work/initial-reference"
+              >Python compiler repository ↗</a
             >
           </div>
         </section>
@@ -123,99 +121,88 @@
           data-time="1:30"
         >
           <div class="eyebrow">
-            <span>02 / The architecture</span><span class="status">Working reference subset</span>
+            <span>02 / The architecture</span
+            ><span class="status">Implemented sequential path</span>
           </div>
-          <h1 id="title-compiler" tabindex="-1">One program model connects the system.</h1>
+          <h1 id="title-compiler" tabindex="-1">What the Python version looks like</h1>
           <p class="lede">
-            Python implements the compiler. Spatial still defines the meaning of numbers, memory and
-            control.
+            Python implements the frontend and compiler. Vitis HLS turns the generated C++ into RTL.
           </p>
           <div
             class="pipeline"
-            aria-label="Python source to capture and specialize to checked program to reference execution"
+            aria-label="Python source to Python compiler to generated C++ to Vitis HLS to RTL"
           >
             <div class="pipeline-node">
               <span class="panel-label">Write</span>
               <h2>Python<br />source</h2>
-              <p>A defined kernel subset</p>
+              <p>Spatial types, memory and control</p>
             </div>
-            <span class="connector">→</span>
-            <div class="pipeline-node">
-              <span class="panel-label">Configure</span>
-              <h2>Capture &amp;<br />specialize</h2>
-              <p>Sizes and constants</p>
-              <span class="small-tag">Public entry point</span>
-            </div>
-            <span class="connector">→</span>
+            <span class="connector" aria-hidden="true">→</span>
             <div class="pipeline-node central">
-              <span class="panel-label">Check</span>
-              <h2>Structured<br />program model</h2>
-              <p>Types, effects and lifetimes</p>
+              <span class="panel-label">Compile</span>
+              <h2>Python<br />compiler</h2>
+              <p>Parse → check →<br />structured program</p>
             </div>
-            <span class="connector">→</span>
+            <span class="connector" aria-hidden="true">→</span>
             <div class="pipeline-node">
-              <span class="panel-label">Run</span>
-              <h2>Python<br />reference</h2>
-              <p>Defined program behavior</p>
-              <span class="small-tag">Internal invocation</span>
+              <span class="panel-label">Generate</span>
+              <h2>Generated<br />C++</h2>
+              <p>Sequential target program</p>
+            </div>
+            <span class="connector" aria-hidden="true">→</span>
+            <div class="pipeline-node">
+              <span class="panel-label">Synthesize</span>
+              <h2>Vitis<br />HLS</h2>
+              <p>C simulation and synthesis</p>
+            </div>
+            <span class="connector" aria-hidden="true">→</span>
+            <div class="pipeline-node">
+              <span class="panel-label">Validate</span>
+              <h2>RTL</h2>
+              <p>Verilog co-simulation</p>
             </div>
           </div>
           <div class="architecture-bottom">
-            <div class="semantic-rules">
-              <span class="panel-label">Why this scales beyond one example</span>
-              <p>Each language construct has a rule.<br />New programs combine those rules.</p>
+            <div class="reference-check">
+              <span class="panel-label">↳ Separate check from the same structured program</span>
+              <h2>Python reference execution</h2>
+              <p>Checks the intended behavior before comparing target results.</p>
             </div>
-            <div class="future-path">
-              <span class="panel-label">Later / from the checked model</span>
-              <h2>Hardware planning → HLS</h2>
-              <p>Preserve the behavior we can already test.</p>
+            <div class="semantic-rules">
+              <span class="panel-label">One set of language rules</span>
+              <p>Explicit arithmetic, memory and ordering.<br />No Rust compiler core.</p>
             </div>
           </div>
           <div class="map-strip">
             <div>
-              <span class="panel-label">Engineering detail, when useful</span>
-              <p>
-                The full proposed architecture includes the remaining compiler and backend work.
-              </p>
+              <span class="panel-label">The wider design</span>
+              <p>The full architecture map also contains proposed, unfinished components.</p>
             </div>
             <button class="action-button" data-open-map>Explore the Excalidraw map ↗</button>
           </div>
           <div class="notes-source" hidden>
             <p>
-              The organizing idea is one explicit model of the Spatial program. Source is captured
-              as data. Compile-time settings specialize that source into a candidate program. The
-              checker then validates the admitted program before the reference engine runs it with
-              prepared inputs.
+              This is the main structure. A Spatial program is written in a defined Python subset.
+              The Python compiler parses and checks it, then represents its operations in a
+              structured program. From there, the current backend emits a sequential C++ program.
+              Vitis handles C simulation, synthesis and RTL co-simulation.
             </p>
             <p>
-              The model records the arithmetic, storage, views, control and order of state changes.
-              Python is the implementation language, while these records and rules define Spatial’s
-              behavior. That is how fixed-width integer overflow can remain predictable even though
-              ordinary Python integers have different behavior.
-            </p>
-            <p>
-              The same model gives us a place to add reusable language features. A helper, a memory
-              window and a loop participate in the same checking and execution rules. We do not need
-              a separate compiler path for each example.
-            </p>
-            <p>
-              The embedded engineering map shows the larger design, including future
-              transformations, saved artifacts and hardware planning. HLS will require additional
-              target-specific work and validation. For today, the solid result is the
-              source-to-reference path for the supported subset. The map is useful for seeing how
-              that path fits into the eventual system.
+              There is also a Python reference engine beside that path. It runs the same program
+              under Spatial’s arithmetic, memory and ordering rules, so we have a behavior check
+              before the target runs. There is no Rust core in this implementation. The larger
+              architecture map is still useful for orientation, but it includes work we have not
+              built. The solid path here is the part demonstrated by the saved result.
             </p>
           </div>
           <div class="sources-source" hidden>
             <a
               href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/30---Implementation-Design/70---Engineering-Architecture-Map"
-              >Architecture map ↗</a
-            ><a
-              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/05---Python-Professor-Brief"
-              >Language design ↗</a
-            ><a
-              href="https://github.com/davidydu/spatial-py/blob/0c7914057970d1cdf3b6a3361f68e761c812b0a6/docs/support-ledger.md"
-              >Implementation support ledger ↗</a
+              >Full proposed architecture ↗</a
+            >
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/0ac7c00/docs/evidence/task-06b-vitis.md"
+              >Implemented target and vendor evidence ↗</a
             >
           </div>
         </section>
@@ -224,36 +211,40 @@
           id="lab1"
           aria-labelledby="title-lab1"
           data-label="The working example"
-          data-time="1:30"
+          data-time="1:45"
         >
           <div class="eyebrow">
-            <span>03 / The working example</span><span class="status">Replayed today</span>
+            <span>03 / The working example</span><span class="status">Saved run · 21 Oct 2026</span>
           </div>
-          <h1 id="title-lab1" tabindex="-1">The first Lab 1 memory example works.</h1>
+          <h1 id="title-lab1" tabindex="-1">One Lab 1 example clears the pipeline</h1>
           <p class="lede">
-            Read 32 values from DRAM, process two 16-value tiles in SRAM, and write the scaled
-            result back.
+            32 Int32 values. Two tiles of 16. Load from DRAM, multiply by two in SRAM, store to
+            DRAM.
           </p>
           <div class="memory-flow">
             <div>
-              <span class="panel-label">Input / DRAM</span><strong>32 values</strong>
+              <span class="panel-label">Load / DRAM</span><strong>32 values</strong>
               <div class="tile-pair"><span>Tile 1 · 16</span><span>Tile 2 · 16</span></div>
             </div>
             <b aria-hidden="true">→</b>
             <div class="sram-box">
-              <span class="panel-label">Scratch / SRAM</span><strong>Load → multiply ×2</strong>
-              <p>Local memory for each tile</p>
+              <span class="panel-label">Compute / SRAM</span><strong>Multiply ×2</strong>
+              <p>Local storage for each tile</p>
             </div>
             <b aria-hidden="true">→</b>
             <div>
-              <span class="panel-label">Output / DRAM</span><strong>32 results</strong>
+              <span class="panel-label">Store / DRAM</span><strong>32 results</strong>
               <div class="tile-pair output"><span>Tile 1 · 16</span><span>Tile 2 · 16</span></div>
             </div>
+          </div>
+          <div class="stage-checks" aria-label="Five validation stages passed">
+            <span>✓ Python reference</span><span>✓ Native C++</span><span>✓ Vitis C simulation</span
+            ><span>✓ Synthesis</span><span>✓ RTL simulation</span>
           </div>
           <div class="lab-results">
             <div class="result-panel">
               <div class="result-header">
-                <span class="panel-label">Recorded compiler output</span>
+                <span class="panel-label">Saved output · 32 values</span>
                 <div class="segmented" role="group" aria-label="Recorded Lab 1 case">
                   <button data-case="0" aria-pressed="true">Ordinary values</button
                   ><button data-case="1" aria-pressed="false">Int32 overflow</button>
@@ -264,49 +255,36 @@
             </div>
             <div class="result-checks">
               <span class="passed">Both cases pass</span>
-              <p>All 32 outputs match independently calculated answers.</p>
-              <p>Loads, writes and scratch-memory lifetimes are recorded.</p>
-              <a href="./assets/lab1-reference-fresh-output.json" target="_blank" rel="noopener"
-                >View execution record ↗</a
-              >
+              <p>All outputs match independently written, literal expectations.</p>
+              <a href="./assets/lab1-rtl-cosim.rpt">View saved RTL report ↗</a>
             </div>
           </div>
           <p class="fine">
-            Replayed 21 October · CPython 3.14.5 · Recorded reference execution, not a live browser
-            simulation or full Lab 1 coverage.
+            Saved run · 21 Oct 2026 · RTL simulation; board execution remains open. This page
+            displays recorded results.
           </p>
           <div class="notes-source" hidden>
             <p>
-              The first concrete example is a tiled-scale memory program based on Lab 1. It
-              processes thirty-two values in two tiles of sixteen. Each tile moves from external
-              memory into local SRAM, is multiplied by a scale, and is written back.
+              The example is deliberately small. There are thirty-two Int32 values, split into two
+              tiles of sixteen. Each tile is loaded from DRAM into SRAM, multiplied by two, and
+              stored back. With ordinary inputs zero through thirty-one, the answers are zero, two,
+              four, up to sixty-two.
             </p>
             <p>
-              With inputs zero through thirty-one and a scale of two, the output is zero, two, four,
-              and so on through sixty-two. A second input includes integer boundary values, and its
-              overflow results agree with the independently specified Int32 expectations.
-            </p>
-            <p>
-              This is actual source going through the compiler, checking, input preparation and
-              reference execution. The run also records the local allocations, transfers, reads,
-              writes and cleanup. Seven required checks are proved during checking; four are
-              enforced by runtime guards.
-            </p>
-            <p>
-              Both cases were rerun today. Their values and recorded behavior match the saved
-              expectations. This establishes the tiled-memory example and the features it uses. Lab
-              1’s registers, FIFOs and reduction or fold families remain to be implemented, and this
-              result does not establish hardware behavior.
+              The second case includes integer boundary values. Those results must follow Int32
+              wraparound, including the negative result shown here. Both cases match independently
+              written literal expectations. They passed Python reference execution, native C++,
+              Vitis C simulation, synthesis and RTL simulation. These are saved results from
+              twenty-one October. This establishes the first complete path for this example; we have
+              not run it on a board, and it does not cover all of Lab 1.
             </p>
           </div>
           <div class="sources-source" hidden>
-            <a href="./assets/lab1-reference-fresh-output.json">Fresh execution record ↗</a
-            ><a
-              href="https://github.com/davidydu/spatial-py/blob/0c7914057970d1cdf3b6a3361f68e761c812b0a6/tests/fixtures/sources/lab1_tiled_scale.py"
-              >Actual source ↗</a
-            ><a
-              href="https://github.com/davidydu/spatial-py/blob/0c7914057970d1cdf3b6a3361f68e761c812b0a6/tests/fixtures/lab1_demo_expected.json"
-              >Independent expected results ↗</a
+            <a href="./assets/meeting-pipeline-record.json">Combined saved pipeline record ↗</a>
+            <a href="./assets/lab1-rtl-cosim.rpt">Lab 1 RTL co-simulation report ↗</a>
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/0ac7c00/docs/evidence/task-06b-vitis.md"
+              >Frozen vendor validation record ↗</a
             >
           </div>
         </section>
@@ -314,101 +292,83 @@
           class="slide"
           id="composition"
           aria-labelledby="title-composition"
-          data-label="Reusable language features"
-          data-time="1:45"
+          data-label="Reusable language rules"
+          data-time="1:15"
         >
           <div class="eyebrow">
-            <span>04 / Reusable language features</span
-            ><span class="status">Working reference subset</span>
+            <span>04 / Reusable language rules</span><span class="status">Beyond one example</span>
           </div>
-          <h1 id="title-composition" tabindex="-1">The same rules support new combinations.</h1>
+          <h1 id="title-composition" tabindex="-1">The compiler uses reusable language rules</h1>
           <p class="lede">
-            Memory, control, helpers and compile-time choices now work together through the shared
-            compiler path.
+            Memory, control, helpers and configuration combine through the same compiler path.
           </p>
           <div class="feature-row">
             <div>
               <span class="feature-symbol">▦</span>
               <h2>Memory</h2>
-              <p>Views, copies, local storage</p>
+              <p>Local storage, views and transfers</p>
             </div>
             <div>
               <span class="feature-symbol">↳</span>
               <h2>Control</h2>
-              <p>Loops and runtime branches</p>
+              <p>Loops, branches and operation order</p>
             </div>
             <div>
               <span class="feature-symbol">ƒ</span>
               <h2>Helpers</h2>
-              <p>Calls and captured values</p>
+              <p>Calls and reusable computations</p>
             </div>
             <div>
               <span class="feature-symbol">N</span>
               <h2>Configuration</h2>
-              <p>Constants and static expansion</p>
+              <p>Sizes, constants and specialization</p>
             </div>
           </div>
-          <div class="specialization">
-            <div class="template-box">
-              <span class="panel-label">Latest increment</span>
-              <h2>Capture once.<br />Specialize twice.</h2>
-              <p>One frozen template.<br />Different sizes and constants.</p>
+          <div class="general-rules">
+            <div>
+              <span class="panel-label">How programs compile</span>
+              <h2>Lower the operations<br />a program uses.</h2>
+              <p>Compiler dispatch follows operations, not a lab or kernel name.</p>
             </div>
-            <span class="branch-symbol" aria-hidden="true">↗<br />↘</span>
-            <div class="specialization-cases">
-              <div>
-                <span class="config-label">N = 3 · BIAS = −2</span
-                ><span class="input-values">[3, 7, 11] →</span><strong>[1, 5, 9]</strong
-                ><span class="case-pass">PASS</span>
-              </div>
-              <div>
-                <span class="config-label">N = 2 · BIAS = 4</span
-                ><span class="input-values">[3, 7] →</span><strong>[7, 11]</strong
-                ><span class="case-pass">PASS</span>
-              </div>
-              <p>Both runs use fresh scratch storage and preserve the host inputs.</p>
+            <div>
+              <span class="panel-label">Supporting hardware evidence · 21 October</span>
+              <h2>4 kernels · 9 cases</h2>
+              <p>
+                Passed through RTL co-simulation, including a new composition independently authored
+                after the compiler was frozen.
+              </p>
             </div>
           </div>
-          <p class="fine">
-            Public capture and specialization work for one core module. Checking and execution still
-            use internal interfaces. Results replayed 21 October.
-          </p>
+          <div class="takeaway">
+            <strong>Current boundary</strong
+            ><span
+              >Reference execution supports more than the C++ target. Hardware coverage remains a
+              bounded subset.</span
+            >
+          </div>
           <div class="notes-source" hidden>
             <p>
-              The progress beyond that one example falls into four groups. First, memory: local
-              storage, transfers, named views and helpers that return memory windows. Second,
-              control: ordinary branches, loops and scopes with explicit cleanup. Third, helpers:
-              calls, nested helpers and captured values or memory. Fourth, compile-time
-              configuration: constants, parameters, helper specialization and finite static
-              expansion.
+              The important question beyond this example is whether the compiler can handle another
+              combination of the same language features. The implementation has rules for memory
+              operations, control, helpers and compile-time configuration. It selects those rules
+              from the operations in a program, rather than recognizing a lab or kernel name.
             </p>
             <p>
-              The useful point is how these features combine. A helper can work on a selected memory
-              window. A compile-time choice can generate scopes that each allocate their own scratch
-              memory. Those pieces still pass through the same checker and reference engine.
-            </p>
-            <p>
-              The latest increment makes source capture and specialization public. One captured
-              template can be used with different settings. In the example, inputs three, seven and
-              eleven with bias minus two produce one, five and nine. The same template, specialized
-              for two inputs with bias four, produces seven and eleven. The two runs use three and
-              two fresh scratch lifetimes, and the original host buffers remain unchanged.
-            </p>
-            <p>
-              The public entry point is still deliberately bounded: one core module with no
-              dependencies. Checking, preparation and execution in this example currently use the
-              private bridge. Finishing that public invocation workflow is the next step.
+              The broader saved hardware checkpoint covers four kernels and nine cases. It includes
+              a composition written independently after the compiler was frozen, which passed
+              without changing that frozen implementation. That gives some evidence that the path is
+              reusable. It is still a small set. The reference implementation supports more features
+              than the current C++ target, so I am not claiming that every working Python program
+              already reaches hardware.
             </p>
           </div>
           <div class="sources-source" hidden>
-            <a href="./assets/public-source-fresh-output.json"
-              >Fresh capture and specialization results ↗</a
-            ><a
-              href="https://github.com/davidydu/spatial-py/blob/0c7914057970d1cdf3b6a3361f68e761c812b0a6/examples/run_public_source.py"
-              >Public source demo ↗</a
-            ><a
-              href="https://github.com/davidydu/spatial-py/blob/0c7914057970d1cdf3b6a3361f68e761c812b0a6/docs/support-ledger.md"
-              >Feature support and limits ↗</a
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/0ac7c00/docs/evidence/task-06b-vitis.md"
+              >Four-kernel checkpoint and independent composition ↗</a
+            >
+            <a href="https://github.com/davidydu/spatial-py/blob/4273ff4/docs/support-ledger.md"
+              >Language support and target boundaries ↗</a
             >
           </div>
         </section>
@@ -416,97 +376,79 @@
           class="slide"
           id="evidence"
           aria-labelledby="title-evidence"
-          data-label="Confidence in the design"
-          data-time="1:45"
+          data-label="Evidence and limits"
+          data-time="1:30"
         >
           <div class="eyebrow">
-            <span>05 / Confidence in the design</span
-            ><span class="status">Bounded, reproducible evidence</span>
+            <span>05 / Evidence and limits</span
+            ><span class="status">Separate completed and pending work</span>
           </div>
-          <h1 id="title-evidence" tabindex="-1">We check more than the final answer.</h1>
+          <h1 id="title-evidence" tabindex="-1">What this first result establishes</h1>
           <p class="lede">
-            The goal is a compiler that handles new combinations of supported features.
+            A working path to RTL for a small subset, with broader coverage still to establish.
           </p>
-          <div class="verification-row">
+          <div class="verification-row maturity-row">
             <div>
-              <span class="step-number">01 / Values</span>
-              <h2>Independent answers</h2>
-              <p>Expected results are written separately from the compiler.</p>
+              <span class="step-number">Demonstrated</span>
+              <h2>Python → C++<br />→ RTL</h2>
+              <p>A bounded sequential path with independently expected results.</p>
+              <span class="scope-tag">Saved vendor run · 21 October</span>
             </div>
             <div>
-              <span class="step-number">02 / Behavior</span>
-              <h2>Memory and effects</h2>
-              <p>Check operation order, storage lifetimes and defined faults.</p>
+              <span class="step-number">Locally validated next</span>
+              <h2>State, shifts<br />and accumulations</h2>
+              <p>Scalar Out/InOut, shifts, sums, dot products and ordered state.</p>
+              <span class="scope-tag">12 projects · 32 cases · HLS pending</span>
             </div>
             <div>
-              <span class="step-number">03 / Composition</span>
-              <h2>A new program</h2>
-              <p>Freeze production code, then test an independently written combination.</p>
+              <span class="step-number">Still ahead</span>
+              <h2>Coverage<br />and useful hardware</h2>
+              <p>Full language support, useful parallel performance and board integration.</p>
+              <span class="scope-tag">No full-rewrite completion claim</span>
             </div>
           </div>
-          <div class="composition-proof">
-            <div>
-              <span class="panel-label">Accepted composition / replayed today</span>
-              <h2>Static expansion + nested helper<br />+ scratch memory + runtime branch</h2>
-            </div>
-            <div class="proof-results">
-              <div><span>Normal branch</span><strong>60</strong></div>
-              <div><span>Flipped branch</span><strong>0</strong></div>
-              <div><span>Empty expansion</span><strong>−9</strong></div>
-            </div>
+          <div class="evidence-principle">
+            <span class="panel-label">What we compare</span>
+            <p>
+              Reference and native results each match independent expectations.<br />RTL validation
+              applies to the earlier, frozen hardware checkpoint.
+            </p>
           </div>
           <div class="test-foot">
-            <strong>1,244</strong>
             <p>
-              tests pass through both the source and installed-package routes.<br /><span
-                >Recorded full suites: 18 October. File hashes and selected examples checked
-                today.</span
+              <strong>1,329 source + 1,329 installed-package tests passed.</strong><br /><span
+                >Recorded 21 October 2026. Supporting regression evidence, not a measure of hardware
+                coverage.</span
               >
             </p>
             <button class="text-button" id="evidence-button">Evidence &amp; limits ↗</button>
           </div>
-          <p class="fine">
-            This is evidence for the current subset. Broader language coverage, whole-workflow
-            acceptance and performance measurements remain open.
-          </p>
           <div class="notes-source" hidden>
             <p>
-              A matching output is necessary, but memory programs have other ways to go wrong. A
-              temporary buffer might outlive its scope, a write might happen in the wrong order, or
-              a fault might occur after an effect that should never have happened.
+              I would separate the progress into three parts. First, we have demonstrated a bounded
+              Python-to-C++-to-RTL path. Second, there is newer local work on scalar output and
+              input-output cells, shifts, sums, dot products and ordered state. That batch covers
+              twelve projects and thirty-two cases, but it has not gone through Vitis yet.
             </p>
             <p>
-              Our checks therefore include independently written expected values and ordered
-              observations of calls, memory operations, branches and cleanup. Some tests compare
-              source programs with separately written common program records. Other tests
-              deliberately exercise rejected programs or faults.
-            </p>
-            <p>
-              We also freeze the implementation before an independent author writes a new
-              composition. The latest accepted case combines static expansion, a nested helper, a
-              mutable scalar cell, scratch SRAM and a runtime branch. Its three handwritten answers
-              are sixty, zero and minus nine. All expected ordered events match as well. That
-              unchanged test was replayed today, and all three scenarios passed.
-            </p>
-            <p>
-              The accepted package checkpoint on eighteen October passed twelve hundred and
-              forty-four tests from source, and the same number from an isolated installed wheel.
-              Today’s checks were narrower: the two demonstrations, that composition, and unchanged
-              file manifests. These results give us concrete regression and composition evidence.
-              Full-compiler acceptance and useful-workload performance measurements remain separate
-              work.
+              Third, the larger goals remain open: full language coverage, useful parallel
+              performance, and board integration. The source and installed-package suites each
+              passed thirteen hundred and twenty-nine tests on twenty-one October. Those tests help
+              protect the implementation, but the hardware claim comes from the specific vendor
+              runs. I want to keep that distinction clear when deciding what result to pursue next.
             </p>
           </div>
           <div class="sources-source" hidden>
             <a
-              href="https://github.com/davidydu/spatial-py/blob/0c7914057970d1cdf3b6a3361f68e761c812b0a6/docs/evidence/task-03c-public-source-acceptance-second.md"
-              >Independent composition and frozen-code evidence ↗</a
-            ><a
-              href="https://github.com/davidydu/spatial-py/blob/0c7914057970d1cdf3b6a3361f68e761c812b0a6/docs/evidence/task-03c-public-source.md"
-              >Full package verification ↗</a
-            ><a
-              href="https://github.com/davidydu/spatial-py/blob/0c7914057970d1cdf3b6a3361f68e761c812b0a6/docs/support-ledger.md"
-              >Current support ledger ↗</a
+              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/50---HLS-Lowering/2026-10-21-vitis-rtl-checkpoint"
+              >Completed vendor checkpoint ↗</a
+            >
+            <a
+              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/50---HLS-Lowering/2026-10-21-scalar-target-checkpoint"
+              >Newer local state and shift checkpoint ↗</a
+            >
+            <a href="https://github.com/davidydu/spatial-py/blob/4273ff4/PROJECT_STATE.md"
+              >Dated compiler state and test evidence ↗</a
             >
           </div>
         </section>
@@ -514,25 +456,24 @@
           class="slide"
           id="next-steps"
           aria-labelledby="title-next-steps"
-          data-label="Implementation plan"
+          data-label="Next steps"
           data-time="1:30"
         >
           <div class="eyebrow">
-            <span>06 / Implementation plan</span><span class="status">Next work</span>
+            <span>06 / Next steps</span><span class="status">Build on hardware feedback</span>
           </div>
-          <h1 id="title-next-steps" tabindex="-1">Finish the workflow. Broaden the language.</h1>
+          <h1 id="title-next-steps" tabindex="-1">Next steps</h1>
           <p class="lede">
-            Add complete feature families in the order suggested by EE 109 Labs 1–3.
+            Broaden the supported language using Labs 1–3, and measure how it maps to hardware.
           </p>
           <div class="next-workflow">
             <div>
-              <span class="panel-label">Next deliverable</span>
-              <h2>A complete public way to check and run</h2>
+              <span class="panel-label">Next after this meeting</span>
+              <h2>Validate the prepared state and shift batch through HLS.</h2>
             </div>
             <p>
-              <strong>Check &amp; prepare</strong><span>→</span
-              ><strong>Correct pause / resume</strong><span>→</span
-              ><strong>Public simulation</strong>
+              <strong>C simulation</strong><span>→</span><strong>Synthesis</strong><span>→</span
+              ><strong>RTL comparison</strong>
             </p>
           </div>
           <div class="roadmap">
@@ -548,56 +489,48 @@
             </div>
             <div class="roadmap-stop">
               <span class="roadmap-index">03</span><span class="panel-label">Lab 3</span>
-              <h2>Buffered<br />computation</h2>
-              <p>Line and shift buffers,<br />convolution</p>
+              <h2>Buffers &amp;<br />convolution</h2>
+              <p>Line and shift buffers,<br />sliding windows</p>
             </div>
             <div class="roadmap-stop later">
-              <span class="roadmap-index">04</span
-              ><span class="panel-label">After language support</span>
-              <h2>Lower<br />to HLS</h2>
-              <p>Program + testbench,<br />then vendor validation</p>
+              <span class="panel-label">Across the sequence</span>
+              <h2>Measure &amp;<br />improve</h2>
+              <p>Storage and scheduling,<br />guided by hardware results</p>
             </div>
           </div>
           <div class="takeaway">
-            <strong>For each family</strong
-            ><span
-              >Source support → checking → reference behavior → independent tests, added
-              together.</span
-            >
+            <strong>Each increment</strong
+            ><span>General rules + new compositions + reference, C++ and RTL checks.</span>
           </div>
+          <p class="fine">
+            The public checking, preparation and simulation workflow also remains open.
+          </p>
           <div class="notes-source" hidden>
             <p>
-              The next implementation step is to expose checking and input preparation through a
-              documented public workflow, using the checker and preparation path we already have.
+              The immediate next step after this meeting is to run the prepared state and shift
+              batch through HLS. That connects the newer local results back to the hardware path we
+              already have.
             </p>
             <p>
-              Before exposing public simulation, we also need real resumption: a run should be able
-              to stop at a supported effect boundary and continue with validated state and
-              cumulative budgets, without replaying effects. The current private resource-limit
-              result does not provide that continuation.
-            </p>
-            <p>
-              After the current initial-contract work, the labs give us a useful language sequence.
-              Lab 1 adds registers, FIFOs and reductions or folds. Lab 2 brings memory reductions,
-              finite-state control, lookup tables and fixed-point tiles. Lab 3 brings line and shift
-              buffers and convolution. We should implement those as reusable features and test new
-              combinations as we go.
-            </p>
-            <p>
-              HLS remains the agreed destination after the planned language and reference support.
-              The trigger for starting vendor validation is a scoped target program, generated code
-              and a testbench. That makes the next stages concrete while keeping the current
-              reference result separate from a hardware claim.
+              For language coverage, the labs give us a concrete sequence. Lab 1 brings more state
+              and reduction patterns. Lab 2 adds richer memory and control. Lab 3 brings buffers and
+              convolution. At each step I want a general language rule, a new composition, and
+              checks through reference execution, C++ and RTL. Alongside that, we should measure
+              storage and scheduling costs and use those results to choose improvements. The current
+              sequential implementation is a starting point for that work; useful parallel
+              performance and the complete public workflow still need attention.
             </p>
           </div>
           <div class="sources-source" hidden>
             <a
-              href="https://github.com/davidydu/spatial-py/blob/0c7914057970d1cdf3b6a3361f68e761c812b0a6/PROJECT_STATE.md"
-              >Current implementation restart plan ↗</a
-            ><a
+              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/50---HLS-Lowering/2026-10-21-scalar-target-checkpoint"
+              >Prepared next target batch ↗</a
+            >
+            <a
               href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/04---Python-Implementation-Roadmap"
               >Implementation roadmap ↗</a
-            ><a
+            >
+            <a
               href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/60---Validation/01---Python-Coverage-Ledger"
               >Language coverage ledger ↗</a
             >
@@ -607,56 +540,51 @@
           class="slide"
           id="discussion"
           aria-labelledby="title-discussion"
-          data-label="Discussion & records"
-          data-time="1:00"
+          data-label="Discussion and records"
+          data-time="1:15"
         >
           <div class="eyebrow">
-            <span>07 / Discussion & records</span><span class="status">21 October 2026</span>
+            <span>07 / Discussion and records</span><span class="status">22 October 2026</span>
           </div>
-          <h1 id="title-discussion" tabindex="-1">
-            A working reference.<br />Broader Spatial next.
-          </h1>
+          <h1 id="title-discussion" tabindex="-1">A working pipeline to build on</h1>
           <p class="lede">
-            The architecture now has executable evidence. The next milestone is a usable public
-            workflow and more language families.
+            A pure Python compiler now carries one Lab 1 example through C++ to RTL simulation.
           </p>
           <div class="closing-grid">
             <div class="discussion-points">
               <div>
-                <span class="panel-label">What we can show today</span>
-                <h2>Source → checked execution → results</h2>
-                <p>Lab 1 memory, reusable features and a new composition.</p>
+                <span class="panel-label">The result</span>
+                <h2>The first bounded hardware path works.</h2>
+                <p>The full rewrite and useful parallel hardware remain ahead.</p>
               </div>
               <div>
-                <span class="panel-label">What comes next</span>
-                <h2>Public workflow, then Lab 1 state</h2>
-                <p>Continue through Labs 2–3 before HLS validation.</p>
+                <span class="panel-label">The next milestone</span>
+                <h2>Broader Lab 1 coverage,<br />with hardware feedback.</h2>
+                <p>Start with the prepared state and shift batch.</p>
               </div>
               <div class="discussion-question">
                 <span class="panel-label">For discussion</span>
-                <p>Which student workload should be our next end-to-end demonstration?</p>
+                <p>Which Lab 1 capability should we prioritize after this batch?</p>
               </div>
             </div>
             <div class="record-links">
               <a href="https://davidydu.github.io/spatial-research-site/"
-                ><span>01 / Research site</span><strong>Design and decisions ↗</strong>
-                <p>The programming model, feasibility and lab mappings.</p></a
-              ><a
-                href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/30---Implementation-Design/80---Initial-Compiler-Goal"
-                ><span>02 / Progress</span><strong>What works and what remains ↗</strong>
-                <p>Evidence, limitations and implementation sequence.</p></a
-              ><a
+                ><span>01 / Research site</span><strong>Design and decisions ↗</strong></a
+              >
+              <a
+                href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/50---HLS-Lowering/2026-10-21-vitis-rtl-checkpoint"
+                ><span>02 / Progress</span><strong>Results and remaining work ↗</strong></a
+              >
+              <a
                 href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/30---Implementation-Design/70---Engineering-Architecture-Map"
-                ><span>03 / Architecture</span><strong>The system in detail ↗</strong>
-                <p>Excalidraw map and component responsibilities.</p></a
+                ><span>03 / Architecture</span><strong>The system in detail ↗</strong></a
               >
               <div class="repo-links">
-                <a
-                  href="https://github.com/davidydu/spatial-py/tree/0c7914057970d1cdf3b6a3361f68e761c812b0a6"
-                  >Compiler checkpoint ↗</a
+                <a href="https://github.com/davidydu/spatial-py/tree/work/initial-reference"
+                  >Compiler repository ↗</a
                 ><a href="https://github.com/davidydu/spatial-research">Research repository ↗</a
                 ><a
-                  href="https://davidydu.github.io/spatial-research-site/90---Meta/2026-10-21-python-progress-presentation"
+                  href="https://davidydu.github.io/spatial-research-site/90---Meta/2026-10-22-python-pipeline-presentation"
                   >Speaking script ↗</a
                 >
               </div>
@@ -664,29 +592,29 @@
           </div>
           <div class="notes-source" hidden>
             <p>
-              The takeaway is that we now have a working Python reference path for a useful
-              memory-program subset. The tiled Lab 1 example runs, reusable features compose, and
-              one captured source can produce multiple checked and executed specializations through
-              the current bridge.
+              The main takeaway is that the pure Python direction now has an initial hardware
+              result. We can start with a small Spatial program, compile it to C++, and check its
+              RTL behavior against expected answers. The Lab 1 example is the clearest way to show
+              that progress.
             </p>
             <p>
-              The next milestone is a complete public invocation workflow, followed by broader
-              language coverage guided by the three labs. HLS remains the later hardware stage.
-            </p>
-            <p>
-              The links here provide the research site, the full architecture, the progress record,
-              and both repositories. We can use them to inspect a result or discuss a missing
-              capability without turning the main presentation into a code walkthrough. The most
-              useful discussion now is which language combinations should shape the next acceptance
-              examples.
+              I would build on it by broadening Lab 1 coverage and using hardware results to guide
+              the compiler work. The prepared state and shift batch is the next concrete step. After
+              that, I would like your input on which missing Lab 1 capability matters most. The
+              links here lead to the architecture, dated progress, both repositories and the
+              speaking script, so we can inspect any part that would help the discussion.
             </p>
           </div>
           <div class="sources-source" hidden>
-            <a href="https://davidydu.github.io/spatial-research-site/">Research site ↗</a
-            ><a
-              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/30---Implementation-Design/80---Initial-Compiler-Goal"
-              >Progress and next steps ↗</a
-            ><a href="https://github.com/davidydu/spatial-research">Research repository ↗</a>
+            <a href="https://davidydu.github.io/spatial-research-site/">Research site ↗</a>
+            <a href="https://github.com/davidydu/spatial-py/tree/work/initial-reference"
+              >Python compiler repository ↗</a
+            >
+            <a href="https://github.com/davidydu/spatial-research">Research repository ↗</a>
+            <a
+              href="https://davidydu.github.io/spatial-research-site/90---Meta/2026-10-22-python-pipeline-presentation"
+              >Full speaking script ↗</a
+            >
           </div>
         </section>
       </main>
@@ -783,136 +711,213 @@
         >
       </footer>
     </dialog>
-    <template id="evidence-content"
-      ><div class="evidence-dialog">
-        <h3>What was checked today</h3>
+    <template id="evidence-content">
+      <div class="evidence-dialog">
+        <h3>Saved hardware result · 21 October 2026</h3>
         <p>
-          On 21 October 2026, CPython 3.14.5 replayed the Lab 1 example (two cases), public
-          capture/specialization demo (two cases), and accepted composition (three scenarios)
-          successfully at compiler commit <code>0c7914057970d1cdf3b6a3361f68e761c812b0a6</code>.
+          Four Python-generated kernels and nine cases passed native C++, Vitis C simulation,
+          synthesis and Verilog RTL co-simulation. Lab 1 contributes the ordinary and Int32-overflow
+          cases shown here. Their results match independent literal expectations.
         </p>
         <p>
-          All 75 production-manifest files and 268 execution-manifest files match the accepted
-          checkpoint. The full suites passed 1,244 tests on each of the source and isolated
-          installed-wheel routes on 18 October; they were not rerun in full today.
-        </p>
-        <h3>What the records establish</h3>
-        <p>
-          The saved Lab 1 case observations match today’s results. Its historical semantic-revision
-          identifier differs; the fresh record retains the current identifier. The public-source
-          output matches its saved JSON exactly.
+          Production freeze: <code>da4d35f90e993a31d3ffda8b1f568cc4cbcecef6</code>. Acceptance
+          record: <code>0ac7c00</code>. Vitis 2025.1 targeted <code>xc7z020clg400-1</code> with a 10
+          ns requested clock. This is a sequential IP profile; the clock setting is not a routed
+          timing result.
         </p>
         <p>
-          The independent second composition passed after production was frozen. The first
-          composition required an observer correction and is treated as regression evidence, not a
-          fresh acceptance test.
+          A new composition authored independently after production was frozen passed unchanged. An
+          earlier unsupported shift candidate was retained as negative evidence for that checkpoint.
+        </p>
+        <h3>Newer local result · vendor validation pending</h3>
+        <p>
+          Scalar Out/InOut and shift support were added at production <code>1e55eb8</code>, with
+          acceptance at <code>25a0e61</code> and the latest compiler checkpoint at
+          <code>4273ff4</code>. The prepared batch contains 12 projects and 32 cases. Reference and
+          native C++ each match independent expected results; there is no new synthesis or RTL
+          result for this batch.
+        </p>
+        <p>
+          The complete source and isolated installed-package suites each passed 1,329 tests on 21
+          October. These are dated saved results, not runs performed by this presentation.
         </p>
         <h3>What remains</h3>
         <p>
-          Public check/prepare/simulate, cumulative resumption, dependency linking, artifact and
-          editing workflows, broader language support and practical performance checks. There is no
-          HLS or hardware result yet.
+          Full Spatial language coverage, the complete public workflow, useful parallel performance,
+          board and AXI integration, and routed timing closure. The reference implementation remains
+          broader than the C++ target. One example clearing the pipeline does not establish
+          full-rewrite completion.
         </p>
         <div class="source-list">
-          <a href="./assets/meeting-demo-record.json">Today’s combined demonstration record ↗</a
-          ><a
-            href="https://github.com/davidydu/spatial-py/blob/0c7914057970d1cdf3b6a3361f68e761c812b0a6/docs/evidence/task-03c-public-source.md"
-            >Full acceptance record ↗</a
-          ><a
-            href="https://github.com/davidydu/spatial-py/blob/0c7914057970d1cdf3b6a3361f68e761c812b0a6/docs/evidence/task-03c-public-source-acceptance-second.md"
-            >Independent composition ↗</a
-          ><a
-            href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/30---Implementation-Design/80---Initial-Compiler-Goal"
-            >Progress and remaining work ↗</a
+          <a href="./assets/meeting-pipeline-record.json">Combined saved pipeline record ↗</a>
+          <a href="./assets/lab1-rtl-cosim.rpt">Exact Lab 1 RTL co-simulation report ↗</a>
+          <a
+            href="https://github.com/davidydu/spatial-py/blob/0ac7c00/docs/evidence/task-06b-vitis.md"
+            >Frozen vendor acceptance record ↗</a
+          >
+          <a
+            href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/50---HLS-Lowering/2026-10-21-scalar-target-checkpoint"
+            >Newer local state and shift evidence ↗</a
+          >
+          <a href="https://github.com/davidydu/spatial-py/blob/4273ff4/PROJECT_STATE.md"
+            >Compiler checkpoint and remaining work ↗</a
           >
         </div>
-      </div></template
-    >
+      </div>
+    </template>
     <script type="application/json" id="meeting-record">
       {
-        "checked_on": "2026-10-21",
-        "compiler_commit": "0c7914057970d1cdf3b6a3361f68e761c812b0a6",
-        "python": "CPython 3.14.5",
+        "schema": "spatial.meeting-pipeline/1",
+        "presentation_date": "2026-10-22",
+        "evidence_date": "2026-10-21",
+        "read_only_evidence_review": "2026-10-22",
+        "new_compiler_or_vendor_execution": false,
+        "vendor_production_revision": "da4d35f90e993a31d3ffda8b1f568cc4cbcecef6",
+        "vendor_acceptance_revision": "0ac7c00",
+        "toolchain": {
+          "vitis": "2025.1",
+          "hls_build": "6135595",
+          "vitis_run_build": "6137779",
+          "rtl_simulator": "xsim",
+          "rtl_language": "Verilog"
+        },
+        "profile": {
+          "part": "xc7z020clg400-1",
+          "flow": "vivado",
+          "clock_period_ns": 10.0,
+          "clock_uncertainty_ns": 2.7,
+          "automatic_pipeline_loops": 0
+        },
         "lab1": {
-          "schema": "spatial.reference-demo/1",
-          "scope": "Private Python reference execution; no HLS or hardware claim",
-          "source": "tests/fixtures/sources/lab1_tiled_scale.py",
-          "entry": "tiled_scale",
-          "semantic_revision": "95002f6b98d592353790a951a079db183f0fe37440dc53d85b32004751be4472",
-          "demands": { "proved": 7, "enforced": 4 },
+          "description": "32 Int32 values, two 16-value tiles, scale 2",
+          "source_path": "docs/evidence/vitis-demo/lab1/source.py",
+          "source_sha256": "a4ce8f6887842853b325ce09dd00677dc79260c56e72021c96f689252c60975b",
+          "kernel_sha256": "b779a82fa1743d834955a05852f7a7d6aca16b9f083946f91dbd27c975749010",
           "cases": [
             {
               "case": "LAB1-TILED-SCALE-2",
-              "outcome": "Completed",
-              "matches_independent_oracle": true,
               "output": [
                 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42,
                 44, 46, 48, 50, 52, 54, 56, 58, 60, 62
               ],
-              "trace_counts": {
-                "allocate": 4,
-                "copy_snapshot": 4,
-                "write": 96,
-                "read": 32,
-                "deallocate": 4
-              },
-              "host_output_remains_uninitialized": true
+              "independent_expected": [
+                0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42,
+                44, 46, 48, 50, 52, 54, 56, 58, 60, 62
+              ],
+              "python_reference": "PASS",
+              "native_cpp": "PASS",
+              "vendor_c_simulation": "PASS",
+              "rtl_post_check": "PASS"
             },
             {
               "case": "LAB1-TILED-SCALE-2-INT32-OVERFLOW",
-              "outcome": "Completed",
-              "matches_independent_oracle": true,
               "output": [
                 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42,
                 44, 46, 48, 50, -2147483648, -2147483648, -2147483646, 2147483646, -2, 0
               ],
-              "trace_counts": {
-                "allocate": 4,
-                "copy_snapshot": 4,
-                "write": 96,
-                "read": 32,
-                "deallocate": 4
-              },
-              "host_output_remains_uninitialized": true
+              "independent_expected": [
+                0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42,
+                44, 46, 48, 50, -2147483648, -2147483648, -2147483646, 2147483646, -2, 0
+              ],
+              "python_reference": "PASS",
+              "native_cpp": "PASS",
+              "vendor_c_simulation": "PASS",
+              "rtl_post_check": "PASS"
             }
-          ]
-        },
-        "public_source": {
-          "schema": "spatial.public-source-demo/1",
-          "scope": "Public source capture/specialization; private reference execution",
-          "captured_templates": 1,
-          "specializations": 2,
-          "cases": [
-            {
-              "input": [3, 7, 11],
-              "bias": -2,
-              "output": [1, 5, 9],
-              "outcome": "Completed",
-              "scratch_scopes": 3,
-              "host_inputs_unchanged": true,
-              "matches_literal_expectations": true
-            },
-            {
-              "input": [3, 7],
-              "bias": 4,
-              "output": [7, 11],
-              "outcome": "Completed",
-              "scratch_scopes": 2,
-              "host_inputs_unchanged": true,
-              "matches_literal_expectations": true
-            }
-          ]
-        },
-        "lab1_inputs": [
-          [
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-            24, 25, 26, 27, 28, 29, 30, 31
           ],
-          [
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-            24, 25, 1073741824, -1073741824, 1073741825, -1073741825, 2147483647, -2147483648
-          ]
-        ]
+          "vendor_project": {
+            "project": "lab1",
+            "classification": "development",
+            "cases": ["LAB1-TILED-SCALE-2", "LAB1-TILED-SCALE-2-INT32-OVERFLOW"],
+            "native": "PASS",
+            "vendor_c_simulation": "PASS",
+            "synthesis": "PASS",
+            "rtl_cosimulation": "PASS",
+            "source_sha256": "a4ce8f6887842853b325ce09dd00677dc79260c56e72021c96f689252c60975b",
+            "kernel_sha256": "b779a82fa1743d834955a05852f7a7d6aca16b9f083946f91dbd27c975749010",
+            "bundle_manifest_sha256": "3eec96b172bb567254092758dc52781eb2fd83ffc0139d16ac2053d5ba528bd9",
+            "semantic_revision": "95002f6b98d592353790a951a079db183f0fe37440dc53d85b32004751be4472",
+            "provenance_revision": "74ce306f0d34e2826ef426f0592c06289351911dbc7a279d9050e0d8707f851a",
+            "resources_hls_estimate": {
+              "BRAM_18K": 0,
+              "DSP": 3,
+              "FF": 622,
+              "LUT": 1269,
+              "URAM": 0
+            },
+            "clock_period_estimate_ns": 6.912,
+            "observed_latency_cycles": {
+              "min": 863,
+              "avg": 863,
+              "max": 863
+            },
+            "observed_transaction_interval_cycles": {
+              "min": 864,
+              "avg": 864,
+              "max": 864
+            },
+            "observed_total_execution_cycles": 1727,
+            "synthesis_started_utc": "2026-10-21T22:26:19Z",
+            "cosim_finished_utc": "2026-10-21T22:27:51Z",
+            "warnings": [
+              "WARNING: [HLS 200-2182] The 'project' project will not automatically appear within Vitis IDE workspaces and is meant only for TCL batch use.  Please use open_component instead of open_project/open_solution to generate Vitis IDE compatible component files and directory structure.",
+              "WARNING: [XFORM 203-561] Updating loop lower bound from 0 to 16 for loop 'VITIS_LOOP_211_5' (./kernel.cpp:211:44) in function 'spatial_kernel'.",
+              "WARNING: [XFORM 203-561] Updating loop lower bound from 0 to 16 for loop 'VITIS_LOOP_302_10' (./kernel.cpp:302:45) in function 'spatial_kernel'."
+            ],
+            "report": "lab1/project/solution/sim/report/spatial_hls_cosim.rpt"
+          }
+        },
+        "hardware_scope": "Bounded sequential IP; no FPGA board execution, final AXI/DRAM integration, timing closure or optimized parallel scheduling.",
+        "broader_vendor_evidence": {
+          "projects": 4,
+          "cases": 9
+        },
+        "latest_local_extension": {
+          "production_revision": "1e55eb8",
+          "accepted_revision": "25a0e61",
+          "source_tests": 1329,
+          "installed_package_tests": 1329,
+          "projects": 12,
+          "cases": 32,
+          "vendor_execution": "pending"
+        },
+        "source_records": {
+          "native_results": {
+            "path": "docs/evidence/native-cpp-demo/results.json",
+            "sha256": "2ab5358d2ca89a0767c5440b28be1ce0673edef6a27530bf6d1ac41bea64df14",
+            "url": "https://github.com/davidydu/spatial-py/blob/0ac7c00/docs/evidence/native-cpp-demo/results.json"
+          },
+          "vendor_results": {
+            "path": "docs/evidence/vitis-demo/results.json",
+            "sha256": "ed0fd1a9132ad6d6ec595b9210dc8281ccf0eb9604cc62be2b85c1f71bd05a20",
+            "url": "https://github.com/davidydu/spatial-py/blob/0ac7c00/docs/evidence/vitis-demo/results.json"
+          },
+          "rtl_log": {
+            "path": "docs/evidence/vitis-demo/lab1/cosim.log",
+            "sha256": "2ca47c828bd8ecfeb998115e9a49715a4644021c746de6ab92fbd9c634edd8b6",
+            "url": "https://github.com/davidydu/spatial-py/blob/0ac7c00/docs/evidence/vitis-demo/lab1/cosim.log"
+          },
+          "rtl_report": {
+            "path": "docs/evidence/vitis-demo/lab1/project/solution/sim/report/spatial_hls_cosim.rpt",
+            "sha256": "357add6c7ba1d8687e3e3ed84c53d601be745d8e3f54fed378d82ace023eee13",
+            "url": "https://github.com/davidydu/spatial-py/blob/0ac7c00/docs/evidence/vitis-demo/lab1/project/solution/sim/report/spatial_hls_cosim.rpt"
+          },
+          "kernel": {
+            "path": "docs/evidence/vitis-demo/lab1/kernel.cpp",
+            "sha256": "b779a82fa1743d834955a05852f7a7d6aca16b9f083946f91dbd27c975749010",
+            "url": "https://github.com/davidydu/spatial-py/blob/0ac7c00/docs/evidence/vitis-demo/lab1/kernel.cpp"
+          },
+          "source": {
+            "path": "docs/evidence/vitis-demo/lab1/source.py",
+            "sha256": "a4ce8f6887842853b325ce09dd00677dc79260c56e72021c96f689252c60975b",
+            "url": "https://github.com/davidydu/spatial-py/blob/0ac7c00/docs/evidence/vitis-demo/lab1/source.py"
+          },
+          "bundle_manifest": {
+            "path": "docs/evidence/vitis-demo/lab1/manifest.json",
+            "sha256": "3eec96b172bb567254092758dc52781eb2fd83ffc0139d16ac2053d5ba528bd9",
+            "url": "https://github.com/davidydu/spatial-py/blob/0ac7c00/docs/evidence/vitis-demo/lab1/manifest.json"
+          }
+        }
       }
     </script>
   </body>
