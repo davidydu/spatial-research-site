@@ -1,0 +1,981 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f8f6ef" />
+    <meta
+      name="description"
+      content="Python Spatial, 16 November 2026: where the compiled hardware loses its cycles, the first fix now in the compiler, a prototype at the staff's speed, and a bug in the course wrapper."
+    />
+    <title>Python Spatial — Compiler efficiency · 16 November 2026</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23f8f6ef'/%3E%3Cpath d='M9 9h9v9H9zM22 9h9v9h-9zM9 22h9v9H9z' fill='%233556b2'/%3E%3Cpath d='M22 22h9v9h-9z' fill='%23a84f37'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="./presentation.css?v=20261116" />
+    <script src="./presentation.js?v=20261116" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#slides">Skip to presentation</a>
+    <div class="deck">
+      <header class="masthead">
+        <a class="brand" href="#result" aria-label="Spatial research, first slide"
+          ><span class="brand-mark" aria-hidden="true"
+            ><span></span><span></span><span></span><span></span></span
+          ><span>SPATIAL <small>RESEARCH</small></span></a
+        >
+        <div class="masthead-meta">Compiler efficiency <span>16 November 2026</span></div>
+        <div class="tools" aria-label="Presentation tools">
+          <button class="tool" id="notes-button" title="Speaker notes (N)">Notes</button
+          ><button class="tool" id="sources-button" title="Evidence (E)">Evidence</button
+          ><button class="tool" id="fullscreen-button" title="Fullscreen (F)">Fullscreen</button
+          ><button class="tool" id="help-button" aria-label="Keyboard shortcuts">?</button>
+        </div>
+      </header>
+      <main id="slides">
+        <!-- 1 -->
+        <section
+          class="slide is-active"
+          id="result"
+          aria-labelledby="title-result"
+          data-label="The result"
+          data-time="1:15"
+        >
+          <div class="eyebrow">
+            <span>01 / The result</span><span class="status">Compiler efficiency</span>
+          </div>
+          <h1 id="title-result" tabindex="-1">Making the compiler's<br />hardware fast</h1>
+          <p class="lede">
+            We measured where the compiled design loses its cycles, put the first fix into the
+            compiler, and showed with a prototype that the rest of the gap can be closed.
+          </p>
+          <div class="stat-row">
+            <div class="stat terra">
+              <span class="value">24.7<small> times</small></span>
+              <span class="label"
+                >the staff's handwritten HLS, before this week: 3,910 cycles against 158 at 1,024
+                elements</span
+              >
+            </div>
+            <div class="stat blue">
+              <span class="value">1,858</span>
+              <span class="label"
+                >cycles at 1,024 elements with the first fix, which is now in the compiler
+                <span class="tag measured">measured</span></span
+              >
+            </div>
+            <div class="stat">
+              <span class="value">155</span>
+              <span class="label"
+                >cycles from a compiler prototype with proved checks and one fused loop; the staff's
+                design takes 158 <span class="tag proto">prototype</span></span
+              >
+            </div>
+          </div>
+          <div class="takeaway">
+            <strong>Where we are</strong
+            ><span
+              >One fix is real and measured. The larger steps are prototypes, two to three weeks
+              from the compiler.</span
+            >
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              Last time I showed the first run on the FPGA: Lab 1 compiled from Python Spatial was
+              correct but took about four times as many cycles as the staff's handwritten HLS. You
+              asked about efficiency. This week was about that.
+            </p>
+            <p>
+              Three things happened. We measured where the cycles go, at larger sizes too, and the
+              gap is worse than it looked. We put the first fix into the real compiler, under the
+              full review routine, and measured it. And a throwaway prototype of the code generator
+              reaches the staff's speed at every size we tried, which tells us the remaining gap is
+              closable and what it takes. I'll also show a bug we found in the course's own wrapper
+              along the way.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a
+              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/80---Weekly-Updates/2026-11-15-weekly-update"
+              >Weekly update, 15 November ↗</a
+            >
+            <a href="https://github.com/davidydu/spatial-py/blob/main/docs/performance-ledger.md"
+              >Performance ledger (compiler repository) ↗</a
+            >
+          </div>
+        </section>
+
+        <!-- 2 -->
+        <section
+          class="slide"
+          id="gap"
+          aria-labelledby="title-gap"
+          data-label="The gap"
+          data-time="1:15"
+          hidden
+        >
+          <div class="eyebrow">
+            <span>02 / The gap</span><span class="status">Kit simulation, three sizes</span>
+          </div>
+          <h1 id="title-gap" tabindex="-1">The gap grows with the array</h1>
+          <p class="lede">
+            Lab 1's tiled scale in the F2 kit simulation, the step students run, beside the staff's
+            handwritten HLS.
+          </p>
+          <div class="two-col">
+            <figure class="figure">
+              <img
+                src="./assets/scaling.svg"
+                alt="Line chart on logarithmic axes. Compiler output before this week rises from 294 to 3,910 cycles between 32 and 1,024 elements. The staff's handwritten HLS rises from 77 to 158. Three compiler prototypes sit between; the last lies on the staff's line."
+              />
+            </figure>
+            <div>
+              <table class="data-table">
+                <caption>
+                  Compute cycles, before this week
+                </caption>
+                <thead>
+                  <tr>
+                    <th>Elements</th>
+                    <th>Staff's HLS</th>
+                    <th>Compiler output</th>
+                    <th>Times as many</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>32</th>
+                    <td>77</td>
+                    <td>294</td>
+                    <td>3.8</td>
+                  </tr>
+                  <tr>
+                    <th>256</th>
+                    <td>109</td>
+                    <td>1,198</td>
+                    <td>11.0</td>
+                  </tr>
+                  <tr>
+                    <th>1,024</th>
+                    <td>158</td>
+                    <td>3,910</td>
+                    <td>24.7</td>
+                  </tr>
+                </tbody>
+              </table>
+              <ul class="points" style="margin-top: 18px">
+                <li>
+                  <strong>About 3.6 cycles for each extra element.</strong>
+                  <span>The staff's design adds 1 to 2 cycles for each extra block of 16.</span>
+                </li>
+                <li>
+                  <strong>One size hid it.</strong>
+                  <span>Last week's comparison used 32 elements.</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="takeaway">
+            <strong>Lesson</strong
+            ><span>Measure at three sizes, beside the staff's design, every time.</span>
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              This is the same Lab 1 program at 32, 256 and 1,024 elements, in the kit's simulation,
+              the make hw_sim step students run. Orange is the staff's handwritten HLS. Blue is what
+              our compiler generated before this week. Both axes are logarithmic.
+            </p>
+            <p>
+              At 32 elements we were 3.8 times slower. At 1,024 we were almost 25 times slower. Our
+              design cost about three and a half cycles per extra element; theirs costs one or two
+              per extra block of sixteen. So the single size we measured last week understated the
+              problem, and we now measure at three sizes as a rule. The green lines are the compiler
+              prototypes I'll come to.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/main/docs/evidence/hardware-performance-planning/vendor-2026-11-15/README.md"
+              >Vendor session of 15 November: scaling and the prototype stages ↗</a
+            >
+            <a
+              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/80---Weekly-Updates/2026-11-15-weekly-update"
+              >Weekly update, item 1 ↗</a
+            >
+          </div>
+        </section>
+
+        <!-- 3 -->
+        <section
+          class="slide"
+          id="cycles"
+          aria-labelledby="title-cycles"
+          data-label="Where cycles go"
+          data-time="1:30"
+          hidden
+        >
+          <div class="eyebrow">
+            <span>03 / Where the cycles go</span
+            ><span class="status">Hand edits, one cause at a time</span>
+          </div>
+          <h1 id="title-cycles" tabindex="-1">Memory traffic and one check, not arithmetic</h1>
+          <p class="lede">
+            Thirty-two multiplications take about 7 cycles. The rest is how the design talks to
+            memory and how it checks itself.
+          </p>
+          <div class="two-col">
+            <div>
+              <figure class="figure">
+                <img
+                  src="./assets/breakdown.svg"
+                  alt="Bar split into parts. Of 3,625 estimated cycles at 1,024 elements, 2,051 are the final check that every output was written, 1,110 the loop over the tiles, and about 400 the six staged copies."
+                />
+              </figure>
+              <ul class="points" style="margin-top: 14px">
+                <li>
+                  <strong>Six separate memory transfers</strong>
+                  <span
+                    >where the staff's design makes two, overlapped. Each costs about 27 cycles of
+                    waiting.</span
+                  >
+                </li>
+                <li>
+                  <strong>A check that every output was written,</strong>
+                  <span>one element every two cycles.</span>
+                </li>
+              </ul>
+            </div>
+            <table class="data-table">
+              <caption>
+                The generated design edited by hand, 32 elements
+              </caption>
+              <thead>
+                <tr>
+                  <th>Version</th>
+                  <th>Cycles</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th>Compiler output before this week</th>
+                  <td>294</td>
+                </tr>
+                <tr>
+                  <th>The final check written so it can run in parallel</th>
+                  <td>257</td>
+                </tr>
+                <tr>
+                  <th>and no flags fetched for inputs the host says are fully set</th>
+                  <td>168</td>
+                </tr>
+                <tr>
+                  <th>and nothing copied that the run cannot change</th>
+                  <td>89</td>
+                </tr>
+                <tr>
+                  <th>and one pipelined loop that reads, multiplies and writes</th>
+                  <td>75</td>
+                </tr>
+                <tr class="staff">
+                  <th>Staff's handwritten HLS</th>
+                  <td>77</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="takeaway">
+            <strong>Three causes</strong
+            ><span
+              >Separate memory round trips; a check whose cost grows with the data; nothing proved
+              before the run.</span
+            >
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              Where does the time go? Not arithmetic. Both designs multiply sixteen numbers at once,
+              and the multiplications take about seven cycles.
+            </p>
+            <p>
+              The bar is our design at 1,024 elements. More than half is one check: at the end the
+              kernel confirms every output element was written, one element every two cycles. The
+              next part is the loop over tiles, and then six staged copies in and out of memory,
+              where the staff's design makes two transfers that overlap.
+            </p>
+            <p>
+              On the right we changed the generated design by hand, one cause at a time, at 32
+              elements. Writing the final check so the tool can evaluate it in parallel: 294 to 257.
+              Not fetching flags for inputs the host says are fully set: 168. Not copying what the
+              run can't change: 89. And one pipelined loop: 75, level with the staff's 77. So three
+              causes: memory round trips, a check whose cost grows with the data, and nothing proved
+              before the run.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/main/docs/evidence/lab1-performance-study/README.md"
+              >Lab 1 performance study (hand edits V0 to V9) ↗</a
+            >
+            <a href="https://github.com/davidydu/spatial-py/blob/main/docs/hardware-design-rules.md"
+              >Hardware design rules ↗</a
+            >
+          </div>
+        </section>
+
+        <!-- 4 -->
+        <section
+          class="slide"
+          id="first-fix"
+          aria-labelledby="title-first-fix"
+          data-label="First fix"
+          data-time="1:30"
+          hidden
+        >
+          <div class="eyebrow">
+            <span>04 / The first fix</span
+            ><span class="status">In the compiler, measured 16 November</span>
+          </div>
+          <h1 id="title-first-fix" tabindex="-1">The first fix is in the compiler</h1>
+          <p class="lede">
+            The "was every output written?" check now rides in a copy loop the hardware already
+            runs, sixteen flags at a time. Every result is exactly as before.
+          </p>
+          <div class="two-col even">
+            <table class="data-table">
+              <caption>
+                Compute cycles in the F2 kit simulation
+              </caption>
+              <thead>
+                <tr>
+                  <th>Elements</th>
+                  <th>Before</th>
+                  <th>With the fix</th>
+                  <th>Staff's HLS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th>32</th>
+                  <td>294</td>
+                  <td class="now-cell"><strong>260</strong></td>
+                  <td>77</td>
+                </tr>
+                <tr>
+                  <th>256</th>
+                  <td>1,198</td>
+                  <td class="now-cell"><strong>692</strong></td>
+                  <td>109</td>
+                </tr>
+                <tr>
+                  <th>1,024</th>
+                  <td>3,910</td>
+                  <td class="now-cell"><strong>1,858</strong></td>
+                  <td>158</td>
+                </tr>
+              </tbody>
+            </table>
+            <ul class="points">
+              <li>
+                <strong>Same answers.</strong>
+                <span
+                  >The generated hardware code, built on the Mac, matches both reference simulators
+                  on 116 hand-specified inputs.</span
+                >
+              </li>
+              <li>
+                <strong>Written apart, agreed at once.</strong>
+                <span
+                  >Tests and code came from the plan separately and matched at the first
+                  merge.</span
+                >
+              </li>
+              <li>
+                <strong>40 of 42 planted bugs caught.</strong>
+                <span>The other two cannot change any result.</span>
+              </li>
+              <li>
+                <strong>Two fresh test sets</strong>
+                <span>written after the code was frozen; 2,640 automated tests pass.</span>
+              </li>
+            </ul>
+          </div>
+          <div class="takeaway">
+            <strong>Why this one first</strong
+            ><span
+              >It needs no proof and no change to the interface. The next steps need both.</span
+            >
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              This is the one that is real. As of last night the compiler itself generates this,
+              merged after the full routine.
+            </p>
+            <p>
+              The change: the kernel no longer has a loop that checks, one element per trip, whether
+              every output was written. The wrapper already runs a loop that copies the "written"
+              flags back to memory, sixteen at a time, so the check now rides in that loop. The
+              program's results are exactly what they were, including which fault is reported.
+            </p>
+            <p>
+              The numbers in blue were measured last night on the real compiler's output, in the kit
+              simulation: 260, 692 and 1,858 cycles, where the old output took 294, 1,198 and 3,910.
+              They equal the prototype's numbers exactly, and at 1,024 elements that is a little
+              over twice as fast.
+            </p>
+            <p>
+              How do we know it's right? The generated hardware code, compiled on the Mac, gives the
+              same results as both reference simulators on 116 inputs whose expected results were
+              specified by hand. The tests and the code were written by separate authors from the
+              plan and agreed the first time they met. Reviewers planted 42 bugs; 40 are caught and
+              the other two can't change a result. And two fresh test sets were written after the
+              code was frozen.
+            </p>
+            <p>
+              We did this one first because it needs nothing new: no proof, no change to the
+              interface with the host. It is still far from the staff's 158.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/main/docs/evidence/p1-completion-fold.md"
+              >Slice P1 evidence ↗</a
+            >
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/main/docs/evidence/p1-completion-fold/vendor/session-2026-11-16/README.md"
+              >The measurement of 16 November ↗</a
+            >
+            <a href="https://github.com/davidydu/spatial-py/pull/4">Pull request 4 ↗</a>
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/main/docs/plans/2026-11-15-p1-completion-fold.md"
+              >Slice plan ↗</a
+            >
+          </div>
+        </section>
+
+        <!-- 5 -->
+        <section
+          class="slide"
+          id="prototype"
+          aria-labelledby="title-prototype"
+          data-label="Prototype"
+          data-time="1:15"
+          hidden
+        >
+          <div class="eyebrow">
+            <span>05 / The rest of the gap</span><span class="status">Throwaway prototype</span>
+          </div>
+          <h1 id="title-prototype" tabindex="-1">A compiler prototype reaches the staff's speed</h1>
+          <p class="lede">
+            The code generator emits each faster design itself once it is told facts about the
+            program. The facts came from a table, not yet from the compiler.
+          </p>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>What the compiler emits</th>
+                <th style="text-align: left">What it must know first</th>
+                <th>32</th>
+                <th>256</th>
+                <th>1,024</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Before this week</th>
+                <td style="text-align: left"></td>
+                <td>294</td>
+                <td>1,198</td>
+                <td>3,910</td>
+              </tr>
+              <tr class="now">
+                <th>First fix <span class="tag measured">in the compiler</span></th>
+                <td style="text-align: left">nothing</td>
+                <td>260</td>
+                <td>692</td>
+                <td>1,858</td>
+              </tr>
+              <tr class="proto">
+                <th>
+                  Checks proved away, no transfer the run cannot observe
+                  <span class="tag proto">prototype</span>
+                </th>
+                <td style="text-align: left">
+                  no check can fail; every output is written; the inputs are fully set
+                </td>
+                <td>87</td>
+                <td>147</td>
+                <td>289</td>
+              </tr>
+              <tr class="proto">
+                <th>One fused, pipelined loop <span class="tag proto">prototype</span></th>
+                <td style="text-align: left">
+                  the same, and each tile is a whole number of memory beats
+                </td>
+                <td>75</td>
+                <td>108</td>
+                <td>155</td>
+              </tr>
+              <tr class="staff">
+                <th>Staff's handwritten HLS</th>
+                <td style="text-align: left"></td>
+                <td>77</td>
+                <td>109</td>
+                <td>158</td>
+              </tr>
+            </tbody>
+          </table>
+          <ul class="points" style="margin-top: 16px">
+            <li class="open">
+              <strong>Limits.</strong>
+              <span
+                >One program; simulation only; and one intermediate design never finished at the
+                larger sizes, unexplained, so nothing planned generates it.</span
+              >
+            </li>
+          </ul>
+          <div class="takeaway">
+            <strong>What it tells us</strong
+            ><span
+              >The remaining gap is closable by the compiler, and it is a matter of what the
+              compiler can prove.</span
+            >
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              The hand edits show what is possible; the compiler has to produce them. So we built a
+              throwaway prototype of the code generator that emits each faster design itself, at any
+              of the three sizes, when it is handed facts about the program.
+            </p>
+            <p>
+              The second row is the fix that is now real. The third row removes the checks and the
+              transfers the run can't observe; it needs to know that no check can fail, that every
+              output is written, and that the host has set the inputs. That gets within a factor of
+              two. The fourth row fuses the load, the loop and the store into one pipelined loop,
+              and that matches the staff's design at every size: 75, 108, 155 against 77, 109, 158.
+            </p>
+            <p>
+              Three honest limits. It is one program. The facts were given to the prototype in a
+              table; proving them is the next slide. And these are simulation numbers. Also, one
+              intermediate design we tried never finished at the larger sizes and we haven't
+              explained it, so we won't generate that one.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/main/docs/evidence/hardware-performance-planning/vendor-2026-11-15/README.md"
+              >Vendor session, section 3: the prototype's stages with saved reports ↗</a
+            >
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/main/docs/plans/2026-11-15-hardware-performance.md"
+              >Hardware performance plan ↗</a
+            >
+          </div>
+        </section>
+
+        <!-- 6 -->
+        <section
+          class="slide"
+          id="proofs"
+          aria-labelledby="title-proofs"
+          data-label="Proofs"
+          data-time="1:15"
+          hidden
+        >
+          <div class="eyebrow">
+            <span>06 / Proving checks away</span><span class="status">Throwaway prover</span>
+          </div>
+          <h1 id="title-proofs" tabindex="-1">Most memory checks can be decided before the run</h1>
+          <p class="lede">
+            Python Spatial checks every memory access. A second prototype reads the checked program
+            and proves each possible failure impossible, using loop ranges and which elements a loop
+            writes.
+          </p>
+          <div class="two-col">
+            <figure class="figure">
+              <img
+                src="./assets/census.svg"
+                alt="Two stacked bars. Across 104 test programs, 1,318 of 1,662 possible memory failures are proved impossible, 97 are impossible once the host confirms the inputs are set, and 247 remain as hardware checks. For the three Lab 1 programs, 39 of 43 are proved and 4 need the host's confirmation; none remain."
+              />
+            </figure>
+            <ul class="points">
+              <li>
+                <strong>All of Lab 1.</strong>
+                <span
+                  >39 proved, 4 once the host confirms its inputs are set, none left for the
+                  hardware.</span
+                >
+              </li>
+              <li>
+                <strong>No wrong proof</strong>
+                <span
+                  >in 1,120 runs of the reference simulator and 31 programs written to mislead
+                  it.</span
+                >
+              </li>
+              <li class="open">
+                <strong>Not yet:</strong>
+                <span
+                  >helper functions and branches. Only 5 of the 26 larger example programs are fully
+                  decided.</span
+                >
+              </li>
+              <li class="open">
+                <strong>Not attempted:</strong>
+                <span>queue-full and queue-empty checks.</span>
+              </li>
+            </ul>
+          </div>
+          <div class="takeaway">
+            <strong>The one error we cannot accept</strong
+            ><span
+              >A wrong proof silently removes a check. This becomes a checker pass with its own
+              reviews, not a shortcut.</span
+            >
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              Where do those facts come from? Python Spatial checks every memory access: in bounds,
+              never reading an element that wasn't set, every output written. Today all of those
+              checks stay in the hardware.
+            </p>
+            <p>
+              A second throwaway prototype reads the checked program and tries to prove each
+              possible failure impossible, with simple reasoning: loop ranges, and which elements a
+              loop writes. Across 104 test programs it proves 79 percent, another 6 percent follow
+              once the host confirms its inputs are fully set, and 15 percent are left as hardware
+              checks. For the three Lab 1 programs nothing is left.
+            </p>
+            <p>
+              The one error we can't accept here is a wrong proof, because it silently removes a
+              check. The proved checks never fired in over a thousand runs of the reference
+              simulator, and thirty-one programs written to trick it produced no wrong proof. It
+              doesn't yet follow helper functions or branches, which is why only five of the
+              twenty-six larger examples are fully decided. This will be built as a real checker
+              pass with its own reviews.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/main/docs/plans/2026-11-15-hardware-performance.md"
+              >Hardware performance plan, sections 2.6 and T4 ↗</a
+            >
+            <a
+              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/80---Weekly-Updates/2026-11-15-weekly-update"
+              >Weekly update, item 4 ↗</a
+            >
+          </div>
+        </section>
+
+        <!-- 7 -->
+        <section
+          class="slide"
+          id="chip"
+          aria-labelledby="title-chip"
+          data-label="On the chip"
+          data-time="1:30"
+          hidden
+        >
+          <div class="eyebrow">
+            <span>07 / On the chip</span><span class="status">F2 instance, 15 and 16 November</span>
+          </div>
+          <h1 id="title-chip" tabindex="-1">A bug in the course's wrapper</h1>
+          <p class="lede">
+            Run repeatedly without reloading the image, every single-loop design eventually returns
+            wrong data, the course's own unmodified Lab 1 design included.
+          </p>
+          <div class="two-col even">
+            <table class="data-table">
+              <caption>
+                Repeated runs after one image load
+              </caption>
+              <thead>
+                <tr>
+                  <th>Design, host program</th>
+                  <th>Runs</th>
+                  <th>Wrong</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="staff">
+                  <th>
+                    Staff's design, the course's own host program
+                    <small>first wrong data on run 53</small>
+                  </th>
+                  <td>101</td>
+                  <td>46</td>
+                </tr>
+                <tr>
+                  <th>Our fused loop, the course's protocol</th>
+                  <td>224</td>
+                  <td>218</td>
+                </tr>
+                <tr>
+                  <th>
+                    Our staged compiler output, the course's protocol
+                    <small>each wrong run followed by correct ones, no reload</small>
+                  </th>
+                  <td>2,600</td>
+                  <td>2</td>
+                </tr>
+                <tr class="now">
+                  <th>Four designs, host writes confirmed or spaced</th>
+                  <td>2,000</td>
+                  <td>0</td>
+                </tr>
+              </tbody>
+            </table>
+            <ul class="points">
+              <li>
+                <strong>Certain, from the code:</strong>
+                <span
+                  >the wrapper's memory arbiter releases its lock too early and routes replies by
+                  whoever is selected, not by owner.</span
+                >
+              </li>
+              <li>
+                <strong>Confirmed on the chip:</strong>
+                <span
+                  >after one run of the course's own test the AWS shell logs an unacknowledged host
+                  write. With writes confirmed, none.</span
+                >
+              </li>
+              <li>
+                <strong>It starts before the test notices, and only a reload clears it.</strong>
+                <span
+                  >The staff's design lost host writes from run 5 but passed until run 23: its test
+                  writes the same data every run.</span
+                >
+              </li>
+              <li>
+                <strong>Our chip counts were about 15 cycles low.</strong>
+                <span
+                  >With writes confirmed the staff's design takes 80 on the chip, 77 in
+                  simulation.</span
+                >
+              </li>
+              <li class="open">
+                <strong>Not explained:</strong>
+                <span>why our staged compiler output recovers without a reload.</span>
+              </li>
+            </ul>
+          </div>
+          <div class="takeaway">
+            <strong>For the course</strong
+            ><span
+              >One added line in the host program avoids it. A note for the staff is drafted.</span
+            >
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              One finding that isn't about our compiler. On the chip, one of our variants gave a
+              wrong answer once in 58 runs. Chasing that, we ran each design's test over and over
+              after a single image load. Every single-loop design eventually returns wrong data and
+              keeps doing so until the image is reloaded. That includes the course's own Lab 1
+              design, unmodified, with the course's own host program: wrong from run 53.
+            </p>
+            <p>
+              Pausing between the program's phases doesn't help. What helps is never having two host
+              writes in flight. One added line does it: the host reads back each word before writing
+              the next. With that, 1,400 runs of four designs, none wrong. Last night a short pause
+              after every write did the same: 600 runs of two designs, none wrong.
+            </p>
+            <p>
+              The cause, as far as we can establish it: the wrapper has a small arbiter that shares
+              the memory between the host and the kernel. It releases its lock at the first
+              acknowledgement without counting the writes in flight, and it routes acknowledgements
+              by whoever is selected, not by owner. The shell allows the host 32 writes in flight,
+              so that is wrong for ordinary traffic. A cycle-level model of those lines reproduces
+              the kernel reporting done early and the layout of the first wrong outputs. And last
+              night we checked it on the chip with the AWS shell's own error counters: after a
+              single run of the course's test, the shell records a host write that never received
+              its acknowledgement, at the last address the program wrote. With the one-line change
+              it records none.
+            </p>
+            <p>
+              Three more things from last night. Once the failure starts, switching to the safe host
+              program does not help; only reloading the image does. It also starts earlier than the
+              test shows: reading the counters after every run, the staff's design was losing host
+              writes from run 5 and still passed until run 23, because the test writes the same data
+              every time. And our own staged design is not immune, as I thought on Sunday: two wrong
+              runs in 2,600, and one stretch of lost writes. But it recovered without a reload, and
+              that we cannot yet explain.
+            </p>
+            <p>
+              A side effect matters for our numbers: with the course's host program the kernel
+              reports done about fifteen cycles early. So the chip counts I showed last week were
+              each too low; the simulation counts are the ones to quote. I have a short note drafted
+              for the course staff if you think it should go to them.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/main/docs/evidence/hardware-performance-planning/wrapper-arbiter-analysis-2026-11-15.md"
+              >The course wrapper's arbiter: analysis, limits and a draft note ↗</a
+            >
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/main/docs/evidence/hardware-performance-planning/vendor-2026-11-15/README.md"
+              >Vendor session, section 4: the repeated runs ↗</a
+            >
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/main/docs/evidence/hardware-performance-planning/vendor-2026-11-16/README.md"
+              >Chip experiments of 16 November: counters, switching, spacing, the long run ↗</a
+            >
+          </div>
+        </section>
+
+        <!-- 8 -->
+        <section
+          class="slide"
+          id="plan"
+          aria-labelledby="title-plan"
+          data-label="Plan and questions"
+          data-time="1:30"
+          hidden
+        >
+          <div class="eyebrow">
+            <span>08 / Plan and questions</span><span class="status">Two to three weeks</span>
+          </div>
+          <h1 id="title-plan" tabindex="-1">The plan, and four questions</h1>
+          <div class="steps" style="margin-top: 18px">
+            <div class="done">
+              <span class="step-number">01 · done</span>
+              <h2>First fix in the compiler</h2>
+              <p>No proof, no interface change.</p>
+            </div>
+            <div>
+              <span class="step-number">02</span>
+              <h2>Confirm the wrapper bug</h2>
+              <p>Reproduce it in simulation.</p>
+            </div>
+            <div>
+              <span class="step-number">03 · 4–5 days</span>
+              <h2>Prover as a checker pass</h2>
+              <p>Unknown never counts as proved.</p>
+            </div>
+            <div>
+              <span class="step-number">04 · 3–4 days</span>
+              <h2>Our own wrapper and host program</h2>
+              <p>The host says which inputs are fully set.</p>
+            </div>
+            <div>
+              <span class="step-number">05 · 4–5 days</span>
+              <h2>Proved design, then the fused loop</h2>
+              <p>Measured at three sizes, soaked on the chip.</p>
+            </div>
+          </div>
+          <ol class="questions">
+            <li>
+              <strong>Checks.</strong>
+              <span
+                >Our rule is "checked by default, proved away when the compiler can, no unchecked
+                mode". A program the prover cannot handle runs slower. Is that the right trade for
+                the class?</span
+              >
+            </li>
+            <li>
+              <strong>One fused loop, or streams?</strong>
+              <span
+                >We fuse a load, a loop and a store when it is provably safe. The staff's FIFO
+                design uses processes joined by streams. Which should the compiler aim at?</span
+              >
+            </li>
+            <li>
+              <strong>What counts as fast enough?</strong>
+              <span
+                >The staff's HLS at 32, 256 and 1,024 elements, or also benchmarks from the original
+                Spatial work?</span
+              >
+            </li>
+            <li>
+              <strong>The wrapper.</strong>
+              <span>Who on the course staff should hear about it?</span>
+            </li>
+          </ol>
+          <div class="takeaway">
+            <strong>Beside this</strong
+            ><span
+              >Lab features continue: FIFO status queries, Reg, then Reduce and Fold. Target:
+              students use it in April 2027.</span
+            >
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              The plan. The first fix is done. Next is confirming the wrapper bug in simulation,
+              because every single-loop design depends on a wrapper we can trust. Then the prover as
+              a real checker pass, the compiler's own wrapper and host program, which also gives us
+              the interface where the host says which inputs are fully set, and then the proved
+              design and the fused loop. About two to three weeks, most of it the review work that
+              makes the result trustworthy, not the code.
+            </p>
+            <p>
+              We also changed how we work: every feature plan now carries a hardware sketch, a
+              throwaway prototype is measured before a hardware slice starts, and there is a
+              performance table we keep current. So FIFO, Reg and Reduce are designed for speed from
+              the start.
+            </p>
+            <p>
+              Four questions for you. First, on checks: no unchecked mode, with checks proved away
+              where the compiler can. Is that right for the class? Second, fusing into one loop
+              against generating streaming processes as the staff's FIFO design does. Third, what
+              counts as fast enough: these three sizes, or benchmarks from the original Spatial work
+              as well. Fourth, who should hear about the wrapper.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/main/docs/plans/2026-11-15-hardware-performance.md"
+              >Hardware performance plan: slices and decisions ↗</a
+            >
+            <a href="https://github.com/davidydu/spatial-py/blob/main/AGENTS.md"
+              >Working rules: the three standing steps on hardware cost ↗</a
+            >
+            <a
+              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/05---Python-Professor-Brief"
+              >Professor brief ↗</a
+            >
+          </div>
+        </section>
+      </main>
+      <footer class="deck-footer">
+        <nav class="chapter-nav" aria-label="Slides">
+          <button data-slide="result" aria-label="01 The result">
+            <span class="chapter-number">01</span
+            ><span class="chapter-label">The result</span></button
+          ><button data-slide="gap" aria-label="02 The gap">
+            <span class="chapter-number">02</span><span class="chapter-label">The gap</span></button
+          ><button data-slide="cycles" aria-label="03 Where cycles go">
+            <span class="chapter-number">03</span><span class="chapter-label">Cycles</span></button
+          ><button data-slide="first-fix" aria-label="04 First fix">
+            <span class="chapter-number">04</span
+            ><span class="chapter-label">First fix</span></button
+          ><button data-slide="prototype" aria-label="05 Prototype">
+            <span class="chapter-number">05</span
+            ><span class="chapter-label">Prototype</span></button
+          ><button data-slide="proofs" aria-label="06 Proofs">
+            <span class="chapter-number">06</span><span class="chapter-label">Proofs</span></button
+          ><button data-slide="chip" aria-label="07 On the chip">
+            <span class="chapter-number">07</span
+            ><span class="chapter-label">On the chip</span></button
+          ><button data-slide="plan" aria-label="08 Plan and questions">
+            <span class="chapter-number">08</span><span class="chapter-label">Plan</span>
+          </button>
+        </nav>
+        <div class="transport">
+          <button id="previous" aria-label="Previous slide">←</button
+          ><span id="slide-count" aria-live="polite">01 / 08</span
+          ><button id="next" aria-label="Next slide">→</button>
+        </div>
+      </footer>
+      <div class="progress-track" aria-hidden="true"><div class="progress-fill"></div></div>
+    </div>
+    <dialog id="detail-dialog" aria-labelledby="dialog-title">
+      <div class="dialog-shell">
+        <header class="dialog-header">
+          <h2 id="dialog-title">Speaker notes</h2>
+          <button id="dialog-close" aria-label="Close dialog">Close ×</button>
+        </header>
+        <div id="dialog-content"></div>
+      </div>
+    </dialog>
+  </body>
+</html>

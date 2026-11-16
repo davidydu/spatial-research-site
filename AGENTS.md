@@ -7,8 +7,9 @@ No private harness memory is required.
 
 - This repository owns Quartz configuration, the build and `presentation/`.
   Research content belongs in `davidydu/spatial-research`; compiler code and
-  current implementation state belong on `spatial-py`'s `work/initial-reference`.
-- The active Python deck is `presentation/python/`; the root deck is historical.
+  current implementation state belong on `spatial-py`'s `main`.
+- The current deck is `presentation/efficiency/` (16 November 2026, compiler efficiency);
+  `presentation/python/` is the 22 October deck; the root deck is historical.
   Distinguish the proposed full architecture from implemented progress. The
   dated result views display saved compiler outputs; they do not execute the
   compiler in the browser. Check current evidence before refreshing claims.
