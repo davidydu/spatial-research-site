@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#f8f6ef" />
     <meta
       name="description"
-      content="Python Spatial, 16 November 2026: where the compiled hardware loses its cycles, the first fix now in the compiler, a prototype at the staff's speed, and a bug in the course wrapper."
+      content="Python Spatial, 16 November 2026: where the compiled hardware loses its cycles, the first fix now in the compiler, the parallelism the compiler never states, a Spatial-style design at the staff's speed, and a bug in the course wrapper."
     />
     <title>Python Spatial — Compiler efficiency · 16 November 2026</title>
     <link
@@ -48,7 +48,8 @@
           <h1 id="title-result" tabindex="-1">Making the compiler's<br />hardware fast</h1>
           <p class="lede">
             We measured where the compiled design loses its cycles, put the first fix into the
-            compiler, and showed with a prototype that the rest of the gap can be closed.
+            compiler, and found the design change that closes the rest: build the hardware the way
+            the original Spatial compiler does.
           </p>
           <div class="stat-row">
             <div class="stat terra">
@@ -66,18 +67,19 @@
               >
             </div>
             <div class="stat">
-              <span class="value">155</span>
+              <span class="value">156</span>
               <span class="label"
-                >cycles from a compiler prototype with proved checks and one fused loop; the staff's
-                design takes 158 <span class="tag proto">prototype</span></span
+                >cycles for Lab 1 written the Spatial way and built as Spatial would, with no
+                run-time checks, in the course's own flow; the staff's design takes 158
+                <span class="tag proto">prototype</span></span
               >
             </div>
           </div>
           <div class="takeaway">
             <strong>Where we are</strong
             ><span
-              >One fix is real and measured. The larger steps are prototypes, two to three weeks
-              from the compiler.</span
+              >One fix is in the compiler and measured. The design that matches the staff is
+              prototyped by hand; the compiler change that generates it is in review.</span
             >
           </div>
           <div class="notes-source" hidden>
@@ -87,12 +89,14 @@
               asked about efficiency. This week was about that.
             </p>
             <p>
-              Three things happened. We measured where the cycles go, at larger sizes too, and the
+              Four things happened. We measured where the cycles go, at larger sizes too, and the
               gap is worse than it looked. We put the first fix into the real compiler, under the
-              full review routine, and measured it. And a throwaway prototype of the code generator
-              reaches the staff's speed at every size we tried, which tells us the remaining gap is
-              closable and what it takes. I'll also show a bug we found in the course's own wrapper
-              along the way.
+              full review routine, and measured it. Then today we found what the compiler really
+              gets wrong: it never states its parallelism, so the vendor tool guesses, and at scale
+              it guesses one lane. And we changed the design to follow the original Spatial
+              compiler: no run-time checks in the hardware, and Spatial's schedules. Written that
+              way and built by hand, Lab 1 matches the staff's design in the course's own flow. I'll
+              also show a bug we found in the course's own wrapper.
             </p>
           </div>
           <div class="sources-source" hidden>
@@ -102,6 +106,10 @@
             >
             <a href="https://github.com/davidydu/spatial-py/blob/main/docs/performance-ledger.md"
               >Performance ledger (compiler repository) ↗</a
+            >
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/docs/parallelism-first/docs/evidence/hardware-performance-planning/spatial-style-2026-11-16/README.md"
+              >The Spatial-style prototype in the course's own flow, 16 November ↗</a
             >
           </div>
         </section>
@@ -190,8 +198,9 @@
               At 32 elements we were 3.8 times slower. At 1,024 we were almost 25 times slower. Our
               design cost about three and a half cycles per extra element; theirs costs one or two
               per extra block of sixteen. So the single size we measured last week understated the
-              problem, and we now measure at three sizes as a rule. The green lines are the compiler
-              prototypes I'll come to.
+              problem, and we now measure at three sizes as a rule. The green lines are compiler
+              prototypes from the weekend; the lowest one, on the staff's line, has the structure we
+              are now building, slide 6.
             </p>
           </div>
           <div class="sources-source" hidden>
@@ -285,10 +294,10 @@
             </table>
           </div>
           <div class="takeaway">
-            <strong>Three causes</strong
+            <strong>Two causes here</strong
             ><span
-              >Separate memory round trips; a check whose cost grows with the data; nothing proved
-              before the run.</span
+              >Separate memory round trips, and a check whose cost grows with the data. Slide 5 adds
+              the larger one.</span
             >
           </div>
           <div class="notes-source" hidden>
@@ -306,9 +315,9 @@
               On the right we changed the generated design by hand, one cause at a time, at 32
               elements. Writing the final check so the tool can evaluate it in parallel: 294 to 257.
               Not fetching flags for inputs the host says are fully set: 168. Not copying what the
-              run can't change: 89. And one pipelined loop: 75, level with the staff's 77. So three
-              causes: memory round trips, a check whose cost grows with the data, and nothing proved
-              before the run.
+              run can't change: 89. And one pipelined loop: 75, level with the staff's 77. So at
+              this size two causes: memory round trips, and a check whose cost grows with the data.
+              At larger sizes there is a bigger one, which I'll come to on slide 5.
             </p>
           </div>
           <div class="sources-source" hidden>
@@ -402,7 +411,8 @@
           <div class="takeaway">
             <strong>Why this one first</strong
             ><span
-              >It needs no proof and no change to the interface. The next steps need both.</span
+              >It needed no proof and no interface change. It is still 11.8 times the staff's design
+              at 1,024 elements.</span
             >
           </div>
           <div class="notes-source" hidden>
@@ -455,119 +465,125 @@
         <!-- 5 -->
         <section
           class="slide"
-          id="prototype"
-          aria-labelledby="title-prototype"
-          data-label="Prototype"
-          data-time="1:15"
+          id="parallelism"
+          aria-labelledby="title-parallelism"
+          data-label="Parallelism"
+          data-time="1:30"
           hidden
         >
           <div class="eyebrow">
-            <span>05 / The rest of the gap</span><span class="status">Throwaway prototype</span>
+            <span>05 / What the compiler gets wrong</span
+            ><span class="status">Synthesis reports and prototypes, 16 November</span>
           </div>
-          <h1 id="title-prototype" tabindex="-1">A compiler prototype reaches the staff's speed</h1>
+          <h1 id="title-parallelism" tabindex="-1">The compiler never states its parallelism</h1>
           <p class="lede">
-            The code generator emits each faster design itself once it is told facts about the
-            program. The facts came from a table, not yet from the compiler.
+            Our C++ is a statement-by-statement translation of the program. Every lane, pipeline and
+            memory layout in the hardware is whatever the vendor tool infers from it.
           </p>
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>What the compiler emits</th>
-                <th style="text-align: left">What it must know first</th>
-                <th>32</th>
-                <th>256</th>
-                <th>1,024</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th>Before this week</th>
-                <td style="text-align: left"></td>
-                <td>294</td>
-                <td>1,198</td>
-                <td>3,910</td>
-              </tr>
-              <tr class="now">
-                <th>First fix <span class="tag measured">in the compiler</span></th>
-                <td style="text-align: left">nothing</td>
-                <td>260</td>
-                <td>692</td>
-                <td>1,858</td>
-              </tr>
-              <tr class="proto">
-                <th>
-                  Checks proved away, no transfer the run cannot observe
-                  <span class="tag proto">prototype</span>
-                </th>
-                <td style="text-align: left">
-                  no check can fail; every output is written; the inputs are fully set
-                </td>
-                <td>87</td>
-                <td>147</td>
-                <td>289</td>
-              </tr>
-              <tr class="proto">
-                <th>One fused, pipelined loop <span class="tag proto">prototype</span></th>
-                <td style="text-align: left">
-                  the same, and each tile is a whole number of memory beats
-                </td>
-                <td>75</td>
-                <td>108</td>
-                <td>155</td>
-              </tr>
-              <tr class="staff">
-                <th>Staff's handwritten HLS</th>
-                <td style="text-align: left"></td>
-                <td>77</td>
-                <td>109</td>
-                <td>158</td>
-              </tr>
-            </tbody>
-          </table>
-          <ul class="points" style="margin-top: 16px">
-            <li class="open">
-              <strong>Limits.</strong>
-              <span
-                >One program; simulation only; and one intermediate design never finished at the
-                larger sizes, unexplained, so nothing planned generates it.</span
-              >
-            </li>
-          </ul>
+          <div class="two-col">
+            <ul class="points">
+              <li>
+                <strong><code>par</code> is written out as a comment.</strong>
+                <span>No loop gets the lanes a program asks for.</span>
+              </li>
+              <li>
+                <strong>At scale the tool infers one lane.</strong>
+                <span
+                  >After the first fix the compute loop does 16 elements a cycle at 32 elements, 1 a
+                  cycle at 256 and 1,024: 71 % of the cycles at 1,024.</span
+                >
+              </li>
+              <li>
+                <strong>The cause: every check is an early exit.</strong>
+                <span
+                  >Each flag read decides whether to leave the loop, so the tool reads a tile's
+                  sixteen flags one per cycle.</span
+                >
+              </li>
+            </ul>
+            <table class="data-table">
+              <caption>
+                Compute cycles, every check kept
+              </caption>
+              <thead>
+                <tr>
+                  <th>Design</th>
+                  <th>32</th>
+                  <th>256</th>
+                  <th>1,024</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="now">
+                  <th>First fix <span class="tag measured">in the compiler</span></th>
+                  <td>260</td>
+                  <td>692</td>
+                  <td>1,858</td>
+                </tr>
+                <tr class="proto">
+                  <th>
+                    Checks recorded instead of exiting <span class="tag proto">prototype</span>
+                  </th>
+                  <td>259</td>
+                  <td>415</td>
+                  <td>824</td>
+                </tr>
+                <tr class="proto">
+                  <th>
+                    and tiles streamed through one loop <span class="tag proto">prototype</span>
+                  </th>
+                  <td>165</td>
+                  <td>278</td>
+                  <td>737</td>
+                </tr>
+                <tr class="staff">
+                  <th>Staff's handwritten HLS</th>
+                  <td>77</td>
+                  <td>109</td>
+                  <td>158</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
           <div class="takeaway">
-            <strong>What it tells us</strong
+            <strong>Lesson</strong
             ><span
-              >The remaining gap is closable by the compiler, and it is a matter of what the
-              compiler can prove.</span
+              >Structure matters more than the checks. The compiler must decide its parallel
+              structure itself, as Spatial's compiler does.</span
             >
           </div>
           <div class="notes-source" hidden>
             <p>
-              The hand edits show what is possible; the compiler has to produce them. So we built a
-              throwaway prototype of the code generator that emits each faster design itself, at any
-              of the three sizes, when it is handed facts about the program.
+              After the first fix I had planned to prove checks away next. When I read the synthesis
+              reports of the fixed design, the largest cost was somewhere else. Our C++ is a
+              statement-by-statement translation of the program, and every bit of parallelism in the
+              hardware is whatever the vendor tool infers. The language's par is parsed, checked,
+              recorded, and then written out as a comment.
             </p>
             <p>
-              The second row is the fix that is now real. The third row removes the checks and the
-              transfers the run can't observe; it needs to know that no check can fail, that every
-              output is written, and that the host has set the inputs. That gets within a factor of
-              two. The fourth row fuses the load, the loop and the store into one pipelined loop,
-              and that matches the staff's design at every size: 75, 108, 155 against 77, 109, 158.
+              At 32 elements the tool happens to infer sixteen lanes for the compute loop. At 256
+              and 1,024 it infers one: the same loop is seventeen times slower per tile, and that is
+              71 percent of the cycles at 1,024. The schedule shows why. Every check is an early
+              exit, so each flag read decides whether to leave the loop, and the tool reads a tile's
+              sixteen flags one per cycle. The data reads, which no exit follows, all happen in one
+              cycle.
             </p>
             <p>
-              Three honest limits. It is one program. The facts were given to the prototype in a
-              table; proving them is the next slide. And these are simulation numbers. Also, one
-              intermediate design we tried never finished at the larger sizes and we haven't
-              explained it, so we won't generate that one.
+              So we tried prototypes that keep every check but change the structure. Recording a
+              failed check instead of exiting: 1,858 down to 824. Streaming the tiles through one
+              loop, still with every check: 737. The structure matters more than the checks. And the
+              compiler has to decide it, as Spatial's compiler does with its unrolling and banking
+              passes.
             </p>
           </div>
           <div class="sources-source" hidden>
             <a
-              href="https://github.com/davidydu/spatial-py/blob/main/docs/evidence/hardware-performance-planning/vendor-2026-11-15/README.md"
-              >Vendor session, section 3: the prototype's stages with saved reports ↗</a
+              href="https://github.com/davidydu/spatial-py/blob/docs/parallelism-first/docs/reviews/2026-11-16-parallelism-direction-review.md"
+              >Review of the direction, 16 November ↗</a
             >
             <a
-              href="https://github.com/davidydu/spatial-py/blob/main/docs/plans/2026-11-15-hardware-performance.md"
-              >Hardware performance plan ↗</a
+              href="https://github.com/davidydu/spatial-py/blob/docs/parallelism-first/docs/evidence/hardware-performance-planning/parallelism-2026-11-16/README.md"
+              >The parallelism prototypes: schedules, reports, streamed tops ↗</a
             >
           </div>
         </section>
@@ -575,93 +591,147 @@
         <!-- 6 -->
         <section
           class="slide"
-          id="proofs"
-          aria-labelledby="title-proofs"
-          data-label="Proofs"
-          data-time="1:15"
+          id="spatial"
+          aria-labelledby="title-spatial"
+          data-label="Spatial's design"
+          data-time="1:45"
           hidden
         >
           <div class="eyebrow">
-            <span>06 / Proving checks away</span><span class="status">Throwaway prover</span>
+            <span>06 / The design change</span
+            ><span class="status">The course's own wrapper and test, 16 November</span>
           </div>
-          <h1 id="title-proofs" tabindex="-1">Most memory checks can be decided before the run</h1>
+          <h1 id="title-spatial" tabindex="-1">Following the original Spatial compiler</h1>
           <p class="lede">
-            Python Spatial checks every memory access. A second prototype reads the checked program
-            and proves each possible failure impossible, using loop ranges and which elements a loop
-            writes.
+            Like Spatial's, our FPGA hardware now checks nothing at run time and keeps no
+            per-element flags; faults are found in the reference simulators. Loops follow Spatial's
+            schedules: <code>Sequential</code> runs one tile at a time,
+            <code>Foreach</code> pipelines, <code>par</code> is lanes.
           </p>
-          <div class="two-col">
-            <figure class="figure">
-              <img
-                src="./assets/census.svg"
-                alt="Two stacked bars. Across 104 test programs, 1,318 of 1,662 possible memory failures are proved impossible, 97 are impossible once the host confirms the inputs are set, and 247 remain as hardware checks. For the three Lab 1 programs, 39 of 43 are proved and 4 need the host's confirmation; none remain."
-              />
-            </figure>
+          <div class="two-col even">
+            <table class="data-table">
+              <caption>
+                Lab 1 Part 2, compute cycles
+              </caption>
+              <thead>
+                <tr>
+                  <th>Design</th>
+                  <th>32</th>
+                  <th>256</th>
+                  <th>1,024</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="staff">
+                  <th>Staff's handwritten HLS</th>
+                  <td>77</td>
+                  <td>109</td>
+                  <td>158</td>
+                </tr>
+                <tr class="proto">
+                  <th>
+                    Lab 1 the Spatial way: <code>Foreach</code> over tiles,
+                    <code>par 16</code> inside <span class="tag proto">prototype</span>
+                  </th>
+                  <td>75</td>
+                  <td>77</td>
+                  <td>156</td>
+                </tr>
+                <tr class="proto">
+                  <th>
+                    the same, as three concurrent stages <span class="tag proto">prototype</span>
+                  </th>
+                  <td>80</td>
+                  <td>114</td>
+                  <td>161</td>
+                </tr>
+                <tr>
+                  <th>
+                    The course's source: <code>Sequential</code>, no <code>par</code>
+                    <small>being re-measured</small>
+                  </th>
+                  <td>–</td>
+                  <td>–</td>
+                  <td>–</td>
+                </tr>
+              </tbody>
+            </table>
             <ul class="points">
               <li>
-                <strong>All of Lab 1.</strong>
+                <strong>The course's Spatial asks for less.</strong>
                 <span
-                  >39 proved, 4 once the host confirms its inputs are set, none left for the
-                  hardware.</span
+                  >Its Lab 1 says <code>Sequential</code> and no <code>par</code>; the staff's HLS
+                  does what <code>Foreach</code> with <code>par 16</code> says. We compare against
+                  our own Spatial version that says it.</span
                 >
               </li>
               <li>
-                <strong>No wrong proof</strong>
+                <strong>Same harness.</strong>
                 <span
-                  >in 1,120 runs of the reference simulator and 31 programs written to mislead
-                  it.</span
+                  >Our file replaces the staff's: same ports, wrapper and test, every output word
+                  compared.</span
                 >
               </li>
               <li class="open">
-                <strong>Not yet:</strong>
-                <span
-                  >helper functions and branches. Only 5 of the 26 larger example programs are fully
-                  decided.</span
-                >
-              </li>
-              <li class="open">
-                <strong>Not attempted:</strong>
-                <span>queue-full and queue-empty checks.</span>
+                <strong>Written by hand so far.</strong>
+                <span>The compiler change that generates it is in design review.</span>
               </li>
             </ul>
           </div>
           <div class="takeaway">
-            <strong>The one error we cannot accept</strong
+            <strong>Decided today</strong
             ><span
-              >A wrong proof silently removes a check. This becomes a checker pass with its own
-              reviews, not a shortcut.</span
+              >No run-time checks or flags on the FPGA, and Spatial's schedules. The native route
+              and both simulators keep every check.</span
             >
           </div>
           <div class="notes-source" hidden>
             <p>
-              Where do those facts come from? Python Spatial checks every memory access: in bounds,
-              never reading an element that wasn't set, every output written. Today all of those
-              checks stay in the hardware.
+              So we changed the design to follow the original Spatial compiler, which our research
+              notes document pass by pass. Spatial's hardware checks nothing at run time and keeps
+              no per-element valid bits; only its simulator does, and it logs and continues. We now
+              do the same on the FPGA: on any input the reference simulators run to completion, the
+              hardware gives their answer; faults are found in the simulators. The native route and
+              both simulators keep every check. And loops follow Spatial's schedules: Sequential
+              runs one tile at a time, Foreach pipelines and, around loads and stores, overlaps
+              tiles, par is lanes.
             </p>
             <p>
-              A second throwaway prototype reads the checked program and tries to prove each
-              possible failure impossible, with simple reasoning: loop ranges, and which elements a
-              loop writes. Across 104 test programs it proves 79 percent, another 6 percent follow
-              once the host confirms its inputs are fully set, and 15 percent are left as hardware
-              checks. For the three Lab 1 programs nothing is left.
+              That raised a question about the comparison itself. The course's own Spatial source
+              for this lab says Sequential over the tiles and no par. Read as Spatial reads it, that
+              is a slow schedule. The staff's handwritten HLS does what Foreach with par 16 says. So
+              we wrote our own Spatial version that says it, and compare that with the staff's
+              design.
             </p>
             <p>
-              The one error we can't accept here is a wrong proof, because it silently removes a
-              check. The proved checks never fired in over a thousand runs of the reference
-              simulator, and thirty-one programs written to trick it produced no wrong proof. It
-              doesn't yet follow helper functions or branches, which is why only five of the
-              twenty-six larger examples are fully decided. This will be built as a real checker
-              pass with its own reviews.
+              To keep the comparison fair we ran it in the course's own flow: our file replaces the
+              staff's, with the same ports, the course's wrapper and the course's test, which
+              compares every output word. Written by hand the way the compiler will emit it: 75, 77
+              and 156 cycles against the staff's 77, 109 and 158. The 77 at 256 is the simulator's
+              memory model; from 32 to 1,024 both designs rise by the same 81 cycles. As three
+              concurrent stages joined by streams: 80, 114, 161.
+            </p>
+            <p>
+              Two lessons from the runs. A top that the tool turns into a self-restarting pipeline
+              starts again by itself in the course's wrapper; the compiler's tops must never be one.
+              And the first measurement of the course's Sequential source turned out to be wrong:
+              the tool merged the two loops into one pipeline, so it was not Spatial's schedule. It
+              is being measured again. The compiler change that generates all this is written up and
+              in design review.
             </p>
           </div>
           <div class="sources-source" hidden>
             <a
-              href="https://github.com/davidydu/spatial-py/blob/main/docs/plans/2026-11-15-hardware-performance.md"
-              >Hardware performance plan, sections 2.6 and T4 ↗</a
+              href="https://github.com/davidydu/spatial-py/blob/docs/parallelism-first/docs/evidence/hardware-performance-planning/spatial-style-2026-11-16/README.md"
+              >The Spatial-style prototype in the course's own flow ↗</a
             >
             <a
-              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/80---Weekly-Updates/2026-11-15-weekly-update"
-              >Weekly update, item 4 ↗</a
+              href="https://github.com/davidydu/spatial-py/blob/docs/parallelism-first/docs/reviews/2026-11-16-spatial-style-fpga-decisions.md"
+              >Decision record: no run-time checks on the FPGA, Spatial's schedules ↗</a
+            >
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/feat/f2-spatial-style/docs/plans/2026-11-16-f2-spatial-style.md"
+              >The compiler slice's plan (in review) ↗</a
             >
           </div>
         </section>
@@ -806,6 +876,13 @@
               each too low; the simulation counts are the ones to quote. I have a short note drafted
               for the course staff if you think it should go to them.
             </p>
+            <p>
+              One more from today, in simulation rather than on the chip. When one of our prototype
+              tops restarted by itself, its second run's memory traffic overlapped the host reading
+              results back, and the host received read data it had not asked for, the protocol
+              checker flagging it. That fits the same arbiter routing replies by whoever is
+              selected. It is an observation, not a reproduction: it was not set up on purpose.
+            </p>
           </div>
           <div class="sources-source" hidden>
             <a
@@ -829,61 +906,61 @@
           id="plan"
           aria-labelledby="title-plan"
           data-label="Plan and questions"
-          data-time="1:30"
+          data-time="1:45"
           hidden
         >
           <div class="eyebrow">
-            <span>08 / Plan and questions</span><span class="status">Two to three weeks</span>
+            <span>08 / Plan and questions</span><span class="status">Next steps</span>
           </div>
           <h1 id="title-plan" tabindex="-1">The plan, and four questions</h1>
           <div class="steps" style="margin-top: 18px">
             <div class="done">
               <span class="step-number">01 · done</span>
               <h2>First fix in the compiler</h2>
-              <p>No proof, no interface change.</p>
+              <p>Measured: 1,858 at 1,024 elements.</p>
+            </div>
+            <div class="done">
+              <span class="step-number">02 · done</span>
+              <h2>Spatial-style design, by hand</h2>
+              <p>Matches the staff in the course's flow.</p>
             </div>
             <div>
-              <span class="step-number">02</span>
-              <h2>Confirm the wrapper bug</h2>
-              <p>Reproduce it in simulation.</p>
+              <span class="step-number">03 · in review</span>
+              <h2>The compiler generates it</h2>
+              <p>Schedules, lanes and layouts decided before the C++ is written.</p>
             </div>
             <div>
-              <span class="step-number">03 · 4–5 days</span>
-              <h2>Prover as a checker pass</h2>
-              <p>Unknown never counts as proved.</p>
+              <span class="step-number">04</span>
+              <h2>Measured in the course's flow</h2>
+              <p>Both Lab 1 versions, three sizes, beside the staff's.</p>
             </div>
             <div>
-              <span class="step-number">04 · 3–4 days</span>
-              <h2>Our own wrapper and host program</h2>
-              <p>The host says which inputs are fully set.</p>
-            </div>
-            <div>
-              <span class="step-number">05 · 4–5 days</span>
-              <h2>Proved design, then the fused loop</h2>
-              <p>Measured at three sizes, soaked on the chip.</p>
+              <span class="step-number">05</span>
+              <h2>Stages joined by streams, then the chip</h2>
+              <p>FPGA build and a long soak with a safe host program.</p>
             </div>
           </div>
           <ol class="questions">
             <li>
-              <strong>Checks.</strong>
+              <strong>No checks in the hardware.</strong>
               <span
-                >Our rule is "checked by default, proved away when the compiler can, no unchecked
-                mode". A program the prover cannot handle runs slower. Is that the right trade for
-                the class?</span
+                >Like Spatial, faults are now found only in the simulators, not on the FPGA. Is that
+                right for the class?</span
               >
             </li>
             <li>
-              <strong>One fused loop, or streams?</strong>
+              <strong>Which Lab 1 to compare.</strong>
               <span
-                >We fuse a load, a loop and a store when it is provably safe. The staff's FIFO
-                design uses processes joined by streams. Which should the compiler aim at?</span
+                >The course's Spatial says <code>Sequential</code> and no <code>par</code>; we
+                compare our own version against the staff's HLS. Is that right, or should the lab's
+                Spatial change?</span
               >
             </li>
             <li>
-              <strong>What counts as fast enough?</strong>
+              <strong>Metapipelines in Vitis.</strong>
               <span
-                >The staff's HLS at 32, 256 and 1,024 elements, or also benchmarks from the original
-                Spatial work?</span
+                >Spatial's double-buffered stages map poorly for small tiles; one fused loop and
+                streams both work. Start with stages that read tiles in order?</span
               >
             </li>
             <li>
@@ -894,40 +971,49 @@
           <div class="takeaway">
             <strong>Beside this</strong
             ><span
-              >Lab features continue: FIFO status queries, Reg, then Reduce and Fold. Target:
-              students use it in April 2027.</span
+              >Lab features continue: FIFO status queries, Reg, then Reduce and Fold, each designed
+              for speed from the start. Target: students use it in April 2027.</span
             >
           </div>
           <div class="notes-source" hidden>
             <p>
-              The plan. The first fix is done. Next is confirming the wrapper bug in simulation,
-              because every single-loop design depends on a wrapper we can trust. Then the prover as
-              a real checker pass, the compiler's own wrapper and host program, which also gives us
-              the interface where the host says which inputs are fully set, and then the proved
-              design and the fused loop. About two to three weeks, most of it the review work that
-              makes the result trustworthy, not the code.
+              The plan. The first fix is done and measured. The Spatial-style design is done by hand
+              and matches the staff's in the course's own flow. Next, the compiler generates it: a
+              new FPGA route that decides schedules, lanes and memory layouts before writing any
+              C++, under the full review routine. Its plan was reviewed today and is being revised.
+              Then we measure the compiler's own output in the course's flow, both Lab 1 versions at
+              three sizes beside the staff's design. After that, stages joined by streams for the
+              cases one fused loop cannot cover, and the first FPGA build and a long soak on the
+              chip with a host program that avoids the wrapper bug.
             </p>
             <p>
-              We also changed how we work: every feature plan now carries a hardware sketch, a
-              throwaway prototype is measured before a hardware slice starts, and there is a
-              performance table we keep current. So FIFO, Reg and Reduce are designed for speed from
-              the start.
+              We changed how we work, too. Every plan now states, for each loop, how many elements
+              it handles a cycle and the memory layout that allows it, and the synthesis report is
+              read at every size before anyone proposes a large mechanism. The proving work from the
+              weekend is not lost; it can still serve the native route, but it is no longer on the
+              path to speed.
             </p>
             <p>
-              Four questions for you. First, on checks: no unchecked mode, with checks proved away
-              where the compiler can. Is that right for the class? Second, fusing into one loop
-              against generating streaming processes as the staff's FIFO design does. Third, what
-              counts as fast enough: these three sizes, or benchmarks from the original Spatial work
-              as well. Fourth, who should hear about the wrapper.
+              Four questions. First: no checks in the hardware, as in Spatial, with faults found
+              only in the simulators. Is that right for the class? Second: the course's Spatial for
+              this lab says Sequential and no par, so we compare our own Spatial version with the
+              staff's HLS. Is that the right comparison, or should the lab's Spatial change? Third:
+              Spatial's double-buffered metapipelines don't map well onto Vitis for small tiles;
+              would you start with stages that read tiles in order? Fourth: who on the staff should
+              hear about the wrapper.
             </p>
           </div>
           <div class="sources-source" hidden>
             <a
-              href="https://github.com/davidydu/spatial-py/blob/main/docs/plans/2026-11-15-hardware-performance.md"
-              >Hardware performance plan: slices and decisions ↗</a
+              href="https://github.com/davidydu/spatial-py/blob/feat/f2-spatial-style/docs/plans/2026-11-16-f2-spatial-style.md"
+              >The compiler slice's plan ↗</a
             >
-            <a href="https://github.com/davidydu/spatial-py/blob/main/AGENTS.md"
-              >Working rules: the three standing steps on hardware cost ↗</a
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/docs/parallelism-first/docs/plans/2026-11-15-hardware-performance.md"
+              >Hardware performance plan, section 15: the reorder ↗</a
+            >
+            <a href="https://github.com/davidydu/spatial-py/blob/docs/parallelism-first/AGENTS.md"
+              >Working rules: the standing steps on hardware cost ↗</a
             >
             <a
               href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/05---Python-Professor-Brief"
@@ -948,11 +1034,11 @@
           ><button data-slide="first-fix" aria-label="04 First fix">
             <span class="chapter-number">04</span
             ><span class="chapter-label">First fix</span></button
-          ><button data-slide="prototype" aria-label="05 Prototype">
+          ><button data-slide="parallelism" aria-label="05 Parallelism">
             <span class="chapter-number">05</span
-            ><span class="chapter-label">Prototype</span></button
-          ><button data-slide="proofs" aria-label="06 Proofs">
-            <span class="chapter-number">06</span><span class="chapter-label">Proofs</span></button
+            ><span class="chapter-label">Parallelism</span></button
+          ><button data-slide="spatial" aria-label="06 Spatial's design">
+            <span class="chapter-number">06</span><span class="chapter-label">Spatial</span></button
           ><button data-slide="chip" aria-label="07 On the chip">
             <span class="chapter-number">07</span
             ><span class="chapter-label">On the chip</span></button
