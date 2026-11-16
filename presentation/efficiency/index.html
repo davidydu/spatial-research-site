@@ -500,6 +500,14 @@
                   sixteen flags one per cycle.</span
                 >
               </li>
+              <li class="open">
+                <strong>What we got wrong: we did not think in streams.</strong>
+                <span
+                  >We built the hardware as a program over buffers copied on chip and back, not as
+                  data streaming from memory through the compute and back. So we blamed the checks
+                  and planned a prover to remove them.</span
+                >
+              </li>
             </ul>
             <table class="data-table">
               <caption>
@@ -548,8 +556,8 @@
           <div class="takeaway">
             <strong>Lesson</strong
             ><span
-              >Structure matters more than the checks. The compiler must decide its parallel
-              structure itself, as Spatial's compiler does.</span
+              >Stream the tiles, as Spatial's load, compute and store and the staff's loop do, and
+              decide that structure in the compiler. It matters more than the checks.</span
             >
           </div>
           <div class="notes-source" hidden>
@@ -574,6 +582,17 @@
               loop, still with every check: 737. The structure matters more than the checks. And the
               compiler has to decide it, as Spatial's compiler does with its unrolling and banking
               passes.
+            </p>
+            <p>
+              What was wrong with our earlier direction comes down to streaming, which we had not
+              understood. We built the hardware like a program running over buffers: copy every
+              input on chip, run the kernel, copy every output back, six memory phases one after
+              another. Hardware wants the data to stream: read a tile while the previous one is
+              computed and the one before is written, every stage overlapped. That is what Spatial's
+              load, compute and store do in a pipelined loop, and what the staff's loop does.
+              Because we didn't see that, we read the checks as the cost and planned a prover to
+              remove them before we could fuse. But a streamed design with every check kept already
+              beats every staged design we built.
             </p>
           </div>
           <div class="sources-source" hidden>
