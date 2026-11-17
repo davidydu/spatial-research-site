@@ -1,0 +1,1313 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f8f6ef" />
+    <meta
+      name="description"
+      content="Python Spatial, November 2026: every Spatial construct EE 109 teaches, its Python Spatial spelling, and what runs today, what is designed and what comes next."
+    />
+    <title>Python Spatial — The language against EE 109 · November 2026</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23f8f6ef'/%3E%3Cpath d='M9 9h9v9H9zM22 9h9v9h-9zM9 22h9v9H9z' fill='%233556b2'/%3E%3Cpath d='M22 22h9v9h-9z' fill='%2342654f'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="./presentation.css?v=20261116" />
+    <script src="./presentation.js?v=20261116" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#slides">Skip to presentation</a>
+    <div class="deck">
+      <header class="masthead">
+        <a class="brand" href="#result" aria-label="Spatial research, first slide"
+          ><span class="brand-mark" aria-hidden="true"
+            ><span></span><span></span><span></span><span></span></span
+          ><span>SPATIAL <small>RESEARCH</small></span></a
+        >
+        <div class="masthead-meta">The language <span>November 2026</span></div>
+        <div class="tools" aria-label="Presentation tools">
+          <button class="tool" id="notes-button" title="Speaker notes (N)">Notes</button
+          ><button class="tool" id="sources-button" title="Evidence (E)">Evidence</button
+          ><button class="tool" id="fullscreen-button" title="Fullscreen (F)">Fullscreen</button
+          ><button class="tool" id="help-button" aria-label="Keyboard shortcuts">?</button>
+        </div>
+      </header>
+      <main id="slides">
+        <!-- 1 -->
+        <section
+          class="slide is-active"
+          id="result"
+          aria-labelledby="title-result"
+          data-label="Where we are"
+          data-time="1:15"
+        >
+          <div class="eyebrow">
+            <span>01 / Where we are</span><span class="status">Python Spatial against EE 109</span>
+          </div>
+          <h1 id="title-result" tabindex="-1">The Spatial EE 109 teaches,<br />in Python</h1>
+          <p class="lede">
+            Every construct the lectures and Labs 1 to 3 use, its Python Spatial spelling, and its
+            state: running today, designed, or next.
+          </p>
+          <div class="stat-row">
+            <div class="stat blue">
+              <span class="value">17<small> of 32</small></span>
+              <span class="label"
+                >constructs Labs 1 to 3 use run today, from source through the checker and both
+                reference simulators <span class="tag runs">runs</span></span
+              >
+            </div>
+            <div class="stat">
+              <span class="value">3<small> of 4</small></span>
+              <span class="label"
+                >Spatial parts of Lab 1 run: registers, DRAM and SRAM, FIFO. Controllers need
+                <code>Reg</code>, <code>Reduce</code> and <code>Fold</code></span
+              >
+            </div>
+            <div class="stat terra">
+              <span class="value">157<small> vs 158</small></span>
+              <span class="label"
+                >cycles for Lab 1 at 1,024 elements, written the Spatial way and built as Spatial
+                would; the staff's HLS takes 158 <span class="tag proto">prototype</span></span
+              >
+            </div>
+          </div>
+          <div class="takeaway">
+            <strong>The rest</strong
+            ><span
+              ><code>Reg</code> and the hardware for <code>par</code> are designed. Twelve
+              constructs come next, in lab order: reductions, memory folds, FSM, LUT, fixed point,
+              then the Lab 3 window memories.</span
+            >
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              You asked for the language itself. This deck takes every Spatial construct EE 109
+              uses, from the lectures and from Labs 1 to 3, and shows its Python Spatial spelling
+              and where it stands.
+            </p>
+            <p>
+              Of the 32 constructs the three labs actually use, 17 run today: from Python source,
+              through the checker, on both of our reference simulators, which must agree. Three of
+              Lab 1's four Spatial parts run end to end; the controllers part needs Reg, Reduce and
+              Fold. Reg is fully designed, with its tests' expected values already derived. Twelve
+              constructs are next, in lab order.
+            </p>
+            <p>
+              And on hardware: Lab 1 written the Spatial way, with Foreach over tiles and par 16
+              inside, and lowered the way the original Spatial compiler would, matches the staff's
+              handwritten HLS in the course's own flow. That is a hand-written prototype of what the
+              compiler will emit; the compiler change is planned and reviewed.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a
+              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/20---Examples/PY-E003---EE109-Feature-Coverage"
+              >The full comparison: every construct, its Python spelling and status ↗</a
+            >
+            <a href="https://github.com/davidydu/spatial-py/blob/main/docs/support-ledger.md"
+              >Support ledger (compiler repository) ↗</a
+            >
+          </div>
+        </section>
+
+        <!-- 2 -->
+        <section
+          class="slide"
+          id="pair"
+          aria-labelledby="title-pair"
+          data-label="Side by side"
+          data-time="1:15"
+          hidden
+        >
+          <div class="eyebrow">
+            <span>02 / Side by side</span><span class="status">Lab 1's tiled scale</span>
+          </div>
+          <h1 id="title-pair" tabindex="-1">One program, two spellings</h1>
+          <p class="lede">
+            Same structure, same memories, same transfers. Python makes the ports part of the
+            signature and names the destination of a transfer first.
+          </p>
+          <div class="code-pair">
+            <figure class="code-block">
+              <span class="code-label">Spatial (Scala)</span>
+              <pre class="code"><span class="k">val</span> src = DRAM[Int](N)
+<span class="k">val</span> dst = DRAM[Int](N)
+<span class="k">val</span> x   = ArgIn[Int]
+Accel {
+  Sequential.Foreach(N by 16) { i =&gt;
+    <span class="k">val</span> a = SRAM[Int](16)
+    <span class="k">val</span> b = SRAM[Int](16)
+    a load src(i::i+16)
+    Foreach(16 by 1) { j =&gt; b(j) = a(j) * x }
+    dst(i::i+16) store b
+  }
+}</pre>
+            </figure>
+            <figure class="code-block">
+              <span class="code-label">Python Spatial</span>
+              <pre class="code"><span class="k">@kernel</span>
+<span class="k">def</span> tiled_scale(src: In[Dram[Int, 32]],
+                scale: In[Int],
+                dst: Out[Dram[Int, 32]]):
+    <span class="k">for</span> base <span class="k">in</span> sequential(0, 32, step=16):
+        a: Sram[Int, 16]
+        b: Sram[Int, 16]
+        load(a, src[base:base + 16])
+        <span class="k">for</span> j <span class="k">in</span> foreach(0, 16):
+            b[j] = a[j] * scale
+        store(dst[base:base + 16], b)</pre>
+            </figure>
+          </div>
+          <div class="takeaway">
+            <strong>Runs today</strong
+            ><span
+              >On both reference simulators, as native C++, and on the F2 FPGA through the course's
+              flow.</span
+            >
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              Here is the program every student meets first, written both ways. The Scala on the
+              left is my own short version of the pattern, in public Spatial syntax. On the right is
+              the Python program our tests run.
+            </p>
+            <p>
+              The structure is the same line for line: a sequential loop over tiles, two SRAMs, a
+              load, an inner Foreach, a store. Two things differ. The ports are part of the
+              function's signature, with their direction and type, instead of DRAM and ArgIn objects
+              declared on the host. And a transfer names its destination first, like an assignment.
+              This one runs today everywhere we have a route: both reference simulators, native C++,
+              and the F2 FPGA.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/main/tests/fixtures/sources/lab1_tiled_scale.py"
+              >The Python program, as the tests run it ↗</a
+            >
+            <a
+              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/20---Examples/PY-E002---Spatial-to-Python-Syntax-Atlas"
+              >Spatial to Python syntax atlas ↗</a
+            >
+          </div>
+        </section>
+
+        <!-- 3 -->
+        <section
+          class="slide"
+          id="host"
+          aria-labelledby="title-host"
+          data-label="Program and host"
+          data-time="1:00"
+          hidden
+        >
+          <div class="eyebrow">
+            <span>03 / Program and host</span
+            ><span class="status">Lectures 2 and 3; every lab</span>
+          </div>
+          <h1 id="title-host" tabindex="-1">The accelerator is a typed Python function</h1>
+          <table class="data-table feature-table">
+            <thead>
+              <tr>
+                <th>In EE 109</th>
+                <th>Python Spatial</th>
+                <th>State</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Accel { … }</code> in a <code>SpatialApp</code></td>
+                <td>
+                  <code>@kernel</code> on a typed function; the compiler reads it and never runs it
+                </td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td><code>ArgIn[Int]</code>, <code>ArgOut[Int]</code>, <code>HostIO[Int]</code></td>
+                <td>
+                  Parameters <code>x: In[Int]</code>, <code>y: Out[Int]</code>,
+                  <code>z: InOut[Int]</code>
+                </td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td><code>DRAM[Int](N)</code> declared on the host</td>
+                <td>
+                  Parameter <code>a: In[Dram[Int, N]]</code>, or <code>Out</code>,
+                  <code>InOut</code>
+                </td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <code>setArg</code>, <code>setMem</code>, <code>getArg</code>, <code>getMem</code>
+                </td>
+                <td>
+                  <code>check</code>, then <code>prepare(program, bindings)</code>, then run;
+                  outputs come back typed
+                </td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td>Host test data, <code>println</code>, <code>assert</code></td>
+                <td>Ordinary Python on the host</td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td>Functions, inlined at every call</td>
+                <td><code>@helper(effects="ordered")</code> inside the kernel</td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td>Tunable sizes, <code>scala.Int</code> parameters</td>
+                <td><code>Meta[Size]</code> values, fixed before the program is checked</td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td>Fringe, MMIO registers</td>
+                <td>Generated by the compiler; never written by students</td>
+                <td><span class="tag runs">F2 route</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="takeaway">
+            <strong>What changes</strong
+            ><span
+              >The interface is the signature. A kernel cannot read an <code>Out</code> port or
+              write an <code>In</code> port; the checker refuses it before anything runs.</span
+            >
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              The host and accelerator split stays, but the accelerator is a typed Python function.
+              Its ports are its parameters: In, Out and InOut, for scalars and for DRAM arrays. The
+              host is ordinary Python: you check the program, prepare it with your data, run it, and
+              get typed outputs back, instead of setArg, setMem, getArg and getMem.
+            </p>
+            <p>
+              Functions become helpers, declared inside the kernel with their effects stated. Sizes
+              you want to tune, like a tile size, are meta values fixed before checking, the role
+              scala.Int plays in the course. Every row here runs today. The F2 route generates its
+              own control registers, so students never write the MMIO layer.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a href="https://github.com/davidydu/spatial-py/blob/main/docs/evidence/lab1-reg-a0.md"
+              >Lab 1 Part 1 (ArgIn and ArgOut) running today ↗</a
+            >
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/main/docs/evidence/e1-public-workflow.md"
+              >The public host workflow ↗</a
+            >
+          </div>
+        </section>
+
+        <!-- 4 -->
+        <section
+          class="slide"
+          id="types"
+          aria-labelledby="title-types"
+          data-label="Types"
+          data-time="1:00"
+          hidden
+        >
+          <div class="eyebrow">
+            <span>04 / Data types</span><span class="status">Lecture 3; Labs 1 to 3</span>
+          </div>
+          <h1 id="title-types" tabindex="-1">Exact integer types now; fixed point next</h1>
+          <table class="data-table feature-table">
+            <thead>
+              <tr>
+                <th>In EE 109</th>
+                <th>Python Spatial</th>
+                <th>State</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Int</code> (<code>FixPt[TRUE,_32,_0]</code>)</td>
+                <td><code>Int</code>: exactly 32 bits, wrapping arithmetic</td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td>Counter values (an <code>Int</code> in Scala)</td>
+                <td>
+                  <code>Index</code>: exact, kept apart from data; <code>min</code> and
+                  <code>max</code> for edge tiles
+                </td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td><code>Boolean</code></td>
+                <td><code>Bool</code>, never a one-bit number, as the course teaches</td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td><code>x.to[T]</code></td>
+                <td><code>embed(Int, i)</code>, with checked or wrapping overflow</td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td><code>FixPt[TRUE,_24,_8]</code> (Lab 2's GEMM)</td>
+                <td><code>Fix[True, 24, 8]</code>, with stated rounding</td>
+                <td><span class="tag next">next</span></td>
+              </tr>
+              <tr>
+                <td><code>FltPt</code>, <code>Float</code>, <code>Half</code></td>
+                <td><code>Float[24, 8]</code> profiles</td>
+                <td><span class="tag later">later</span></td>
+              </tr>
+              <tr>
+                <td><code>@struct</code>, <code>Vec</code>, bit views (taught, in no lab)</td>
+                <td>Records, vectors and packing</td>
+                <td><span class="tag later">later</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="takeaway">
+            <strong>One deliberate change</strong
+            ><span
+              >Counters and data are different types. Mixing them needs <code>embed</code>, so an
+              index never silently becomes a value.</span
+            >
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              Types. Int is exactly Spatial's 32-bit integer, with wrapping arithmetic. Loop
+              counters have their own exact type, Index, and turning one into data takes an explicit
+              embed, which can wrap or check. Bool is its own type, which is what the course already
+              teaches. These run today.
+            </p>
+            <p>
+              Fixed point is next: Lab 2's GEMM uses FixPt 24.8, and our spelling is Fix True 24 8
+              with the rounding stated. Floating point and the structs, vectors and bit views of
+              lecture 3 come later; no lab uses them.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a
+              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/10---Research/PY-R002---Numeric-and-Reduction-Semantics"
+              >Numeric and reduction semantics ↗</a
+            >
+          </div>
+        </section>
+
+        <!-- 5 -->
+        <section
+          class="slide"
+          id="memories"
+          aria-labelledby="title-memories"
+          data-label="Memories"
+          data-time="1:30"
+          hidden
+        >
+          <div class="eyebrow">
+            <span>05 / On-chip memories</span
+            ><span class="status">Lectures 3 and 7; Labs 1 to 3</span>
+          </div>
+          <h1 id="title-memories" tabindex="-1">SRAM and FIFO run; Reg is designed</h1>
+          <table class="data-table feature-table">
+            <thead>
+              <tr>
+                <th>In EE 109</th>
+                <th>Python Spatial</th>
+                <th>State</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>SRAM[Int](16)</code>, <code>SRAM[Int](M,N)</code></td>
+                <td>
+                  <code>t: Sram[Int, 16]</code>, <code>Sram[Int, M, N]</code>; a read of an unset
+                  cell is a fault
+                </td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <code>FIFO[Int](16)</code>: <code>enq</code>, <code>deq</code>, <code>peek</code>
+                </td>
+                <td>
+                  <code>q: Fifo[Int, 16]</code>; <code>q.enq(x)</code>, <code>q.deq()</code>,
+                  <code>q.peek()</code>
+                </td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td>FIFO <code>numel</code> (lecture 5)</td>
+                <td>
+                  <code>q.occupancy()</code>, <code>q.is_empty()</code>, <code>q.is_full()</code>
+                </td>
+                <td><span class="tag review">in review</span></td>
+              </tr>
+              <tr>
+                <td><code>Reg[Int](0)</code>: <code>:=</code>, <code>.value</code></td>
+                <td>
+                  <code>acc: Reg[Int] = 0</code>; <code>acc.value = e</code>,
+                  <code>acc.value += e</code>
+                </td>
+                <td><span class="tag designed">designed</span></td>
+              </tr>
+              <tr>
+                <td><code>LUT[Int](3,3)(…)</code></td>
+                <td><code>w: Lut[Int, 3, 3] = lut(((…), (…), (…)))</code></td>
+                <td><span class="tag next">next</span></td>
+              </tr>
+              <tr>
+                <td><code>LineBuffer[T](Kh, C)</code></td>
+                <td><code>lb: LineBuffer[Int, 3, C]</code>; unpublished rows cannot be read</td>
+                <td><span class="tag next">next</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <code>RegFile</code>: <code>sr(i,*) &lt;&lt;= x</code>, <code>sr.reset(c)</code>
+                </td>
+                <td>
+                  <code>sr: RegFile[Int, 3, 3]</code>; <code>sr[i, :].shift(x)</code>,
+                  <code>sr.reset(enable=c)</code>
+                </td>
+                <td><span class="tag next">next</span></td>
+              </tr>
+              <tr>
+                <td><code>SRAM(…).buffer</code> (Lab 2's GEMM)</td>
+                <td>Not needed: buffering is the compiler's choice</td>
+                <td><span class="tag designed">compiler</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="takeaway">
+            <strong>New in Python</strong
+            ><span
+              >Every memory knows which cells are set. A read of an unset cell, an out-of-range
+              index, or a <code>deq</code> from an empty queue is a fault with its source
+              line.</span
+            >
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              Memories. SRAM in one and two dimensions runs, and so does the FIFO with enq, deq and
+              peek, including loads and stores to a queue. The FIFO observations, occupancy and
+              empty and full, are written and tested and in review now. Reg is fully designed: its
+              rules are written and its tests' expected values derived by a separate author.
+            </p>
+            <p>
+              LUT, LineBuffer and RegFile with its shift come next, for Labs 2 and 3. The .buffer
+              annotation from Lab 2's GEMM is not needed in Python: a program's results never depend
+              on overlap, so buffering is the compiler's decision.
+            </p>
+            <p>
+              The important difference: every memory tracks which cells have been written. Reading
+              an unset cell, an index out of range, or a deq from an empty queue stops the
+              simulation with the fault and its source line, where Spatial's simulator logs and
+              continues.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a href="https://github.com/davidydu/spatial-py/blob/main/docs/evidence/lab1-fifo-a1.md"
+              >The FIFO, slice A1: evidence ↗</a
+            >
+            <a href="https://github.com/davidydu/spatial-py/blob/main/docs/lab-language-contract.md"
+              >The lab language contract: queue rules ↗</a
+            >
+          </div>
+        </section>
+
+        <!-- 6 -->
+        <section
+          class="slide"
+          id="transfers"
+          aria-labelledby="title-transfers"
+          data-label="Transfers"
+          data-time="1:00"
+          hidden
+        >
+          <div class="eyebrow">
+            <span>06 / Moving data</span><span class="status">Lectures 3 to 6; every lab</span>
+          </div>
+          <h1 id="title-transfers" tabindex="-1">Loads and stores, destination first</h1>
+          <table class="data-table feature-table">
+            <thead>
+              <tr>
+                <th>In EE 109</th>
+                <th>Python Spatial</th>
+                <th>State</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>a load src(i::i+16)</code></td>
+                <td><code>load(a, src[i:i + 16])</code></td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td><code>dst(i::i+16) store b</code></td>
+                <td><code>store(dst[i:i + 16], b)</code></td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td>Tiles: <code>a(mm::mm+m, kk::kk+k)</code></td>
+                <td><code>a[mm:mm + m, kk:kk + k]</code>, views with steps</td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td>Edge tiles: <code>min(tile, K-kk)</code></td>
+                <td><code>width: Index = min(TILE, K - kk)</code></td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td><code>fifo load data</code>, <code>out store fifo</code></td>
+                <td><code>load(q, src[0:n])</code>, <code>store(dst[0:n], q)</code></td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td><code>par</code> on a transfer</td>
+                <td>Hardware moves a 512-bit beat a cycle</td>
+                <td><span class="tag designed">designed</span></td>
+              </tr>
+              <tr>
+                <td><code>gather</code>, <code>scatter</code> (taught, in no lab)</td>
+                <td>Indexed transfers with a stated rule for repeated indices</td>
+                <td><span class="tag later">later</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="takeaway">
+            <strong>Checked before it moves</strong
+            ><span
+              >A transfer checks its whole range first. If any cell is out of range or unset,
+              nothing is written.</span
+            >
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              Transfers keep Spatial's dense load and store with the same slicing, in Python's slice
+              syntax, with the destination first. Two-dimensional tiles, views with steps, edge
+              tiles with min, and FIFO loads and stores all run today; the reference simulators run
+              a tiled GEMM with uneven edge tiles written this way.
+            </p>
+            <p>
+              The par on a transfer becomes a hardware rule: a transfer moves one 512-bit beat a
+              cycle. Gather and scatter come later; no lab uses them. And a transfer checks its
+              whole range before it moves anything, so a bad range never leaves half a tile written.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a href="https://github.com/davidydu/spatial-py/blob/main/tests/runtime/lab_sizes.py"
+              >Lab-sized programs: tiled scale, GEMM with tails, a 3×3 window ↗</a
+            >
+          </div>
+        </section>
+
+        <!-- 7 -->
+        <section
+          class="slide"
+          id="control"
+          aria-labelledby="title-control"
+          data-label="Controllers"
+          data-time="1:30"
+          hidden
+        >
+          <div class="eyebrow">
+            <span>07 / Controllers</span><span class="status">Lectures 3 and 4; Labs 1 to 3</span>
+          </div>
+          <h1 id="title-control" tabindex="-1">Loops and branches run; reductions are next</h1>
+          <table class="data-table feature-table">
+            <thead>
+              <tr>
+                <th>In EE 109</th>
+                <th>Python Spatial</th>
+                <th>State</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Foreach(0 until N par P)</code></td>
+                <td><code>for i in foreach(0, N, par=P):</code></td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td><code>Sequential.Foreach(N by B)</code></td>
+                <td><code>for i in sequential(0, N, step=B):</code></td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td><code>if</code>/<code>else</code>, value <code>if</code></td>
+                <td>
+                  <code>if</code>/<code>elif</code>/<code>else</code>; <code>a if c else b</code>
+                </td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td><code>Reduce(acc)(N by 1){…}{_+_}</code>, <code>Fold</code></td>
+                <td>
+                  <code>reduce(0, N, identity=0, body=f, combine="add")</code>, <code>fold(…)</code>
+                </td>
+                <td><span class="tag next">next</span></td>
+              </tr>
+              <tr>
+                <td><code>MemReduce</code>, <code>MemFold</code></td>
+                <td>
+                  <code>mem_reduce(dst, 0, N, body=tile, combine="add")</code>,
+                  <code>mem_fold(…)</code>
+                </td>
+                <td><span class="tag next">next</span></td>
+              </tr>
+              <tr>
+                <td><code>FSM(init)(test){action}{next}</code></td>
+                <td><code>fsm(start, test=t, action=a, next=n)</code>, three typed helpers</td>
+                <td><span class="tag next">next</span></td>
+              </tr>
+              <tr>
+                <td><code>Pipe{…}</code>, <code>Pipe(ii=2)</code>, <code>Parallel{…}</code></td>
+                <td>
+                  <code>with pipe():</code>, <code>with pipe(ii=2):</code>,
+                  <code>with parallel():</code>
+                </td>
+                <td><span class="tag next">next</span></td>
+              </tr>
+              <tr>
+                <td><code>mux(c, a, b)</code>, <code>abs</code></td>
+                <td><code>select(c, a, b)</code>, <code>spatial.math.abs</code></td>
+                <td><span class="tag next">next</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="takeaway">
+            <strong>New in Python</strong
+            ><span
+              >A reduction names its identity and its combining operation, so the compiler can check
+              the tree it builds is legal.</span
+            >
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              Controllers. Foreach with par, Sequential.Foreach with a step, and branches, including
+              the value form of if, run today. The par is accepted and recorded; making the hardware
+              honor it is the compiler change I'll show on the next slide.
+            </p>
+            <p>
+              The reductions are next, right after Reg, because Lab 1's last part needs them: Reduce
+              and Fold, then MemReduce and MemFold for Lab 2, then FSM. One difference by design: a
+              reduction states its identity and its combining operation, so the compiler can check
+              that the tree it builds with par gives the same answer as adding in order. Pipe,
+              Parallel, mux and abs complete the list.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a
+              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/10---Research/PY-R013---Controllers-Reductions-and-Lab2-Mapping"
+              >Controllers, reductions and the Lab 2 mapping ↗</a
+            >
+          </div>
+        </section>
+
+        <!-- 8 -->
+        <section
+          class="slide"
+          id="parallel"
+          aria-labelledby="title-parallel"
+          data-label="par and hardware"
+          data-time="1:30"
+          hidden
+        >
+          <div class="eyebrow">
+            <span>08 / Parallelism</span
+            ><span class="status">Lectures 4 and 6; Lab 2.6, Lab 3</span>
+          </div>
+          <h1 id="title-parallel" tabindex="-1">Spatial's schedules become the hardware</h1>
+          <div class="two-col">
+            <ul class="points">
+              <li>
+                <strong><code>sequential</code> is <code>Sequential</code>.</strong>
+                <span>Tiles run one at a time, stages in order.</span>
+              </li>
+              <li>
+                <strong><code>foreach</code> pipelines.</strong>
+                <span
+                  >An inner loop at one iteration a cycle; an outer loop over loads, compute and
+                  stores overlaps its tiles.</span
+                >
+              </li>
+              <li>
+                <strong><code>par</code> is lanes,</strong>
+                <span>with each memory banked from the accesses that use it.</span>
+              </li>
+              <li>
+                <strong>No run-time checks in hardware,</strong>
+                <span>as in Spatial. The simulators keep every check.</span>
+              </li>
+            </ul>
+            <table class="data-table">
+              <caption>
+                Lab 1, compute cycles, the course's own flow
+              </caption>
+              <thead>
+                <tr>
+                  <th>Design</th>
+                  <th>32</th>
+                  <th>256</th>
+                  <th>1,024</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="staff">
+                  <th>Staff's handwritten HLS</th>
+                  <td>77</td>
+                  <td>109</td>
+                  <td>158</td>
+                </tr>
+                <tr class="proto">
+                  <th>
+                    <code>foreach</code> over tiles, <code>par=16</code> inside
+                    <span class="tag proto">prototype</span>
+                  </th>
+                  <td>76</td>
+                  <td>108</td>
+                  <td>157</td>
+                </tr>
+                <tr class="proto">
+                  <th>
+                    The course's source: <code>Sequential</code>, no <code>par</code>
+                    <span class="tag proto">prototype</span>
+                  </th>
+                  <td>114</td>
+                  <td>468</td>
+                  <td>1,557</td>
+                </tr>
+                <tr class="now">
+                  <th>The compiler today <span class="tag measured">measured</span></th>
+                  <td>260</td>
+                  <td>692</td>
+                  <td>1,858</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="takeaway">
+            <strong>So schedules teach again</strong
+            ><span
+              >Writing <code>foreach</code> and <code>par</code> changes the hardware the way the
+              course says it should. The compiler change is planned and reviewed.</span
+            >
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              Parallelism is where the language meets the hardware, and since our last meeting we
+              decided to follow the original Spatial compiler. Sequential runs tiles one at a time.
+              Foreach pipelines: an inner loop at one iteration a cycle, and an outer loop over a
+              load, a compute loop and a store overlaps its tiles. Par is lanes, and each memory is
+              banked from the accesses that use it. Like Spatial's hardware, ours checks nothing at
+              run time; the simulators keep every check.
+            </p>
+            <p>
+              The table is Lab 1 in the course's own wrapper and test. Written the Spatial way, with
+              foreach over tiles and par 16, and lowered by hand the way the compiler will, it
+              matches the staff's HLS. The course's own source, which says Sequential and no par,
+              gets Spatial's sequential schedule. The compiler today is the last row. So once the
+              compiler change lands, the schedules students write change the hardware the way the
+              course teaches.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/main/docs/evidence/hardware-performance-planning/spatial-style-2026-11-16/README.md"
+              >The Spatial-style prototype in the course's flow ↗</a
+            >
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/main/docs/reviews/2026-11-16-spatial-style-fpga-decisions.md"
+              >Decision record ↗</a
+            >
+            <a
+              href="https://github.com/davidydu/spatial-py/blob/main/docs/plans/2026-11-16-f2-spatial-style.md"
+              >The compiler change's plan ↗</a
+            >
+          </div>
+        </section>
+
+        <!-- 9 -->
+        <section
+          class="slide"
+          id="streaming"
+          aria-labelledby="title-streaming"
+          data-label="Streaming"
+          data-time="0:45"
+          hidden
+        >
+          <div class="eyebrow">
+            <span>09 / Streaming</span><span class="status">Lecture 5; no lab</span>
+          </div>
+          <h1 id="title-streaming" tabindex="-1">Streaming is designed for later</h1>
+          <table class="data-table feature-table">
+            <thead>
+              <tr>
+                <th>In EE 109</th>
+                <th>Python Spatial</th>
+                <th>State</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>StreamIn[T]</code>, <code>StreamOut[T]</code></td>
+                <td>Typed stream ports with an arrival and close protocol</td>
+                <td><span class="tag later">later</span></td>
+              </tr>
+              <tr>
+                <td><code>Stream(*){…}</code>, <code>Stream.Foreach</code></td>
+                <td><code>with stream():</code> and named tasks joined by channels</td>
+                <td><span class="tag later">later</span></td>
+              </tr>
+              <tr>
+                <td>A stage stalls on an empty or full FIFO</td>
+                <td>Channels wait; a plain <code>Fifo</code> in ordinary code faults instead</td>
+                <td><span class="tag later">later</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <ul class="points" style="margin-top: 16px">
+            <li>
+              <strong>Why later:</strong>
+              <span
+                >no lab uses streaming, and waiting, deadlock and stopping have to be part of the
+                meaning, not only of the hardware.</span
+              >
+            </li>
+          </ul>
+          <div class="takeaway">
+            <strong>The FIFO today</strong
+            ><span
+              >Ordered and bounded, never blocking: the same queue streaming will build on.</span
+            >
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              Streaming, lecture 5, is designed but not started: typed stream ports, and stream
+              regions with named tasks joined by channels. We put it after the labs for two reasons.
+              No lab uses it. And in a stream a stage waits on an empty or full FIFO, so waiting,
+              deadlock and stopping have to become part of the language's meaning, which is a bigger
+              design than a queue. Today's FIFO is ordered and bounded and never blocks; a deq from
+              an empty queue is a fault. Streaming will add channels that wait.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a
+              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/20---Examples/PY-E002---Spatial-to-Python-Syntax-Atlas"
+              >Syntax atlas: streams and tasks ↗</a
+            >
+          </div>
+        </section>
+
+        <!-- 10 -->
+        <section
+          class="slide"
+          id="differences"
+          aria-labelledby="title-differences"
+          data-label="What changes"
+          data-time="1:30"
+          hidden
+        >
+          <div class="eyebrow">
+            <span>10 / On purpose</span><span class="status">What Python Spatial changes</span>
+          </div>
+          <h1 id="title-differences" tabindex="-1">Six deliberate differences</h1>
+          <ol class="questions">
+            <li>
+              <strong>Faults are part of the language.</strong>
+              <span
+                >An out-of-range index, an unset cell, an empty or full queue, a zero divisor: each
+                stops the simulation with its kind and source line.</span
+              >
+            </li>
+            <li>
+              <strong>Results never depend on the schedule.</strong>
+              <span
+                >Every program's results equal running it in order; <code>Sequential</code>,
+                <code>Pipe</code> and <code>par</code> choose overlap and lanes only.</span
+              >
+            </li>
+            <li>
+              <strong>The interface is the signature.</strong>
+              <span>Ports are typed parameters with a direction; the host is ordinary Python.</span>
+            </li>
+            <li>
+              <strong>Transfers name the destination first,</strong>
+              <span>and check their whole range before they move anything.</span>
+            </li>
+            <li>
+              <strong>Counters and data are different types.</strong>
+              <span
+                ><code>Index</code> is exact; data is <code>Int</code>; <code>embed</code> joins
+                them.</span
+              >
+            </li>
+            <li>
+              <strong>Queue state is observed, not waited on.</strong>
+              <span><code>q.is_empty()</code>; waiting belongs to streaming's channels.</span>
+            </li>
+          </ol>
+          <div class="takeaway">
+            <strong>Why</strong
+            ><span
+              >Students see their mistake at the line that made it, and a schedule they try can only
+              change speed, never answers.</span
+            >
+          </div>
+          <div class="notes-source" hidden>
+            <p>
+              Six differences, each on purpose. First, faults are part of the language: an index out
+              of range, a read of an unset cell, a queue that is empty or full, a zero divisor, each
+              stops the simulation and names the line. Second, results never depend on the schedule:
+              in Spatial a Pipe with a hazard can change the answer; in Python Spatial every
+              program's results are those of running it in order, and the schedule only chooses
+              overlap and lanes.
+            </p>
+            <p>
+              Third, the interface is the function signature. Fourth, transfers name the destination
+              first and check their whole range before moving anything. Fifth, counters and data are
+              different types. Sixth, queue state is observed with methods and never waited on;
+              waiting is streaming's job. The reason for all six: students see their mistake at the
+              line that made it, and trying a schedule can change speed but never the answer.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a
+              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/10---Research/PY-R005---Full-Language-Coverage-and-Migration"
+              >Full language coverage and migration: what is preserved and what is revised ↗</a
+            >
+          </div>
+        </section>
+
+        <!-- 11 -->
+        <section
+          class="slide"
+          id="labs"
+          aria-labelledby="title-labs"
+          data-label="Lab by lab"
+          data-time="1:30"
+          hidden
+        >
+          <div class="eyebrow">
+            <span>11 / Lab by lab</span><span class="status">The Spatial parts of Labs 1 to 3</span>
+          </div>
+          <h1 id="title-labs" tabindex="-1">What each lab needs, and what runs</h1>
+          <table class="data-table feature-table">
+            <thead>
+              <tr>
+                <th>Lab part</th>
+                <th>What it needs</th>
+                <th>State</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1.3 Registers</td>
+                <td><code>ArgIn</code>, <code>ArgOut</code>, host arguments</td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td>1.4 DRAM and SRAM</td>
+                <td>Tiles, <code>Sequential</code>, <code>Foreach</code>, load and store</td>
+                <td><span class="tag runs">runs, also on F2</span></td>
+              </tr>
+              <tr>
+                <td>1.5 FIFO</td>
+                <td><code>enq</code>, <code>deq</code>, queue load and store</td>
+                <td><span class="tag runs">runs</span></td>
+              </tr>
+              <tr>
+                <td>1.6 Controllers</td>
+                <td><code>Reg</code>, <code>Reduce</code>, <code>Fold</code></td>
+                <td><span class="tag next">Reg designed; next</span></td>
+              </tr>
+              <tr>
+                <td>2.1 to 2.4</td>
+                <td>
+                  <code>MemReduce</code>, <code>MemFold</code>, <code>FSM</code>, <code>LUT</code>
+                </td>
+                <td><span class="tag next">next</span></td>
+              </tr>
+              <tr>
+                <td>2.5 and 2.6 GEMM</td>
+                <td>
+                  2-D tiles, edge tiles, <code>FixPt</code>, <code>MemFold</code>, <code>par</code>
+                </td>
+                <td><span class="tag next">tiles run; fixed point next</span></td>
+              </tr>
+              <tr>
+                <td>3.1 Convolution</td>
+                <td>
+                  <code>LineBuffer</code>, <code>RegFile</code> shift, <code>LUT</code>,
+                  <code>Reduce</code>, <code>mux</code>, <code>abs</code>
+                </td>
+                <td><span class="tag next">next</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <ul class="points" style="margin-top: 12px">
+            <li>
+              <strong>The shapes already run:</strong>
+              <span
+                >a tiled GEMM with uneven edges and a 3×3 window over a 2-D SRAM, written with loops
+                and SRAMs. The dedicated constructs make them read like the labs.</span
+              >
+            </li>
+          </ul>
+          <div class="notes-source" hidden>
+            <p>
+              Lab by lab. Lab 1's registers, DRAM and SRAM, and FIFO parts run; DRAM and SRAM also
+              runs on the F2 FPGA. Controllers needs Reg, which is designed, and Reduce and Fold,
+              which are next. Lab 2 needs the memory reductions, FSM, LUT and fixed point; Lab 3 the
+              window memories, LUT, Reduce, mux and abs.
+            </p>
+            <p>
+              The shapes themselves already run: our reference simulators run a tiled GEMM with
+              uneven edge tiles and a three-by-three window over a two-dimensional SRAM, written
+              with plain loops and SRAMs. What is missing is the constructs that let students write
+              them the way the labs teach.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a
+              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/20---Examples/PY-E003---EE109-Feature-Coverage"
+              >The full comparison, lab by lab ↗</a
+            >
+          </div>
+        </section>
+
+        <!-- 12 -->
+        <section
+          class="slide"
+          id="routine"
+          aria-labelledby="title-routine"
+          data-label="How it is built"
+          data-time="1:00"
+          hidden
+        >
+          <div class="eyebrow">
+            <span>12 / How a construct is delivered</span
+            ><span class="status">The FIFO as the example</span>
+          </div>
+          <h1 id="title-routine" tabindex="-1">
+            Each construct is specified first, then tested against the spec
+          </h1>
+          <div class="steps" style="margin-top: 18px">
+            <div class="done">
+              <span class="step-number">01</span>
+              <h2>Rules in the contract</h2>
+              <p>The meaning, the faults, and every form refused.</p>
+            </div>
+            <div class="done">
+              <span class="step-number">02</span>
+              <h2>Expected results by hand</h2>
+              <p>A separate author, who never sees the code.</p>
+            </div>
+            <div class="done">
+              <span class="step-number">03</span>
+              <h2>Tests first, then code</h2>
+              <p>Two reference simulators that must agree.</p>
+            </div>
+            <div class="done">
+              <span class="step-number">04</span>
+              <h2>Reviews with planted bugs</h2>
+              <p>Every planted bug must be caught.</p>
+            </div>
+            <div class="done">
+              <span class="step-number">05</span>
+              <h2>A fresh holdout</h2>
+              <p>New programs, written after the code is frozen.</p>
+            </div>
+          </div>
+          <ul class="points">
+            <li>
+              <strong>The FIFO:</strong>
+              <span
+                >80 programs with 115 input sets against hand-derived results, 78 refused forms, and
+                step counts derived by two separate authors.</span
+              >
+            </li>
+            <li>
+              <strong>The FIFO observations, this week:</strong>
+              <span
+                >71 runs against a blind oracle; the two charge derivations agreed on every
+                value.</span
+              >
+            </li>
+            <li>
+              <strong>2,640 automated tests on main</strong>
+              <span>pass before every merge, from source and from the installed package.</span>
+            </li>
+          </ul>
+          <div class="notes-source" hidden>
+            <p>
+              How each construct gets delivered, so you can judge what "runs" means. The rules go
+              into the language contract first, including every form we refuse. A separate author,
+              who never sees the code, derives the expected results by hand. Tests are written
+              first, then the code, on two reference simulators that must agree with each other.
+              Reviewers plant bugs that the tests must catch, and after the code is frozen another
+              author writes fresh programs it has never seen.
+            </p>
+            <p>
+              For the FIFO that meant 80 programs with 115 input sets, 78 refused forms, and step
+              counts derived by two authors separately. This week the FIFO observations went through
+              the same steps: 71 runs against a blind oracle, and two charge derivations that agreed
+              on every value. All 2,640 tests on main pass before every merge, from source and from
+              the installed package.
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a href="https://github.com/davidydu/spatial-py/blob/main/AGENTS.md"
+              >The routine, in the working rules ↗</a
+            >
+            <a href="https://github.com/davidydu/spatial-py/blob/main/docs/evidence/lab1-fifo-a1.md"
+              >The FIFO's evidence ↗</a
+            >
+          </div>
+        </section>
+
+        <!-- 13 -->
+        <section
+          class="slide"
+          id="plan"
+          aria-labelledby="title-plan"
+          data-label="Plan and questions"
+          data-time="1:45"
+          hidden
+        >
+          <div class="eyebrow">
+            <span>13 / Plan and questions</span
+            ><span class="status">Students use it in April 2027</span>
+          </div>
+          <h1 id="title-plan" tabindex="-1">The order of delivery, and four questions</h1>
+          <div class="steps" style="margin-top: 18px">
+            <div class="done">
+              <span class="step-number">01 · now</span>
+              <h2>FIFO observations</h2>
+              <p>Built and tested; in review.</p>
+            </div>
+            <div>
+              <span class="step-number">02</span>
+              <h2>Reg, Reduce, Fold</h2>
+              <p>Lab 1 complete.</p>
+            </div>
+            <div>
+              <span class="step-number">03</span>
+              <h2>Memory folds, FSM, LUT, fixed point</h2>
+              <p>Lab 2 complete.</p>
+            </div>
+            <div>
+              <span class="step-number">04</span>
+              <h2>LineBuffer, RegFile, mux, abs</h2>
+              <p>Lab 3 complete.</p>
+            </div>
+            <div>
+              <span class="step-number">05 · alongside</span>
+              <h2>Spatial-style hardware</h2>
+              <p>Each family on the F2 FPGA.</p>
+            </div>
+          </div>
+          <ol class="questions">
+            <li>
+              <strong>Fixed point.</strong>
+              <span
+                >Lab 2's GEMM uses <code>FixPt[TRUE,_24,_8]</code>. Which rounding and overflow
+                behaviour should students see?</span
+              >
+            </li>
+            <li>
+              <strong>Schedule names.</strong>
+              <span
+                >Keep <code>Sequential</code>, <code>Pipe</code>, <code>Parallel</code> and
+                <code>Stream</code> as Python spellings, with results never depending on them?</span
+              >
+            </li>
+            <li>
+              <strong>Lab 1's source.</strong>
+              <span
+                >It says <code>Sequential</code> and no <code>par</code>. Should the lab teach
+                <code>Foreach</code> and <code>par</code>, so hardware matches the staff's
+                HLS?</span
+              >
+            </li>
+            <li>
+              <strong>Streaming.</strong>
+              <span>No lab uses it. Needed by April 2027, or after?</span>
+            </li>
+          </ol>
+          <div class="notes-source" hidden>
+            <p>
+              The order of delivery follows the labs. The FIFO observations are built and tested and
+              in review now. Then Reg, Reduce and Fold, which completes Lab 1. Then the memory
+              folds, FSM, LUT and fixed point for Lab 2, then the Lab 3 window memories with mux and
+              abs. Alongside, the Spatial-style hardware route takes each family to the FPGA.
+            </p>
+            <p>
+              Four questions. Fixed point: Lab 2's GEMM uses 24.8 fixed point; which rounding and
+              overflow behaviour should students see? Schedule names: should we keep Sequential,
+              Pipe, Parallel and Stream as the Python spellings, with the rule that results never
+              depend on them? Lab 1's own source says Sequential with no par; should the lab teach
+              Foreach and par so the hardware matches the staff's HLS? And streaming: no lab uses
+              it; is it needed by April, or can it follow?
+            </p>
+          </div>
+          <div class="sources-source" hidden>
+            <a
+              href="https://davidydu.github.io/spatial-research-site/50---Python-Rewrite/04---Python-Implementation-Roadmap"
+              >Implementation roadmap ↗</a
+            >
+            <a href="https://github.com/davidydu/spatial-py/blob/main/PROJECT_STATE.md"
+              >Project state ↗</a
+            >
+          </div>
+        </section>
+      </main>
+      <footer class="deck-footer">
+        <nav class="chapter-nav" aria-label="Slides">
+          <button data-slide="result" aria-label="01 Where we are">
+            <span class="chapter-number">01</span><span class="chapter-label">Today</span></button
+          ><button data-slide="pair" aria-label="02 Side by side">
+            <span class="chapter-number">02</span><span class="chapter-label">Pair</span></button
+          ><button data-slide="host" aria-label="03 Program and host">
+            <span class="chapter-number">03</span><span class="chapter-label">Host</span></button
+          ><button data-slide="types" aria-label="04 Types">
+            <span class="chapter-number">04</span><span class="chapter-label">Types</span></button
+          ><button data-slide="memories" aria-label="05 Memories">
+            <span class="chapter-number">05</span><span class="chapter-label">Memory</span></button
+          ><button data-slide="transfers" aria-label="06 Transfers">
+            <span class="chapter-number">06</span
+            ><span class="chapter-label">Transfers</span></button
+          ><button data-slide="control" aria-label="07 Controllers">
+            <span class="chapter-number">07</span><span class="chapter-label">Control</span></button
+          ><button data-slide="parallel" aria-label="08 par and hardware">
+            <span class="chapter-number">08</span><span class="chapter-label">par</span></button
+          ><button data-slide="streaming" aria-label="09 Streaming">
+            <span class="chapter-number">09</span><span class="chapter-label">Stream</span></button
+          ><button data-slide="differences" aria-label="10 What changes">
+            <span class="chapter-number">10</span><span class="chapter-label">Changes</span></button
+          ><button data-slide="labs" aria-label="11 Lab by lab">
+            <span class="chapter-number">11</span><span class="chapter-label">Labs</span></button
+          ><button data-slide="routine" aria-label="12 How it is built">
+            <span class="chapter-number">12</span><span class="chapter-label">Routine</span></button
+          ><button data-slide="plan" aria-label="13 Plan and questions">
+            <span class="chapter-number">13</span><span class="chapter-label">Plan</span>
+          </button>
+        </nav>
+        <div class="transport">
+          <button id="previous" aria-label="Previous slide">←</button
+          ><span id="slide-count" aria-live="polite">01 / 13</span
+          ><button id="next" aria-label="Next slide">→</button>
+        </div>
+      </footer>
+      <div class="progress-track" aria-hidden="true"><div class="progress-fill"></div></div>
+    </div>
+    <dialog id="detail-dialog" aria-labelledby="dialog-title">
+      <div class="dialog-shell">
+        <header class="dialog-header">
+          <h2 id="dialog-title">Speaker notes</h2>
+          <button id="dialog-close" aria-label="Close dialog">Close ×</button>
+        </header>
+        <div id="dialog-content"></div>
+      </div>
+    </dialog>
+  </body>
+</html>

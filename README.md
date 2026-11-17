@@ -47,7 +47,8 @@ Preview the combined build with the existing static-server dependency:
 node --input-type=module -e 'import http from "node:http"; import handler from "serve-handler"; http.createServer((req, res) => handler(req, res, { public: "public", cleanUrls: true })).listen(8080)'
 # documentation: http://localhost:8080/
 # presentation: http://localhost:8080/presentation/
-# current deck (16 November): http://localhost:8080/presentation/efficiency/
+# language deck (16 November): http://localhost:8080/presentation/language/
+# efficiency deck (16 November): http://localhost:8080/presentation/efficiency/
 # 22 October deck: http://localhost:8080/presentation/python/
 ```
 
@@ -84,7 +85,19 @@ content. Compiler implementation and HLS execution remain paused for the meeting
 
 ## Presentations
 
-The current deck, **16 November 2026**, eight slides on compiler efficiency (where the
+The language deck, **16 November 2026 (evening)**, thirteen slides for the professor,
+compares every Spatial construct EE 109's lectures and Labs 1 to 3 use with its Python
+Spatial spelling and its state (runs, in review, designed, next, later). It lives at
+`presentation/language/` and publishes to
+[Python Spatial: the language against EE 109](https://davidydu.github.io/spatial-research-site/presentation/language/).
+It reuses the efficiency deck's script and styles, with code-pair, feature-table and
+state-tag styles added at the end of its `presentation.css`; arrows change slides, **N**
+opens the notes, **E** the evidence links. The full table is the vault's
+`50 - Python Rewrite/20 - Examples/PY-E003 - EE109 Feature Coverage.md`; the speaking
+script is `90 - Meta/2026-11-16-language-presentation.md`. Refresh its states from the
+compiler's support ledger as slices merge. Course code is never copied into it.
+
+The efficiency deck, **16 November 2026**, eight slides on compiler efficiency (where the
 compiled hardware loses its cycles, the first fix in the compiler, the prototypes and
 the course wrapper's bug), lives at `presentation/efficiency/` and publishes to
 [Python Spatial: compiler efficiency](https://davidydu.github.io/spatial-research-site/presentation/efficiency/).
