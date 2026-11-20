@@ -52,7 +52,7 @@
           </p>
           <div class="stat-row">
             <div class="stat blue">
-              <span class="value">17<small> of 32</small></span>
+              <span class="value">18<small> of 32</small></span>
               <span class="label"
                 >constructs Labs 1 to 3 use run today, from source through the checker and both
                 reference simulators <span class="tag runs">runs</span></span
@@ -61,8 +61,8 @@
             <div class="stat">
               <span class="value">3<small> of 4</small></span>
               <span class="label"
-                >Spatial parts of Lab 1 run: registers, DRAM and SRAM, FIFO. Controllers need
-                <code>Reg</code>, <code>Reduce</code> and <code>Fold</code></span
+                >Spatial parts of Lab 1 run: registers, DRAM and SRAM, FIFO. Controllers needs
+                <code>Reduce</code> and <code>Fold</code>; <code>Reg</code> runs</span
               >
             </div>
             <div class="stat terra">
@@ -76,8 +76,8 @@
           <div class="takeaway">
             <strong>The rest</strong
             ><span
-              ><code>Reg</code> and the hardware for <code>par</code> are designed. Twelve
-              constructs come next, in lab order: reductions, memory folds, FSM, LUT, fixed point,
+              ><code>Reduce</code>, <code>Fold</code> and the hardware for <code>par</code> are
+              designed. Ten constructs come next, in lab order: memory folds, FSM, LUT, fixed point,
               then the Lab 3 window memories.</span
             >
           </div>
@@ -88,11 +88,12 @@
               and where it stands.
             </p>
             <p>
-              Of the 32 constructs the three labs actually use, 17 run today: from Python source,
+              Of the 32 constructs the three labs actually use, 18 run today: from Python source,
               through the checker, on both of our reference simulators, which must agree. Three of
-              Lab 1's four Spatial parts run end to end; the controllers part needs Reg, Reduce and
-              Fold. Reg is fully designed, with its tests' expected values already derived. Twelve
-              constructs are next, in lab order.
+              Lab 1's four Spatial parts run end to end. Reg has run since 19 November, so the
+              controllers part runs when it is written with loops and a register; written as the
+              course writes it, it needs Reduce and Fold, which are designed and come next. Ten
+              constructs follow them, in lab order.
             </p>
             <p>
               And on hardware: Lab 1 written the Spatial way, with Foreach over tiles and par 16
@@ -407,7 +408,7 @@ Accel {
             <span>05 / On-chip memories</span
             ><span class="status">Lectures 3 and 7; Labs 1 to 3</span>
           </div>
-          <h1 id="title-memories" tabindex="-1">SRAM and FIFO run; Reg is designed</h1>
+          <h1 id="title-memories" tabindex="-1">SRAM, FIFO and Reg run</h1>
           <table class="data-table feature-table">
             <thead>
               <tr>
@@ -440,7 +441,7 @@ Accel {
                 <td>
                   <code>q.occupancy()</code>, <code>q.is_empty()</code>, <code>q.is_full()</code>
                 </td>
-                <td><span class="tag review">in review</span></td>
+                <td><span class="tag runs">runs</span></td>
               </tr>
               <tr>
                 <td><code>Reg[Int](0)</code>: <code>:=</code>, <code>.value</code></td>
@@ -448,7 +449,7 @@ Accel {
                   <code>acc: Reg[Int] = 0</code>; <code>acc.value = e</code>,
                   <code>acc.value += e</code>
                 </td>
-                <td><span class="tag designed">designed</span></td>
+                <td><span class="tag runs">runs</span></td>
               </tr>
               <tr>
                 <td><code>LUT[Int](3,3)(…)</code></td>
@@ -488,9 +489,10 @@ Accel {
           <div class="notes-source" hidden>
             <p>
               Memories. SRAM in one and two dimensions runs, and so does the FIFO with enq, deq and
-              peek, including loads and stores to a queue. The FIFO observations, occupancy and
-              empty and full, are written and tested and in review now. Reg is fully designed: its
-              rules are written and its tests' expected values derived by a separate author.
+              peek, including loads and stores to a queue, and so do the FIFO observations,
+              occupancy and empty and full, since 16 November. Reg has run since 19 November: a
+              register declared before a loop keeps its value across the iterations, and each
+              read and write is in the trace.
             </p>
             <p>
               LUT, LineBuffer and RegFile with its shift come next, for Labs 2 and 3. The .buffer
@@ -508,8 +510,14 @@ Accel {
             <a href="https://github.com/davidydu/spatial-py/blob/main/docs/evidence/lab1-fifo-a1.md"
               >The FIFO, slice A1: evidence ↗</a
             >
+            <a href="https://github.com/davidydu/spatial-py/blob/main/docs/evidence/lab1-fifo-a2a.md"
+              >The FIFO observations, slice A2a: evidence ↗</a
+            >
+            <a href="https://github.com/davidydu/spatial-py/blob/main/docs/evidence/lab1-reg-a1.md"
+              >Registers, slice A1: evidence ↗</a
+            >
             <a href="https://github.com/davidydu/spatial-py/blob/main/docs/lab-language-contract.md"
-              >The lab language contract: queue rules ↗</a
+              >The lab language contract: queue and register rules ↗</a
             >
           </div>
         </section>
@@ -612,7 +620,7 @@ Accel {
           <div class="eyebrow">
             <span>07 / Controllers</span><span class="status">Lectures 3 and 4; Labs 1 to 3</span>
           </div>
-          <h1 id="title-control" tabindex="-1">Loops and branches run; reductions are next</h1>
+          <h1 id="title-control" tabindex="-1">Loops and branches run; reductions are designed</h1>
           <table class="data-table feature-table">
             <thead>
               <tr>
@@ -642,9 +650,10 @@ Accel {
               <tr>
                 <td><code>Reduce(acc)(N by 1){…}{_+_}</code>, <code>Fold</code></td>
                 <td>
-                  <code>reduce(0, N, identity=0, body=f, combine="add")</code>, <code>fold(…)</code>
+                  <code>acc.value = reduce(0, N, identity=0, body=f, combine="add")</code>,
+                  <code>fold(…, seed=acc.value, …)</code>
                 </td>
-                <td><span class="tag next">next</span></td>
+                <td><span class="tag designed">designed</span></td>
               </tr>
               <tr>
                 <td><code>MemReduce</code>, <code>MemFold</code></td>
@@ -677,8 +686,9 @@ Accel {
           <div class="takeaway">
             <strong>New in Python</strong
             ><span
-              >A reduction names its identity and its combining operation, so the compiler can check
-              the tree it builds is legal.</span
+              >A reduction is a value. It names its identity and one of five combining operations,
+              each of which may be regrouped freely, so the tree <code>par</code> builds gives the
+              same answer.</span
             >
           </div>
           <div class="notes-source" hidden>
@@ -688,11 +698,14 @@ Accel {
               honor it is the compiler change I'll show on the next slide.
             </p>
             <p>
-              The reductions are next, right after Reg, because Lab 1's last part needs them: Reduce
-              and Fold, then MemReduce and MemFold for Lab 2, then FSM. One difference by design: a
-              reduction states its identity and its combining operation, so the compiler can check
-              that the tree it builds with par gives the same answer as adding in order. Pipe,
-              Parallel, mux and abs complete the list.
+              The reductions are designed and come next, because Lab 1's last part needs them:
+              Reduce and Fold, then MemReduce and MemFold for Lab 2, then FSM. Two differences by
+              design: a reduction is a value you assign, acc.value = reduce(...), rather than taking
+              the register as an argument; and it states its identity, checked to be the
+              operation's neutral value, and one of five combining operations, add, multiply, and,
+              or and exclusive or, each of which may be regrouped freely, so the tree it builds with
+              par gives the same answer as adding in order. Pipe, Parallel, mux and abs complete
+              the list.
             </p>
           </div>
           <div class="sources-source" hidden>
@@ -1018,7 +1031,7 @@ Accel {
               <tr>
                 <td>1.6 Controllers</td>
                 <td><code>Reg</code>, <code>Reduce</code>, <code>Fold</code></td>
-                <td><span class="tag next">Reg designed; next</span></td>
+                <td><span class="tag designed">Reg runs; reductions designed</span></td>
               </tr>
               <tr>
                 <td>2.1 to 2.4</td>
@@ -1056,8 +1069,8 @@ Accel {
           <div class="notes-source" hidden>
             <p>
               Lab by lab. Lab 1's registers, DRAM and SRAM, and FIFO parts run; DRAM and SRAM also
-              runs on the F2 FPGA. Controllers needs Reg, which is designed, and Reduce and Fold,
-              which are next. Lab 2 needs the memory reductions, FSM, LUT and fixed point; Lab 3 the
+              runs on the F2 FPGA. Controllers needs Reg, which runs, and Reduce and Fold, which
+              are designed and come next. Lab 2 needs the memory reductions, FSM, LUT and fixed point; Lab 3 the
               window memories, LUT, Reduce, mux and abs.
             </p>
             <p>
@@ -1180,14 +1193,14 @@ Accel {
           </div>
           <h1 id="title-plan" tabindex="-1">The order of delivery, and four questions</h1>
           <div class="steps" style="margin-top: 18px">
-            <div class="done">
-              <span class="step-number">01 · now</span>
-              <h2>FIFO observations</h2>
-              <p>Built and tested; in review.</p>
-            </div>
             <div>
-              <span class="step-number">02</span>
-              <h2>Reg, Reduce, Fold</h2>
+              <span class="step-number">01 · done</span>
+              <h2>FIFO observations, Reg</h2>
+              <p>Merged 16 and 19 November.</p>
+            </div>
+            <div class="done">
+              <span class="step-number">02 · now</span>
+              <h2>Reduce, Fold</h2>
               <p>Lab 1 complete.</p>
             </div>
             <div>
@@ -1236,8 +1249,8 @@ Accel {
           </ol>
           <div class="notes-source" hidden>
             <p>
-              The order of delivery follows the labs. The FIFO observations are built and tested and
-              in review now. Then Reg, Reduce and Fold, which completes Lab 1. Then the memory
+              The order of delivery follows the labs. The FIFO observations and Reg are merged. Now
+              Reduce and Fold, which completes Lab 1. Then the memory
               folds, FSM, LUT and fixed point for Lab 2, then the Lab 3 window memories with mux and
               abs. Alongside, the Spatial-style hardware route takes each family to the FPGA.
             </p>
