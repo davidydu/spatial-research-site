@@ -164,8 +164,8 @@ Accel {
           <div class="takeaway">
             <strong>Runs today</strong
             ><span
-              >On both reference simulators, as native C++, and on the F2 FPGA through the course's
-              flow.</span
+              >On both reference simulators and as native C++; in experiments, also on the F2 FPGA
+              through the course's flow.</span
             >
           </div>
           <div class="notes-source" hidden>
@@ -179,8 +179,8 @@ Accel {
               load, an inner Foreach, a store. Two things differ. The ports are part of the
               function's signature, with their direction and type, instead of DRAM and ArgIn objects
               declared on the host. And a transfer names its destination first, like an assignment.
-              This one runs today everywhere we have a route: both reference simulators, native C++,
-              and the F2 FPGA.
+              This one runs today everywhere we have a route: both reference simulators and native
+              C++, and, in experiments so far, the F2 FPGA.
             </p>
           </div>
           <div class="sources-source" hidden>
@@ -1021,7 +1021,7 @@ Accel {
               <tr>
                 <td>1.4 DRAM and SRAM</td>
                 <td>Tiles, <code>Sequential</code>, <code>Foreach</code>, load and store</td>
-                <td><span class="tag runs">runs, also on F2</span></td>
+                <td><span class="tag runs">runs; F2 experiments</span></td>
               </tr>
               <tr>
                 <td>1.5 FIFO</td>
@@ -1069,7 +1069,7 @@ Accel {
           <div class="notes-source" hidden>
             <p>
               Lab by lab. Lab 1's registers, DRAM and SRAM, and FIFO parts run; DRAM and SRAM also
-              runs on the F2 FPGA. Controllers needs Reg, which runs, and Reduce and Fold, which
+              ran on the F2 FPGA, in experiments. Controllers needs Reg, which runs, and Reduce and Fold, which
               are designed and come next. Lab 2 needs the memory reductions, FSM, LUT and fixed point; Lab 3 the
               window memories, LUT, Reduce, mux and abs.
             </p>
